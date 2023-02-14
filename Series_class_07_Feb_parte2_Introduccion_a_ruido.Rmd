@@ -1,0 +1,117 @@
+---
+title: "Series_class_07_Feb_parte2"
+author: "Sergibar"
+date: "2023-02-07"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Class of 07.Feb.2022 
+
+*   UN EJEMPLO DEL RUIDO EN LAS SERIES DE TIEMPO
+
+```{r}
+st_1 <- rep(100, times=10)
+#Para agregar ruido a la @serie@ 
+ruido_1<- rnorm(10,0,1)
+#Para constuir la @nueva serie@ tomand en cuenta el "ruido"
+st_1_ruido <- st_1 + ruido_1
+
+#Graficando "sin  ruido"
+plot(st_1, type="l")
+
+#Graficando "con ruido"
+plot(st_1_ruido, type="l")
+
+#Graficando "con ruido" pero limitando el valor del eje y
+plot(st_1_ruido, type="l", ylim=c(0,max(st_1_ruido)))
+
+
+```
+Agregando tendencia a una serie aleatoria
+
+```{r}
+
+st_2 <- 80 + 5*c(1:10)
+#Para agregar ruido a la @serie@ 
+ruido_2<- rnorm(10,0,5)
+#Para constuir la @nueva serie@ tomand en cuenta el "ruido"
+st_2_ruido <- st_2 + ruido_2
+
+#Graficando "sin  ruido"
+plot(st_2, type="l")
+
+#Graficando "con ruido"
+plot(st_2_ruido, type="l")
+
+#Graficando "con ruido" pero limitando el valor del eje y
+plot(st_2_ruido, type="l", ylim=c(0,max(st_2_ruido)))
+
+
+```
+
+
+¿Cómo agregar patrones repetitivos a la serie? 
+
+
+```{r}
+st_3 <-rep(100,times=12)
+#Para agregar ruido a la @serie@ 
+ruido_3<- rnorm(12,0,10)
+
+#VAMOS A AGREGAR FACTORES ESTACIONALES
+FE<- c(3,6,9)
+
+#Para constuir la @nueva serie@ tomand en cuenta el "ruido"
+st_3_ruido <- st_3 + +FE+ ruido_3
+
+#Graficando "sin  ruido"
+plot(st_3, type="l")
+
+#Graficando "con ruido"
+plot(st_3_ruido, type="l")
+
+#Graficando "con ruido" pero limitando el valor del eje y
+plot(st_3_ruido, type="l", ylim=c(0,max(st_3_ruido)))
+
+```
+
+
+
+# FILTROS DE SERIES DE TIEMPO 
+
+### Filtración mediante la media 
+
+```{r}
+st_1 <- rep(100, times=10)
+#Para agregar ruido a la @serie@ 
+ruido_1<- rnorm(10,0,10)
+#Para constuir la @nueva serie@ tomand en cuenta el "ruido"
+st_1_ruido <- st_1 + ruido_1
+
+#Graficando "con ruido" pero limitando el valor del eje y
+plot(st_1_ruido, type="l", ylim=c(0,max(st_1_ruido)))
+
+#USAREMOS LA MEDIA COMOF ILTRO 
+filtro_1 <- rep(mean(st_1_ruido), times=10)
+plot(st_1_ruido, type="l", ylim=c(0,max(st_1_ruido)))
+lines(filtro_1)
+
+
+med_est<- mean(st_1_ruido)
+
+#Para estimar el ruido 
+ruido_est <- st_1_ruido - filtro_1
+
+
+#Vamos a ver los valores que ruido real vs ruido calculado para evaluar que tal fue el "filtro" que elegimos que fue el mean 
+data.frame(ruido_est, ruido_1)
+
+
+
+### Filtración mediante la ecuación de la recta para filtración de serie con tendencias 
+
+

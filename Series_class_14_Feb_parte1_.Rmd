@@ -1,0 +1,357 @@
+---
+title: "Series_class_07_Feb_parte2"
+author: "Sergibar"
+date: "2023-02-07"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Class of 07.Feb.2022 
+
+## SERIE SIN TENDENCIA-
+UN EJEMPLO DEL RUIDO EN LAS SERIES DE TIEMPO
+
+```{r}
+st_1 <- rep(100, times=10)
+#Para agregar ruido a la @serie@ 
+ruido_1<- rnorm(10,0,1)
+#Para constuir la @nueva serie@ tomand en cuenta el "ruido"
+st_1_ruido <- st_1 + ruido_1
+
+#Graficando "sin  ruido"
+plot(st_1, type="l")
+
+#Graficando "con ruido"
+plot(st_1_ruido, type="l")
+
+#Graficando "con ruido" pero limitando el valor del eje y
+plot(st_1_ruido, type="l", ylim=c(0,max(st_1_ruido)))
+
+
+```
+
+## SERIE CON TENDENCIA- Agregando tendencia a una serie aleatoria
+
+```{r}
+
+st_2 <- 80 + 5*c(1:10)
+#Para agregar ruido a la @serie@ 
+ruido_2<- rnorm(10,0,5)
+#Para constuir la @nueva serie@ tomand en cuenta el "ruido"
+st_2_ruido <- st_2 + ruido_2
+
+#Graficando "sin  ruido"
+plot(st_2, type="l")
+
+#Graficando "con ruido"
+plot(st_2_ruido, type="l")
+
+#Graficando "con ruido" pero limitando el valor del eje y
+plot(st_2_ruido, type="l", ylim=c(0,max(st_2_ruido)))
+
+
+```
+
+
+¿Cómo agregar patrones repetitivos a la serie? 
+
+```{r}
+st_3 <-rep(100,times=12)
+#Para agregar ruido a la @serie@ 
+ruido_3<- rnorm(12,0,10)
+
+#VAMOS A AGREGAR FACTORES ESTACIONALES
+FE<- c(3,6,9)
+
+#Para constuir la @nueva serie@ tomand en cuenta el "ruido"
+st_3_ruido <- st_3 + +FE+ ruido_3
+
+#Graficando "sin  ruido"
+plot(st_3, type="l")
+
+#Graficando "con ruido"
+plot(st_3_ruido, type="l")
+
+#Graficando "con ruido" pero limitando el valor del eje y
+plot(st_3_ruido, type="l", ylim=c(0,max(st_3_ruido)))
+
+```
+
+
+
+# FILTROS DE SERIES DE TIEMPO 
+## Filtración mediante la media (cuando hay tendencia)
+
+```{r}
+st_1 <- rep(100, times=10)
+#Para agregar ruido a la @serie@ 
+ruido_1<- rnorm(10,0,10)
+#Para constuir la @nueva serie@ tomand en cuenta el "ruido"
+st_1_ruido <- st_1 + ruido_1
+
+#Graficando "con ruido" pero limitando el valor del eje y
+plot(st_1_ruido, type="l", ylim=c(0,max(st_1_ruido)))
+
+#USAREMOS LA MEDIA COMOF ILTRO 
+filtro_1 <- rep(mean(st_1_ruido), times=10)
+plot(st_1_ruido, type="l", ylim=c(0,max(st_1_ruido)))
+lines(filtro_1)
+
+
+med_est<- mean(st_1_ruido)
+
+#Para estimar el ruido 
+ruido_est <- st_1_ruido - filtro_1
+
+
+#Vamos a ver los valores que ruido real vs ruido calculado para evaluar que tal fue el "filtro" que elegimos que fue el mean 
+data.frame(ruido_est, ruido_1)
+
+### Filtración mediante la ecuación de la recta para filtración de serie con tendencias 
+
+```
+
+
+
+
+# Class.14.feb.2023
+
+
+# FILTROS DE SERIES DE TIEMPO 
+
+## Serie con estacionalidad y sin tendencia 
+
+```{r}
+st_1 <- rep(100, times=12)
+#Para agregar ruido a la @serie@ 
+ruido_1<- rnorm(12,0,1)
+
+#Para agregar estacionalidad (Definiendo los factores estacionales)
+FE<- c(3,9,12)
+
+#Para constuir la @nueva serie@ tomand en cuenta el "ruido"
+st_seasonalidad_tendencia <- st_1 + ruido_1 + FE
+
+#Graficando "con ruido" pero limitando el valor del eje y
+plot(st_seasonalidad, type="l", ylim=c(0,max(st_seasonalidad)))
+abline(v=c(1,4,7,10,12))
+
+#Se calculan los valores estacionales con base en los puntos donde se repite dependiendo estaconaldiad
+F_estacional1 <- st_seasonalidad[c(1,4,7,10)]
+F_estacional1
+
+F_estacional2 <- st_seasonalidad[c(2,5,8,1)]
+F_estacional2
+
+F_estacional3 <- st_seasonalidad[c(3,6,9,12)]
+F_estacional3
+
+
+#Ahora si calculando los factores estacionales como tal
+
+Fac_estacional1 <- mean(F_estacional1)/mean(st_seasonalidad)
+Fac_estacional1
+
+Fac_estacional2 <- mean(F_estacional2)/mean(st_seasonalidad)
+Fac_estacional2
+
+
+Fac_estacional3 <- mean(F_estacional3)/mean(st_seasonalidad)
+Fac_estacional3
+
+
+#La suma de factores estacionalida debe ser igual número de estaciones definidas 
+suma_Fac_escionales <- Fac_estacional1+Fac_estacional2+ Fac_estacional3
+suma_Fac_escionales
+
+## Diferencia de factores estacionales
+
+Diff_FE1_2 <- abs(Fac_estacional1-Fac_estacional2)
+Diff_FE1_2
+
+Diff_FE2_3 <- abs(Fac_estacional3-Fac_estacional2)
+Diff_FE2_3
+
+
+
+#GENERANDO LA SERIE SIN estacionalidad 
+# Va a buscar y sobreescribir los valores
+
+st_seasonalidad[c(1,4,7,10)]<-st_seasonalidad[c(1,4,7,10)] / (Fac_estacional1)
+st_seasonalidad[c(1,4,7,10)]
+
+st_seasonalidad[c(2,5,8,11)]<-st_seasonalidad[c(2,5,8,11)] / (Fac_estacional2)
+st_seasonalidad[c(2,5,8,11)]
+
+st_seasonalidad[c(3,6,9,12)]<-st_seasonalidad[c(3,6,9,12)] / (Fac_estacional2)
+st_seasonalidad[c(3,6,9,12)]
+
+# Ploteando 
+plot(st_seasonalidad, type="l")
+
+
+#Extrayendo el ruido 
+ruido_4 <- st_seasonalidad-mean(st_seasonalidad)
+ruido_4
+data.frame(ruido_4, ruido_1)
+
+```
+
+
+ggg
+
+
+
+
+
+# FILTROS DE SERIES DE TIEMPO 
+
+## Serie CON estacionalidad y CON tendencia 
+
+```{r}
+
+st_5 <- 80 + 5*c(1:12)
+#Para agregar ruido a la @serie@ 
+ruido_5<- rnorm(10,0,5)
+
+#Agregando estacionalidad
+FE<- c(3,9,12)
+
+
+#Para constuir la @nueva serie@ tomand en cuenta el "ruido"
+st_estacionalidad_tendencia <- st_5 + ruido_5 + FE
+st_estacionalidad_tendencia 
+
+
+##APLICANDO MODELO LINEAL
+ml_2 <- lm(st_estacionalidad_tendencia~c(1:12))
+ml_2
+
+
+#Graficando CON TENDENCIA Y ESTACIONALIDAD
+plot(st_estacionalidad_tendencia, type="l")
+abline(ml_2, col="green")
+
+# Generando el modelo lineal 
+#Intercepto es coefficients[1] 
+
+recta_tendencia <-ml_2$coefficients[1] + ml_2$coefficients[2]*c(1:12)
+
+recta_tendencia
+
+
+recta_sin_tendencia <- st_estacionalidad_tendencia / recta_tendencia
+
+#Graficando SIN TENDENCIA Y CON ESTACIONALIDAD
+plot(recta_sin_tendencia, type="l", main="recta sin tendnecia y con estacionalidad")
+
+```
+
+
+
+RETIRANDO AHORA LA ESTACIONALIDAD
+```{r}
+
+st_5 <- 80 + 5*c(1:12)
+#Para agregar ruido a la @serie@ 
+ruido_5<- rnorm(10,0,5)
+
+#Agregando estacionalidad
+FE<- c(3,9,12)
+
+
+#Para constuir la @nueva serie@ tomand en cuenta el "ruido"
+st_estacionalidad_tendencia <- st_5 + ruido_5 + FE
+st_estacionalidad_tendencia 
+
+
+##APLICANDO MODELO LINEAL
+ml_2 <- lm(st_estacionalidad_tendencia~c(1:12))
+ml_2
+
+
+#Graficando CON TENDENCIA Y ESTACIONALIDAD
+plot(st_estacionalidad_tendencia, type="l")
+abline(ml_2, col="green")
+
+# Generando el modelo lineal 
+#Intercepto es coefficients[1] 
+
+recta_tendencia <-ml_2$coefficients[1] + ml_2$coefficients[2]*c(1:12)
+
+recta_tendencia
+
+
+recta_sin_tendencia <- st_estacionalidad_tendencia / recta_tendencia
+
+#Graficando SIN TENDENCIA Y CON ESTACIONALIDAD
+plot(recta_sin_tendencia, type="l", main="recta sin tendnecia y con estacionalidad")
+
+
+#Se calculan los valores estacionales con base en los puntos donde se repite dependiendo estaconaldiad
+F_estacional1 <- recta_sin_tendencia[c(1,4,7,10)]
+F_estacional1
+
+F_estacional2 <- recta_sin_tendencia[c(2,5,8,1)]
+F_estacional2
+
+F_estacional3 <- recta_sin_tendencia[c(3,6,9,12)]
+F_estacional3
+
+
+#Ahora si calculando los factores estacionales como tal
+
+Fac_estacional1 <- mean(F_estacional1)/mean(recta_sin_tendencia)
+Fac_estacional1
+
+Fac_estacional2 <- mean(F_estacional2)/mean(recta_sin_tendencia)
+Fac_estacional2
+
+
+Fac_estacional3 <- mean(F_estacional3)/mean(recta_sin_tendencia)
+Fac_estacional3
+
+
+#La suma de factores estacionalida debe ser igual número de estaciones definidas 
+suma_Fac_escionales <- Fac_estacional1+Fac_estacional2+ Fac_estacional3
+suma_Fac_escionales
+
+## Diferencia de factores estacionales
+
+Diff_FE1_2 <- abs(Fac_estacional1-Fac_estacional2)
+Diff_FE1_2
+
+Diff_FE2_3 <- abs(Fac_estacional3-Fac_estacional2)
+Diff_FE2_3
+
+
+
+#GENERANDO LA SERIE SIN estacionalidad 
+# Va a buscar y sobreescribir los valores
+
+recta_sin_tendencia[c(1,4,7,10)]<-recta_sin_tendencia[c(1,4,7,10)] / (Fac_estacional1)
+recta_sin_tendencia[c(1,4,7,10)]
+
+recta_sin_tendencia[c(2,5,8,11)]<-recta_sin_tendencia[c(2,5,8,11)] / (Fac_estacional2)
+recta_sin_tendencia[c(2,5,8,11)]
+
+recta_sin_tendencia[c(3,6,9,12)]<-recta_sin_tendencia[c(3,6,9,12)] / (Fac_estacional2)
+recta_sin_tendencia[c(3,6,9,12)]
+
+
+# Ploteando 
+plot(recta_sin_tendencia, type="l")
+
+#Extrayendo el ruido 
+ruido_5 <- st_seasonalidad-mean(st_seasonalidad)
+ruido_4
+data.frame(ruido_4, ruido_1)
+
+```
+
+
+
+

@@ -1,0 +1,140 @@
+---
+title: "Series_class_07_Feb_2023"
+author: "Sergibar"
+date: "2023-02-07"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Intento Markdown 
+
+```{r}
+x=1:10
+x_ra <- sqrt(x)
+
+```
+El vector x es `r x`.
+La raíz cuadrada del vector x es `r x_ra`.
+
+
+## Repaso de R 
+
+### Objetos en R 
+* Vectors:
+-Numerical vector
+```{r}
+vec_1<- c(5,3,6,1,2,3)
+vec_1
+vec_1[3]
+vec_1[2:4]
+vec_1[c(2,4)]
+vec_1>3
+vec_1[vec_1>3]
+vec_1[vec_1>=3]
+vec_1[vec_1!=3]
+
+vec_2<- c(5,3,6,1,NA,3)
+vec_2_mean <-mean(vec_2, na.rm=TRUE)
+vec_2_mean
+#Para encontrar NAs
+is.na(vec_2)
+#Para sustiturilo por cero
+vec_2[is.na(vec_2)]<-0
+vec_2
+
+#Para sustiturilo por la media
+vec_2[is.na(vec_2)]<-mean(vec_2, na.rm=TRUE)
+vec_2
+
+vec_3<- c(TRUE,3,2,1,FALSE)
+
+vec_4<- c(5,3,6,1,0,3)
+
+vec_5<- c(vec_3,vec_1)
+vec_5
+
+vec_j <- c("Juan", "Pedro", "Luis")
+vec_6 <- c(5,3, "o", 1,3)
+```
+
+El vector vec_1 númerico es (`r vec_1`.)
+
+*   Matrix 
+
+
+```{r}
+M_1 <- c(1:9)
+dim(M_1) <- c(3,3)
+M_1
+M_1[2,2]
+M_1[2,]
+M_1[,2]
+M_2 <-M_1[,-2]
+M_2
+M_22 <- M_2[-2,]
+M_22
+
+#Para obtener la diagonal de la matriz 
+M3_<-diag(M_1)
+
+#Para generar una matriz identidad  a partir de un vector 
+rep(1, each=10)
+dim(rep(1, each=10))
+
+#Para hacer una secuencia con paso específico 
+seq(1,10, by=0.1)
+
+
+M_1[2,2]<- "Juan"
+
+M_1[,1]<- vec_j
+
+# Operaciones con matrices 
+M_11 <- c(1:9)
+dim(M_11) <- c(3,3)
+M_11
+#SUma de matrices
+M_11_2 <- M_11+M_11
+M_11_2
+#Multiplicacion de matrices
+M_11_3 <- M_11%*%M_11
+M_11_3
+
+
+```
+
+*    DATAFRAMES EN R
+
+```{r}
+calif_1<-c(10,9,9.5)
+calif_2<-c(5,3,0)
+DF_1<- data.frame(vec_j,calif_1,calif_2)
+DF_1
+
+#Para hacer un resumen de la información del DATA FRAME  
+str(DF_1)
+summary(DF_1)
+
+
+#Para extraer datos del DATA FRme aw PUEDE VEC COMO MATRIZ 
+DF_1[2,]
+DF_1$calif_1
+DF_1$calif_1[2]
+
+
+```
+
+*   Listas en R 
+
+```{r}
+list_1 <- list(vec_1, M_1, DF_1)
+list_1
+#Para extraer objetos dentro de las listas
+list_1[[2]]
+list_1[[2]][2,3]
+```
+
+

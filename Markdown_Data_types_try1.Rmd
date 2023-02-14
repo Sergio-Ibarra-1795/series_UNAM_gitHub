@@ -1,0 +1,98 @@
+---
+title: "Data_types_try1"
+author: "Sergibar"
+date: "2023-02-07"
+output:
+  word_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+# Data types
+## Vectors & Matrix
+
+Vectors:Vectors are created as "lists" and asigned to objetcs:
+
+```{r, }
+v1 <- c(1, 2, 3, 4, 5)
+v1
+is.vector(v1)
+```
+
+Vamos a probar ahora formulas en Markdown
+
+## Media 
+La media de una población se calcula como: 
+$$ \mu=\frac{1}{n}\sum_{i=1}^nx_i$$
+
+```{r}
+x <- c(1, 2, 3, 4, 5)
+x_1 <- mean(x)
+```
+
+El resultado de la meadia es $\mu=$ `r x_1`.
+
+
+## Suma de cuadrados
+La suma de cuadrados se calcula como se calcula como: 
+$$ \sigma=\frac{1}{n}\sum_{i=1}^n(x_i-\mu) $$
+
+##Matrix
+```{r}
+
+m1 <- matrix(c(T, T, F, F, T, F), nrow = 2)
+m1
+
+m2 <- matrix(c("a", "b", 
+               "c", "d"), 
+               nrow = 2,
+               byrow = T)
+m2
+
+```
+
+
+##List
+
+```{r}
+o1 <- c(1, 2, 3)
+o2 <- c("a", "b", "c", "d")
+o3 <- c(T, F, T, T, F)
+
+o1
+o2
+o3
+
+list1 <- list(o1, o2, o3)
+list1
+
+list2 <- list(o1, o2, o3, list1)  # Lists within lists!
+list2
+```
+
+Las listas son: $$o1$$:(`r o1`), $$o2$$:(`r o2`) ,$$o3$$:(`r o3`)
+
