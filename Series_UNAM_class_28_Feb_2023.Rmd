@@ -1,0 +1,277 @@
+---
+title: "Series_UNAM_class_28_Feb_2023"
+author: "Sergibar"
+date: "2023-02-28"
+output: html_document
+---
+
+# Suavizamiento de series de tiempo con Holt Winters
+
+## Serie 3
+
+```{r}
+library(readxl)
+Bici <- read_excel("SeriesHW.xlsx", sheet = "Bicicletas")
+#View(Bici)
+
+plot(Bici$`Ventas trimestrales`, type="l")
+```
+
+La serie es HOMOCELASTICA, es decir LA VARIANZA A LO LARGO DEL TIEMPO SE MANTIENE CONSTANTE
+
+
+```{r}
+bici <-Bici$'Ventas trimestrales'
+```
+
+
+
+Teniendo la tendencia, que sería la recta que mejor representa a dischos datos
+```{r}
+tendencia <-lm(bici~c(1:32))
+tendencia
+```
+
+
+Esta ya sería la recta de nuestros datos
+```{r}
+recta_3 <- tendencia$coefficients[1] + c(1:32)*tendencia$coefficients[2]
+
+plot(bici, type='l')
+abline(tendencia)
+```
+
+
+Vamos a reover tendencia
+```{r}
+bici_st <- bici/recta_3
+bici_st
+plot(bici_st, type='l')
+```
+
+
+
+b) Después se remueve la estacionalidad
+Hay que calcular los factores estacionales, por ejemplo, filtrando los factores que corresponden a los 
+trimestres (1,2,3 y 4) vs el promedio de toda la seria
+
+
+TOMANDO SOLO LOS TRIMESTRES DE LA SERIE 
+```{r}
+trimestre1 <-bici_st[seq(1,32, by=4)]
+trimestre1
+
+trimestre2 <-bici_st[seq(2,32, by=4)]
+trimestre2
+
+
+trimestre3 <-bici_st[seq(3,32, by=4)]
+trimestre3
+
+trimestre4 <-bici_st[seq(4,32, by=4)]
+trimestre4
+
+```
+
+
+¿Cómo está el trimestre 1 vs todos los datos? (Factor estacional 1)
+```{r}
+FE1 <-mean(trimestre1) / mean(bici_st)
+FE1
+```
+
+
+Otros factores estacionales
+```{r}
+FE2 <-mean(trimestre2) / mean(bici_st)
+FE2
+
+FE3 <-mean(trimestre3) / mean(bici_st)
+FE3
+
+FE4 <-mean(trimestre4) / mean(bici_st)
+FE4
+```
+
+
+SI NO HUBIERA ESTACIONALIDAD, LOS PROMEDIOS, DEBE´RIA TENDER A UNO. PERO EN ESTE CASO
+
+FE_1 = 0.7  Y FE=1.10  
+
+Lo que indica que del trimestre 1 al dos "Las ventas aumentan aproximandamente 30%".  (De nuevo si no hubiera estacionalidad los dos FE serían 1)
+YA REMOVIDA LA TENDENCIA, POR EFECTO ESTACIONAL, LAS VENTAS AUMENTA APROX 30% DEL TRIMESTRE 1 AL TRIEMESTRE 2
+
+
+FE_3 = 1.24 (Del trimestre 2 al 3 las ventas 'aumentraon aprox' otro 30%)
+
+FE_4 = 0.89 (Del trimestre 3 al 4 las ventas 'decrecieron aprox' un 40%)
+
+
+ADEMÁS ESTO ESTÁ AFECTADO POR LA TENDENCIA QUE EN GENERAL SE INCRMEENTA 2.29 NICICLETAS "CADA TRIMESTRE"
+
+
+
+Ahora lo que prentendemos es llevar cada valor de la serie los más parecida a 1 posible
+
+
+```{r}
+bici_ruido <- bici_st /c(FE1, FE2, FE3, FE4)
+bici_ruido
+plot(bici_ruido, type='l')
+
+```
+
+Si se medio acercan los valores en estacionalidad a 1 (NO ES exactamente UNO por el 'ruido / componente netamente estocástico que tiene y que nosotros suponemos que se comporta normalmente')
+
+
+Ahora vamos a filtrar el ruido
+
+
+Los valores en filtro_ruido_bici deben estar 'muy cercanos a cero', pues los desmediamos
+```{r}
+filtro_ruido_bici <- bici_ruido - mean(bici_ruido)
+
+filtro_ruido_bici
+plot(filtro_ruido_bici, type='l')
+
+```
+
+
+AHORA AL MOMENTO NUESTRO VALOR PRONOSTICADO PARA EL SIGUIENTE TRIMESTRE (Y DE HECHO PARA LOS SIG 4 PERIODOS ES LA MEDIA)
+```{r}
+bici_pronosticado <- mean(bici_ruido)
+bici_pronosticado
+```
+
+
+Ahora construimos el valor de los 32 NAs + los 4 pronosticos 
+
+```{r}
+bici_pronostico <- c(rep(NA,32),rep(bici_pronosticado,4))
+bici_pronostico
+```
+
+
+
+AHORA PARA TENER LOS 32 DATOS COMO TAL + EL PRONOSTICO
+
+```{r}
+bici_pronostico_2 <- c(bici_ruido,rep(bici_pronosticado,4))
+bici_pronostico_2 
+plot(bici_pronostico_2, type='l')
+```
+
+
+AHORA, como generamos los INTERVALOS DE CONFIANZA 
+
+Entonces a la media que es el ronostico se le debe restar 2 veces la desviación estandar de los errores (Desviación estandar del ruido) * la raíz del determinado periodo 
+
+```{r}
+LI <-bici_pronostico_2[33:36] - 2*sd(filtro_ruido_bici)*c(1:4)^.5
+LI
+```
+LI obviamente va disminuyendo
+
+
+
+El limite superior es 'como el inferior pero sumando el error'
+
+```{r}
+LS <-bici_pronostico_2[33:36] + 2*sd(filtro_ruido_bici)*c(1:4)^.5
+LS
+```
+LS obviamente va creciendo
+
+
+
+
+
+
+
+Ahora construimos el valor de los 32 NAs + los 4 pronosticos 
+
+```{r}
+LI2 <- c(rep(NA, times=32),LI)
+LI2
+
+```
+
+
+```{r}
+LS2 <- c(rep(NA, times=32),LS)
+LS2
+```
+
+
+
+VAMOS A 'DEVOLVER ESTACIONALIDAD MULTIPLICANDO POR LOS FACTORES DE ESTACIONALIDAD'
+
+```{r}
+bici_cest <- bici_pronostico_2 *c(FE1,FE2,FE3,FE4)
+bici_cest
+plot(bici_cest, type='l')
+```
+
+
+
+
+Ahora vamos a agregar los limites
+
+```{r}
+LI_cest <- LI2*c(FE1,FE2,FE3,FE4)
+LI_cest
+
+LS_cest <- LS2*c(FE1,FE2,FE3,FE4)
+LS_cest
+
+```
+
+
+```{r}
+plot(bici_cest, type='l')
+lines(LI_cest, col='red')
+lines(LS_cest, col='blue')
+```
+
+
+Ahora solo falta 'devolver tendencia'
+
+
+```{r}
+recta_bici_para_pronostico <- tendencia$coefficients[1] +c(1:36)*tendencia$coefficients[2]
+
+
+bici_pronostico_final <- bici_cest *recta_bici_para_pronostico
+
+plot(bici_pronostico_final, type='l')
+
+```
+
+
+
+
+```{r}
+LI_final <- LI_cest * recta_bici_para_pronostico
+LI_final
+LS_final <- LS_cest * recta_bici_para_pronostico
+LS_final
+```
+
+
+
+```{r}
+plot(bici_pronostico_final, type='l', ylim=c(0, max(LS_final, na.rm =TRUE)))
+lines(LI_final, col= 'red')
+lines(LS_final, col= 'blue')
+```
+
+
+NOTAR QUE ESTAMOS ASUMIENDO UNA MEDIA COSNTANTE ÁTRAVES DEL TIEMPO 
+TAMBIÉN ESTOY OBLIGANDO A QUE MI TENDENCIA SEA COSNTANTE, es decir, esos 2.29 de inclinación de reacta los tomamos fijos átraves del tiempo
+TAMBIÉN estamos tomando los Factores estacionales constantes a través del tiempo. 
+
+
+
+
+
+

@@ -1,0 +1,69 @@
+---
+title: "Series_UNAM_class_28_Feb_parte2_Introduccion_Suavizamiento_exponencial_simple"
+author: "Sergibar"
+date: "2023-02-28"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Suavizamiento Exponencial Simple con R 
+
+# Importar series
+
+```{r}
+library(readxl)
+Baca <- read_excel("SeriesHW.xlsx", sheet = "Bacalao")
+#str(Baca)
+#View(Baca)
+head(Baca, 3)
+#tail(Baca, 3)
+names(Baca)[3]<-c("Pesca")
+plot(Baca$Pesca, ylim=c(0, max(Baca$Pesca)), type="l")
+```
+
+
+
+
+## Se va a hacer uso del metodo holtwinters que requiere que la serie sea una serie de tiempo
+
+¿Que pasa si cambio frequency? 
+
+```{r}
+library(forecast)
+
+baca_ts_trim <- ts(Baca$Pesca, start=c(2021,1), frequency = 4)
+baca_ts_trim
+plot(baca_ts_trim)
+
+```
+
+
+```{r}
+library(forecast)
+
+baca_ts_cuatrimestral <- ts(Baca$Pesca, start=c(2021,1), frequency = 3)
+baca_ts_cuatrimestral
+plot(baca_ts_cuatrimestral)
+
+```
+
+
+
+```{r}
+library(forecast)
+
+baca_ts <- ts(Baca$Pesca, start=c(2021,1), frequency = 12)
+baca_ts
+plot(baca_ts)
+
+```
+
+
+
+
+
+
+

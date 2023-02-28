@@ -1,0 +1,154 @@
+---
+title: "Suavizamiento SIN TENDENCIA y SIN ESTACIONALIDAD & CON TENDENCIA y SIN ESTACIONALIDAD"
+author: "SIR_clase_WULFRANO"
+date: "2023-02-21"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Importar series
+
+```{r}
+library(readxl)
+Baca <- read_excel("SeriesHW.xlsx", sheet = "Bacalao")
+#str(Baca)
+#View(Baca)
+head(Baca, 3)
+#tail(Baca, 3)
+names(Baca)[3]<-c("Pesca")
+plot(Baca$Pesca, ylim=c(0, max(Baca$Pesca)), type="l")
+```
+
+
+# Filtro
+
+```{r}
+Filtro_1<-mean(Baca$Pesca)
+Error_est_1<-Baca$Pesca-Filtro_1
+sd_est_1<-sd(Error_est_1)
+tao<-c(1:4)
+Lim_1<-2*sd_est_1*tao^.5
+```
+
+# Gráfica
+
+```{r}
+Tiempo_1<-c(1:28)
+Baca_1<-c(Baca$Pesca, rep(NA, times=4))
+Filtro_V2<-rep(Filtro_1, times=28)
+
+LI<-c(rep(NA, times=24), Filtro_1-Lim_1)
+LS<-c(rep(NA, times=24), Filtro_1+Lim_1)
+
+plot(Tiempo_1, Baca_1, type="l", ylim=c(0, max(LS, na.rm = TRUE)), col="Blue")
+
+lines(Filtro_V2, col="Red")
+lines(LI, col="Grey")
+lines(LS, col="Grey")
+
+DF_1<-data.frame(Tiempo_1, Baca_1, Filtro_1,LI, LS)
+#View(DF_1)
+```
+
+
+# Serie 2
+
+```{r}
+
+Termo<- read_excel("SeriesHW.xlsx", sheet = "Termostatos")
+View(Termo)
+names(Termo)[2]<-c("Termos")
+plot(Termo$Termos, type="l")
+```
+
+
+# Filtro_2
+
+```{r}
+
+linea_1<-lm(Termos[1:30]~Semana[1:30], data=Termo)
+
+linea_2<-lm(Termos[31:52]~Semana[31:52], data=Termo)
+
+Linea_v2<-c(linea_1$coefficients[1]+linea_1$coefficients[2]*Termo$Semana[1:30], linea_2$coefficients[1]+linea_2$coefficients[2]*Termo$Semana[31:52])
+
+
+
+
+plot(Termo$Termos, type="l")
+lines(Linea_v2)
+
+Serie_v2<-Termo$Termos/Linea_v2
+
+plot(Serie_v2, type="l")
+
+```
+
+# Estimación
+
+```{r}
+Filtro_2<-mean(Serie_v2)
+Error_est_2<-Serie_v2-Filtro_2
+sd_est_2<-sd(Error_est_2)
+Lim_2<-2*sd_est_2*tao^.5
+```
+
+# Pronóstico
+
+```{r}
+Tiempo_2<-c(1:56)
+Termot_1<-c(Serie_v2, rep(NA, times=4))
+Filtro_V3<-rep(Filtro_2, times=56)
+
+LI_2<-c(rep(NA, times=52), Filtro_2-Lim_2)
+LS_2<-c(rep(NA, times=52), Filtro_2+Lim_2)
+
+plot(Tiempo_2, Termot_1, type="l", ylim=c(0, max(LS_2, na.rm = TRUE)), col="Blue")
+
+lines(Filtro_V3, col="Red")
+lines(LI_2, col="Purple")
+lines(LS_2, col="Purple")
+
+DF_1<-data.frame(Tiempo_1, Baca_1, Filtro_1,LI, LS)
+```
+
+# Datos reales
+
+```{r}
+Linea_v3<-c(linea_1$coefficients[1]+linea_1$coefficients[2]*Termo$Semana[1:30], linea_2$coefficients[1]+linea_2$coefficients[2]*c(31:56))
+
+Termos_f<-c(Termo$Termos, rep(NA, times=4))
+
+plot(Termos_f, type="l")
+lines(Est_punt_r)
+
+Est_punt_r<-c(rep(NA, times=52), Filtro_2*Linea_v3[53:56])
+
+LI_2V1<-c(rep(NA, times=52), LI_2[53:56]*Linea_v3[53:56])
+
+LS_2V1<-c(rep(NA, times=52), LS_2[53:56]*Linea_v3[53:56])
+
+plot(Termos_f, type="l", ylim=c(0, max(LS_2V1, na.rm = TRUE)))
+lines(Est_punt_r)
+lines(LI_2V1)
+lines(LS_2V1)
+
+#lines(Linea_v3)
+
+DF_2<-data.frame(c(1:56),Termos_f, Est_punt_r, LI_2V1,LS_2V1)
+View(DF_2)
+```
+
+# Serie 3
+
+```{r}
+Bici <- read_excel("SeriesHW.xlsx", sheet = "Bicicletas")
+View(Bici)
+
+plot(Bici$`Ventas trimestrales`, type="l")
+```
+

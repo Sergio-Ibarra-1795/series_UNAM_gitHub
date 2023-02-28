@@ -1,0 +1,181 @@
+---
+title: "Series_class_21_Feb_parte2"
+author: "Sergibar"
+date: "2023-02-21"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Class of 21.Feb.2022 
+
+
+## EJEMPLO DE "TRANSFORMACIÓN DE SERIES"-
+
+```{r}
+library(readxl)
+SeriesHW_importado_baca <- read_excel("C:/Users/sergi/OneDrive/Documentos/MIS_UNAM/Segundo_semestre/Series_UNAM_HPi3/Series_UNAM_git/Series_class_21_Feb/SeriesHW.xlsx", 
+    sheet = "Bacalao")
+head(SeriesHW_importado_baca)
+str(SeriesHW_importado_baca)
+typeof(SeriesHW_importado_baca)
+
+
+
+```
+```{r}
+
+#Para "cambiar los nombres de las columnas del objeto" 
+#names(SeriesHW_importado_baca) <- c("Mes", "Periodo", "Pesca")
+
+names(SeriesHW_importado_baca)[3]<-("Pesca")
+names(SeriesHW_importado_baca)
+
+```
+
+
+
+
+
+
+```{r}
+
+#Ploteando la serie 
+
+plot(SeriesHW_importado_baca$Pesca, ylim=c(0,max(SeriesHW_importado_baca$Pesca)),type="l")
+
+```
+
+
+
+```{r}
+
+#Filtrando la serie 
+
+Filtro_1 <- mean(SeriesHW_importado_baca$Pesca)
+Error_est_1 <- SeriesHW_importado_baca$Pesca - Filtro_1
+
+#Estandard deviation del valor estimado
+sd_est_1 <- sd(Error_est_1)
+
+#Para limitar el númer de valores a ´predecif
+tao<- c(1:4)
+
+#Intervlzos de confianza
+
+#Se calculan los limites que se sumaran y restaran a la media
+Lim_de_int_conf_1 <- 2*sd_est_1*tao^0.5
+
+
+
+
+```
+
+
+
+
+
+```{r}
+#Yo tengo 24 meses + 4 que yo quiero "pronosticar" 
+Tiempo_1 <- c(1:28)
+
+#Para que SeriesHW_importado_baca$Pesca tenga 28 datos 
+Bacalao_pesca_28 <- c(SeriesHW_importado_baca$Pesca, rep(NA, times=4))
+Bacalao_pesca_28
+
+Filtro_v2<-rep(Filtro_1, times=28)
+
+#Otra forma de grafucar es y en función de x y~x
+plot(Bacalao_pesca_28~Tiempo_1,type="l")
+lines(Filtro_v2)
+
+```
+
+
+Calculando los limites de los intervalos de confianza
+
+```{r}
+
+Lim_inferior<-c(rep(NA, times=24), Filtro_1-Lim_de_int_conf_1)
+Lim_inferior
+
+Lim_superior<-c(rep(NA, times=24), Filtro_1+Lim_de_int_conf_1)
+Lim_superior
+
+
+#Otra forma de grafucar es y en función de x y~x
+plot(Bacalao_pesca_28~Tiempo_1,type="l", ylim=c(0,max(Lim_superior, na.rm=TRUE)),col="blue")
+lines(Filtro_v2, col="red")
+lines(Lim_inferior, col="gray")
+lines(Lim_superior, col="gray")
+
+```
+
+
+
+Para ver todos los datos en un data.frame y observar el estimado, junto con los "limites de confianza"
+
+```{r}
+DF_1 <-data.frame(Tiempo_1,Bacalao_pesca_28, Filtro_1, Lim_inferior, Lim_superior)
+head(DF_1)
+tail(DF_1)
+```
+
+
+
+
+## Serie2: Segundo método de filtración
+
+
+Importando la tab/sheet de termostatos 
+```{r}
+library(readxl)
+SeriesHW_importado_termo <- read_excel("C:/Users/sergi/OneDrive/Documentos/MIS_UNAM/Segundo_semestre/Series_UNAM_HPi3/Series_UNAM_git/Series_class_21_Feb/SeriesHW.xlsx", 
+    sheet = "Termostatos")
+View(SeriesHW_importado_termo)
+plot(SeriesHW_importado_termo$`Ventas de termostatos`, type="l")
+```
+
+
+Renombrando la columna Ventas de termostatos por ventas 
+```{r}
+
+#Para "cambiar los nombres de las columnas del objeto" 
+#names(SeriesHW_importado_baca) <- c("Mes", "Periodo", "Pesca")
+names(SeriesHW_importado_termo)[2]<-("Termos")
+names(SeriesHW_importado_termo)
+plot(SeriesHW_importado_termo$Termos, type="l")
+
+```
+
+
+
+
+Filtro 2
+a) Primero debemos "remover la tendencia"
+
+```{r}
+
+#Filtrando la serie, primero intentaremos crear un modelo lineal para remover tedencia
+
+linea_1 <-lm(SeriesHW_importado_termo~Semana, data=SeriesHW_importado_termo)
+plot(SeriesHW_importado_termo$Termos, type="l")
+abline(linea_1)
+
+```
+
+
+
+```{r}
+Linea_v2 <- linea_1$coefficients[1] + linea_1$coefficients[2]*SeriesHW_importado_termo$Semana
+
+Serie_v2 <- SeriesHW_importado_termo$
+```
+
+
+
+
+
+
