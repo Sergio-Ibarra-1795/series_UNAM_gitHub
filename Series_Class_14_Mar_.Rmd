@@ -1,0 +1,147 @@
+---
+title: "Series_Class_14_Mar_"
+author: "Sergibar"
+date: "2023-03-14"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Método de Holt 
+
+## Importar series
+
+### Serie 2 con tendencia 
+
+```{r}
+# Install the readxl package
+install.packages("readxl")
+
+# Load the readxl package
+library(readxl)
+
+```
+
+
+```{r}
+
+Termo<- read_excel("SeriesHW.xlsx", sheet = "Termostatos")
+View(Termo)
+names(Termo)[2]<-c("Termos")
+plot(Termo$Termos, type="l")
+```
+
+
+```{r}
+Termo_ts <-ts(Termo$Termos, start=c(2022,1), frequency=52)
+plot(Termo_ts)
+```
+
+betta es gama para nosotros
+gamma va a ser el del seasonal
+Como no restringí ni el primer nivel ni la primer tendencia, R los va a estimar. 
+Entonces va a estimar
+alpha, gamma y los bo y lo 
+
+```{r}
+Termo_tshw <-HoltWinters(Termo_ts,gamma=FALSE)
+plot(Termo_tshw)
+```
+
+
+```{r}
+Termo_tshw$alpha
+Termo_tshw$beta
+```
+
+
+```{r}
+Termo_tshw2 <-HoltWinters(Termo_ts,gamma=FALSE, alpha = 0.15, beta=0.26, l.start=228, b.start=0)
+plot(Termo_tshw2)
+```
+
+
+```{r}
+Termo_tshw2$alpha
+Termo_tshw2$beta
+```
+
+
+
+```{r}
+Termo_tshw2$SSE
+
+Termo_tshw$SSE
+```
+
+```{r}
+AIC()
+```
+
+
+Volviendo a probar otros valores de arranque 
+
+```{r}
+Termo_tshw3 <-HoltWinters(Termo_ts,gamma=FALSE, alpha = 0.2, beta=0.1, l.start=202, b.start=-0.26)
+plot(Termo_tshw3)
+```
+
+
+```{r}
+Termo_tshw3$SSE
+
+Termo_tshw2$SSE
+
+Termo_tshw$SSE
+```
+
+
+
+Volviendo a probar otros/OTROS valores de arranque (Para nostros se´ria muchos más sencillo solo especificar l0 y b0)
+
+```{r}
+Termo_tshw4 <-HoltWinters(Termo_ts,gamma=FALSE, l.start=202, b.start=-0.26)
+plot(Termo_tshw4)
+```
+
+```{r}
+
+Termo_tshw4$SSE
+
+Termo_tshw3$SSE
+
+Termo_tshw2$SSE
+
+Termo_tshw$SSE
+```
+
+Ahora vamos a hacer el forecast con el tshw4
+
+```{r}
+# Install the forecast package
+install.packages("forecast")
+
+# Load the forecast package
+library(forecast)
+
+```
+
+
+
+```{r}
+Termo_tshw4_fc <- forecast(Termo_tshw4, h=52, level=0.95)
+plot(Termo_tshw4_fc)
+```
+
+```{r}
+Termo_tshw4_fc2 <- forecast(Termo_tshw4, h=8, level=0.95)
+plot(Termo_tshw4_fc2)
+```
+
+
+
+
+
+
