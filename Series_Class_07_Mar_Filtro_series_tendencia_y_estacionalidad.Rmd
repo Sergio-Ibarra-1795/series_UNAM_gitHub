@@ -1,0 +1,337 @@
+---
+title: "CLASS OF 07. MARCH.2023 HOLT_WINTERS (SES) vs NUESTRO FILTRO"
+author: "SIR"
+date: "2023-02-21"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Importar series
+
+```{r}
+library(readxl)
+Baca <- read_excel("SeriesHW.xlsx", sheet = "Bacalao")
+#str(Baca)
+#View(Baca)
+head(Baca, 3)
+#tail(Baca, 3)
+names(Baca)[3]<-c("Pesca")
+plot(Baca$Pesca, ylim=c(0, max(Baca$Pesca)), type="l")
+```
+
+# Filtro
+
+
+```{r}
+Filtro_1<-mean(Baca$Pesca)
+Error_est_1<-Baca$Pesca-Filtro_1
+sd_est_1<-sd(Error_est_1)
+tao<-c(1:4)
+Lim_1<-2*sd_est_1*tao^.5
+```
+
+# Gráfica
+
+```{r}
+Tiempo_1<-c(1:28)
+Baca_1<-c(Baca$Pesca, rep(NA, times=4))
+Filtro_V2<-rep(Filtro_1, times=28)
+
+LI<-c(rep(NA, times=24), Filtro_1-Lim_1)
+LS<-c(rep(NA, times=24), Filtro_1+Lim_1)
+
+plot(Tiempo_1, Baca_1, type="l", ylim=c(0, max(LS, na.rm = TRUE)), col="Blue")
+
+lines(Filtro_V2, col="Red")
+lines(LI, col="Grey")
+lines(LS, col="Grey")
+
+DF_1<-data.frame(Tiempo_1, Baca_1, Filtro_1,LI, LS)
+#View(DF_1)
+```
+
+
+# Serie 2
+
+```{r}
+
+Termo<- read_excel("SeriesHW.xlsx", sheet = "Termostatos")
+View(Termo)
+names(Termo)[2]<-c("Termos")
+plot(Termo$Termos, type="l")
+```
+
+
+# Filtro_2
+
+```{r}
+
+linea_1<-lm(Termos[1:30]~Semana[1:30], data=Termo)
+
+linea_2<-lm(Termos[31:52]~Semana[31:52], data=Termo)
+
+Linea_v2<-c(linea_1$coefficients[1]+linea_1$coefficients[2]*Termo$Semana[1:30], linea_2$coefficients[1]+linea_2$coefficients[2]*Termo$Semana[31:52])
+
+
+
+
+plot(Termo$Termos, type="l")
+lines(Linea_v2)
+
+Serie_v2<-Termo$Termos/Linea_v2
+
+plot(Serie_v2, type="l")
+
+```
+
+# Estimación
+
+```{r}
+Filtro_2<-mean(Serie_v2)
+Error_est_2<-Serie_v2-Filtro_2
+sd_est_2<-sd(Error_est_2)
+Lim_2<-2*sd_est_2*tao^.5
+```
+
+# Pronóstico
+
+```{r}
+Tiempo_2<-c(1:56)
+Termot_1<-c(Serie_v2, rep(NA, times=4))
+Filtro_V3<-rep(Filtro_2, times=56)
+
+LI_2<-c(rep(NA, times=52), Filtro_2-Lim_2)
+LS_2<-c(rep(NA, times=52), Filtro_2+Lim_2)
+
+plot(Tiempo_2, Termot_1, type="l", ylim=c(0, max(LS_2, na.rm = TRUE)), col="Blue")
+
+lines(Filtro_V3, col="Red")
+lines(LI_2, col="Purple")
+lines(LS_2, col="Purple")
+
+DF_1<-data.frame(Tiempo_1, Baca_1, Filtro_1,LI, LS)
+```
+
+# Datos reales
+
+```{r}
+Linea_v3<-c(linea_1$coefficients[1]+linea_1$coefficients[2]*Termo$Semana[1:30], linea_2$coefficients[1]+linea_2$coefficients[2]*c(31:56))
+
+Termos_f<-c(Termo$Termos, rep(NA, times=4))
+
+plot(Termos_f, type="l")
+lines(Est_punt_r)
+
+Est_punt_r<-c(rep(NA, times=52), Filtro_2*Linea_v3[53:56])
+
+LI_2V1<-c(rep(NA, times=52), LI_2[53:56]*Linea_v3[53:56])
+
+LS_2V1<-c(rep(NA, times=52), LS_2[53:56]*Linea_v3[53:56])
+
+plot(Termos_f, type="l", ylim=c(0, max(LS_2V1, na.rm = TRUE)))
+lines(Est_punt_r)
+lines(LI_2V1)
+lines(LS_2V1)
+
+#lines(Linea_v3)
+
+DF_2<-data.frame(c(1:56),Termos_f, Est_punt_r, LI_2V1,LS_2V1)
+View(DF_2)
+```
+
+# Serie 3
+
+```{r}
+Bici <- read_excel("SeriesHW.xlsx", sheet = "Bicicletas")
+View(Bici)
+
+plot(Bici$`Ventas trimestrales`, type="l")
+
+bici<-Bici$`Ventas trimestrales`
+
+tend<-lm(bici~c(1:32))
+recta_3<-tend$coefficients[1]+c(1:32)*tend$coefficients[2]
+
+plot(bici, type="l")
+abline(tend)
+
+bici_st<-bici/recta_3
+
+plot(bici_st, type="l")
+
+T1<-bici_st[seq(1,32, by=4)]
+T2<-bici_st[seq(2,32, by=4)]
+T3<-bici_st[seq(3,32, by=4)]
+T4<-bici_st[seq(4,32, by=4)]
+
+FE1<-mean(T1)/mean(bici_st)
+FE2<-mean(T2)/mean(bici_st)
+FE3<-mean(T3)/mean(bici_st)
+FE4<-mean(T4)/mean(bici_st)
+
+bici_ruido<-bici_st/c(FE1, FE2, FE3, FE4)
+
+
+plot(bici_ruido, type="l")
+
+filtro_3 <-bici_ruido-mean(bici_ruido)
+
+plot(filtro_3, type="l")
+
+pron_3<-c(bici_ruido, rep(mean(bici_ruido), 4))
+
+plot(pron_3, type="l")
+
+LI<-pron_3[33:36]-2*sd(filtro_3)*c(1:4)^.5
+LS<-pron_3[33:36]+2*sd(filtro_3)*c(1:4)^.5
+
+LI2<-c(rep(NA, times=32), LI)
+LS2<-c(rep(NA, times=32), LS)
+
+# Devolver estacionalidada
+
+bici_cest<-pron_3*c(FE1, FE2,FE3, FE4)
+
+LI_cest<-LI2*c(FE1, FE2,FE3, FE4)
+LS_cest<-LS2*c(FE1, FE2,FE3, FE4)
+
+plot(bici_cest, type="l")
+lines(LI_cest, col="red")
+lines(LS_cest, col="red")
+
+recta_3V1<-tend$coefficients[1]+c(1:36)*tend$coefficients[2]
+
+bici_fin<-bici_cest*recta_3V1
+
+LI_fin<-LI_cest*recta_3V1
+LS_fin<-LS_cest*recta_3V1
+
+plot(bici_fin, type="l", ylim=c(0, max(LS_fin, na.rm = TRUE)))
+lines(LI_fin, col="red")
+lines(LS_fin, col="red")
+
+df_3<-data.frame(bici_fin, LI_fin, LS_fin)
+View(df_3)
+```
+
+# Suavizado simple
+
+```{r}
+plot(Baca$Pesca, type="l")
+View(Baca)
+str(Baca)
+
+HoltWinters(Baca$Pesca)
+
+ts_baca<-ts(Baca$Pesca, start=c(2021,1), 
+frequency = 12)
+
+plot(ts_baca)
+
+hw_baca<-HoltWinters(ts_baca, beta=FALSE, gamma = FALSE )
+
+plot(hw_baca, ylim=c(0, max(ts_baca)))
+
+(hw_baca$SSE/(length(ts_baca)-1))^.5
+
+
+```
+
+
+
+
+```{r}
+#Holt
+ library(forecast)
+ 
+ View(Baca)
+ 
+ ts_baca <- ts(Baca$Pesca, start=c(2021,1), frequency=12)
+plot(ts_baca) 
+
+hw_baca <- HoltWinters(ts_baca, beta=FALSE, gamma=FALSE) 
+
+plot(hw_baca, ylim=c(0,max(ts_baca))) 
+mean(ts_baca)
+
+
+```
+
+
+
+Usando la libreria forecast para pronosticar 
+```{r}
+#H es el horizonte en tiempo para pronóstico
+fc_hw_baca <-forecast(hw_baca, h=12, level=.90)
+plot(fc_hw_baca)
+
+```
+
+
+```{r}
+hw_baca$SSE
+```
+
+
+
+```{r}
+s_baca <- ((hw_baca$SSE)/(length(ts_baca)-1))^0.5
+s_baca
+```
+
+
+¿CUAL ERA LA S de nuestro modelo anterior? 
+
+```{r}
+Filtro_1<-mean(Baca$Pesca)
+Error_est_1<-Baca$Pesca-Filtro_1
+sd_est_1<-sd(Error_est_1)
+sd_est_1
+```
+
+
+
+```{r}
+help(HoltWinters)
+```
+
+
+
+¿Qué pasa si cambio el nivel inicial?
+
+
+
+```{r}
+hw_baca_ls_alterado1 <- HoltWinters(ts_baca, beta=FALSE, gamma=FALSE, l.start=0) 
+plot(hw_baca_ls_alterado1)
+hw_baca_ls_alterado1$alpha
+
+hw_baca_ls_alterado1$SSE
+```
+
+
+
+
+```{r}
+hw_baca_ls_alterado2 <- HoltWinters(ts_baca, beta=FALSE, gamma=FALSE, l.start=mean(ts_baca))
+plot(hw_baca_ls_alterado2)
+hw_baca_ls_alterado2$alpha
+hw_baca_ls_alterado2$SSE
+plot(forecast(hw_baca_ls_alterado2, h=12, level=0.95))
+```
+
+```{r}
+plot(forecast(hw_baca_ls_alterado2, h=12, level=0.95), ylim=c(0,500))
+```
+
+
+```{r}
+mean(ts_baca)
+min(ts_baca)
+max(ts_baca)
+```
+
+
