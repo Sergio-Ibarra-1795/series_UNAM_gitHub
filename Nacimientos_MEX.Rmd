@@ -1,0 +1,103 @@
+---
+title: "Nacimientos_MEX"
+author: "Sergi"
+date: "2023-03-27"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Serie CON TENDENCIA y SIN ESTACIONALIDAD (EJEMPLO DE NACIMIENTOS EN MEX)
+
+Primero importamos la data de nacimientos en MEX
+```{r}
+
+nacimientos_mex <-read_excel("Nacimientos_MEX1.xlsx")
+```
+
+
+Revisamos que la data de nacimientos MEX sehay importado correctamente 
+```{r}
+head(nacimientos_mex)
+summary(nacimientos_mex)
+typeof(nacimientos_mex)
+dim(nacimientos_mex)
+```
+
+```{r}
+view(nacimientos_mex)
+```
+
+
+
+Vamos a graficar la serie 
+
+
+```{r}
+
+plot(nacimientos_mex$Births,type="l")
+```
+
+
+
+### Apliquemos el filtro de la linea de tendencia a la serie de nacimientos 
+
+```{r}
+
+linea_nacimientos<-lm(Births~Date, data=nacimientos_mex)
+linea_nacimientos
+```
+```{r}
+linea_nacimientos$coefficients
+```
+
+
+
+
+### Graficamos la "serie original" de nacimientos vs el filtro 
+
+```{r}
+
+
+##Creamos la data para la linea_nacimientos 
+my_values <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27)
+linea_nacimientos_aplicada <- linea_nacimientos$coefficients[1] + (linea_nacimientos$coefficients[2] * my_values)
+
+linea_nacimientos_aplicada
+
+
+```
+```{r}
+
+plot(linea_nacimientos_aplicada, type= "l")
+
+```
+
+
+```{r}
+plot(nacimientos_mex$Births, type="l")
+lines(linea_nacimientos_aplicada)
+```
+
+```{r}
+plot(nacimientos_mex$Date, nacimientos_mex$Births, type="l", 
+     xlab = "Date", ylab = "Births", main = "Births Over Time")
+lines(nacimientos_mex$Date, linea_nacimientos_aplicada, col = "red")
+
+```
+
+
+```{r}
+linea_nacimientos_aplicada2 <- predict(linea_nacimientos, newdata = data.frame(Date = nacimientos_mex$Date))
+
+linea_nacimientos_aplicada2
+
+```
+
+
+```{r}
+plot(nacimientos_mex$Births, type="l")
+lines(linea_nacimientos_aplicada2, col = "red")
+```
