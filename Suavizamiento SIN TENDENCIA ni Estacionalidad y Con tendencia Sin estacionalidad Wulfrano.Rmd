@@ -1,5 +1,5 @@
 ---
-title: "HOLT_WINTERS"
+title: "Suavizamiento SIN TENDENCIA ni Estacionalidad y Con tendencia Sin estacionalidad Wulfrano"
 author: "WULFRANO"
 date: "2023-02-21"
 output: html_document

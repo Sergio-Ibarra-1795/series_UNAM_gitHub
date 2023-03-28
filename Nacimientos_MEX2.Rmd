@@ -1,0 +1,231 @@
+---
+title: "Nacimientos_MEX1"
+author: "Sergi"
+date: "2023-03-27"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Serie CON TENDENCIA y SIN ESTACIONALIDAD (EJEMPLO DE NACIMIENTOS EN MEX)
+
+Primero importamos la data de nacimientos en MEX
+```{r}
+install.packages("readxl")
+
+library("readxl")
+
+
+nacimientos_mex <-read_excel("Nacimientos_MEX1.xlsx")
+```
+
+
+Revisamos que la data de nacimientos MEX sehay importado correctamente 
+```{r}
+head(nacimientos_mex)
+summary(nacimientos_mex)
+typeof(nacimientos_mex)
+dim(nacimientos_mex)
+```
+
+
+Vamos a graficar la serie 
+
+
+```{r}
+
+plot(nacimientos_mex$Births,type="l")
+```
+
+
+
+### Apliquemos el filtro de la linea de tendencia a la serie de nacimientos 
+
+```{r}
+
+linea_nacimientos<-lm(Births~Date, data=nacimientos_mex)
+linea_nacimientos
+```
+
+
+### Graficamos la "serie original" de nacimientos vs el filtro 
+
+Para eso primero debemos crear nuestra linea de tendencia con base en la linea_nacimientos calculada a partir de la data 
+```{r}
+linea_nacimientos_aplicada2 <- predict(linea_nacimientos, newdata = data.frame(Date = nacimientos_mex$Date))
+
+linea_nacimientos_aplicada2
+
+```
+
+
+```{r}
+plot(nacimientos_mex$Births, type="l")
+lines(linea_nacimientos_aplicada2, col = "red")
+```
+
+
+### Ahora vamos a "quitar el efecto de la tendencia" de nuestra "serie original de datos"
+
+```{r}
+nacimientos_Sin_Tendencia<-nacimientos_mex$Births/linea_nacimientos_aplicada2
+
+plot(nacimientos_Sin_Tendencia, type="l")
+```
+
+
+
+### Una vez teniend la serie sin tendencia, podemos aplicar como nuestro "mejor filtro" a la media de la serie
+
+
+Calculamos la media de nuestra serie sin tendecia 
+```{r}
+media_nacimientos_ST<-mean(nacimientos_Sin_Tendencia)
+media_nacimientos_ST
+
+```
+
+Se determinan los errores estimados como Errores = Serie original - tendecia - media 
+Se calcula también la desviación estandar de esos errores 
+```{r}
+Error_est_nacimientos<-nacimientos_Sin_Tendencia-media_nacimientos_ST
+Error_est_nacimientos
+
+sd_est_nacimientos<-sd(Error_est_nacimientos)
+sd_est_nacimientos
+
+```
+
+Se calculan los límites para el pronóstico de 12 datos 
+
+```{r}
+tao<-c(1:5)
+Lim_nacimientos<-2*sd_est_nacimientos*tao^.5
+Lim_nacimientos
+```
+
+### Vamos a hacer el pronóstico de la serie de naciemientos para los próximos 5 años
+
+
+# Pronóstico
+
+```{r}
+##Creamos un eje x que incluya a los 27 datos + 5 que se pronosticarán
+Date_nacimientos2<-c(1:32)
+
+nacimientos_Sin_Tendencia_para_pron<-c(nacimientos_Sin_Tendencia, rep(NA, times=5))
+nacimientos_Sin_Tendencia_para_pron
+
+estimacion_nacimientos <- rep(media_nacimientos_ST, times=32)
+estimacion_nacimientos
+
+
+LI_naci<-c(rep(NA, times=27), media_nacimientos_ST-Lim_nacimientos)
+LI_naci
+
+LS_naci<-c(rep(NA, times=27), media_nacimientos_ST+Lim_nacimientos)
+LS_naci
+
+plot(Date_nacimientos2, nacimientos_Sin_Tendencia_para_pron, type="l", ylim = c(0.7,1.3) ,col="Blue")
+
+lines(estimacion_nacimientos, col="Red")
+lines(LI_naci, col="Purple")
+lines(LS_naci, col="Purple")
+
+```
+
+
+
+### Llevando el pornóstico a la dimensión de los Datos reales
+
+
+```{r}
+# create a new data set with 5 additional years
+extended_dates <- seq(as.Date("1995-01-01"), as.Date("2027-01-01"), by = "year")
+extended_nacimientos_mex <- data.frame(Date = extended_dates, 
+                                       Births = rep(NA, length(extended_dates)))
+
+extended_nacimientos_mex
+```
+
+
+```{r}
+# create a new data set with 5 additional years
+extended_dates <- seq(as.Date("1995-01-01"), as.Date("2027-01-01"), by = "year")
+extended_nacimientos_mex <- data.frame(Date = extended_dates, 
+                                       Births = rep(NA, length(extended_dates)))
+
+extended_nacimientos_mex
+```
+
+
+```{r}
+# copy the original data to the new data set
+extended_nacimientos_mex$Births[1:length(nacimientos_mex$Births)] <- nacimientos_mex$Births
+extended_nacimientos_mex
+
+# fit the model with the extended data set
+linea_nacimientos_extended <- lm(Births ~ Date, data = extended_nacimientos_mex)
+linea_nacimientos_extended
+
+```
+
+
+```{r}
+# predict values for the extended date range
+linea_nacimientos_aplicada_extended <- predict(linea_nacimientos_extended, 
+                                                newdata = data.frame(Date = extended_dates))
+linea_nacimientos_aplicada_extended
+
+# plot the predicted values
+plot(extended_dates, linea_nacimientos_aplicada_extended, type = "l")
+```
+
+
+
+
+
+```{r}
+
+##Creando el vector original + los valores a predecir como NAs
+nacimientos_original_para_pron<-c(nacimientos_mex$Births, rep(NA, times=6))
+nacimientos_original_para_pron
+dim(nacimientos_original_para_pron)
+
+
+Est_punt_nacimientos<-c(rep(NA, times=27), media_nacimientos_ST*linea_nacimientos_aplicada_extended[28:33])
+Est_punt_nacimientos
+
+# plot the original data and the predicted values together
+plot(extended_dates, nacimientos_original_para_pron, type="l", xlab="Year", ylab="Births")
+lines(extended_dates, Est_punt_nacimientos, col="blue")
+
+
+
+
+```
+
+
+Calculamos ahora los límites de estimación 
+
+```{r}
+
+LI_naci_ajustado<-c(rep(NA, times=27), LI_naci[28:33]*linea_nacimientos_aplicada_extended[28:33])
+LI_naci_ajustado
+
+LS_naci_ajustado<-c(rep(NA, times=27), LS_naci[28:33]*linea_nacimientos_aplicada_extended[28:33])
+LS_naci_ajustado
+
+# plot the original data and the predicted values together
+plot(extended_dates, nacimientos_original_para_pron, type="l", xlab="Year", ylab="Births")
+lines(extended_dates, Est_punt_nacimientos, col="blue")
+lines(LI_naci_ajustado, col="purple")
+lines(LS_naci_ajustado, col="purple")
+
+```
+
+
+
+

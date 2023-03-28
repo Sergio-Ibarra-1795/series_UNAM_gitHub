@@ -1,0 +1,94 @@
+---
+title: "Demanda_electrico_wu"
+author: "Sergibar"
+date: "2023-03-28"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Serie de tiempo CON tendencia y CON estacionalidad
+
+
+Primero vamos a importar la data 
+
+```{r}
+install.packages("readxl")
+
+library("readxl")
+
+
+Demanda_electrico_xl <-read_excel("Demanda_electrico_2022_full1.xlsx")
+```
+
+
+
+Revisamos que la data se haya importado correctamente 
+```{r}
+head(Demanda_electrico_xl)
+summary(Demanda_electrico_xl)
+typeof(Demanda_electrico_xl)
+dim(Demanda_electrico_xl)
+```
+
+
+
+
+```{r}
+#URL HPi5
+Demanda_electrico<-read.csv("Demanda_electrico_2022_full1.csv", header= TRUE)
+
+```
+
+
+Revisamos que la data se haya importado correctamente 
+```{r}
+head(Demanda_electrico)
+summary(Demanda_electrico)
+typeof(Demanda_electrico)
+dim(Demanda_electrico)
+```
+
+
+```{r}
+plot(Demanda_electrico$Demanded_Gas, type = "l")
+```
+
+
+### Primero se calculará una linea de tendencia y se removerá de la 'data original de demanda_electrico'
+
+
+
+```{r}
+
+Demanded_gas_line<-lm(Demanded_Gas~Date, data=Demanda_electrico)
+
+Demanded_gas_line
+
+
+```
+
+
+
+
+```{r}
+linea_Demanded_gas 
+```
+
+
+
+
+recta_3<-tend$coefficients[1]+c(1:32)*tend$coefficients[2]
+
+plot(bici, type="l")
+abline(tend)
+
+bici_st<-bici/recta_3
+
+plot(bici_st, type="l")
+
+
+
+

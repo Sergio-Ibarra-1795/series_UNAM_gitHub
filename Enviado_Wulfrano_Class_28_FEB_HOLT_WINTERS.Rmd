@@ -163,9 +163,17 @@ bici_st<-bici/recta_3
 plot(bici_st, type="l")
 
 T1<-bici_st[seq(1,32, by=4)]
+T1
+
 T2<-bici_st[seq(2,32, by=4)]
+T2
+
 T3<-bici_st[seq(3,32, by=4)]
+T3
+
 T4<-bici_st[seq(4,32, by=4)]
+T4
+
 
 FE1<-mean(T1)/mean(bici_st)
 FE2<-mean(T2)/mean(bici_st)
