@@ -1,0 +1,375 @@
+---
+title: "Demanda_electrico_wu"
+author: "Sergibar"
+date: "2023-03-28"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Serie de tiempo CON tendencia y CON estacionalidad (Historico mensual de Demanda de Gas Natural para el sector eléctrico en México)
+
+
+Primero vamos a importar la data 
+
+```{r}
+install.packages("readxl")
+
+library("readxl")
+```
+
+
+```{r}
+
+Demanda_electrico <-read_excel("Demanda_electrico_2022_full1_pp.xlsx")
+```
+
+
+
+Revisamos que la data se haya importado correctamente 
+```{r}
+head(Demanda_electrico)
+summary(Demanda_electrico)
+typeof(Demanda_electrico)
+dim(Demanda_electrico)
+```
+
+Graficamos la "data original" de demanda de gas natural en el sector eléctrico del año 2005 al 2021  
+
+```{r}
+plot(Demanda_electrico$Demanded_Gas, type = "l")
+```
+
+
+### Primero se calculará la linea "general" de tendencia de nuestra serie de Electrico_Demanded_gas_line (que representa la tendencia de la "serie de datos originales") y se removerá dicha tendencia de la 'data original' de demanda_electrico
+
+
+Se calcula primero la linea de tendencia 
+```{r}
+
+Electrico_Demanded_gas_line<-lm(Demanded_Gas~Date, data=Demanda_electrico)
+
+Electrico_Demanded_gas_line
+
+
+```
+
+
+
+### Graficamos la "serie original" de demanda_electrico vs el filtro1 (Linea de tendencia)
+
+Para eso primero debemos "crear/simular" datos de 2005 a 2021 a partir de nuestra linea de tendencia Electrico_Demanded_gas_line
+```{r}
+Electrico_Demanded_gas_line_aplicada <- predict(Electrico_Demanded_gas_line, newdata = data.frame(Date = Demanda_electrico$Date))
+
+Electrico_Demanded_gas_line_aplicada
+
+```
+
+
+Graficamos entonces a la "data original de demanda electrico" y a la data calculada a partir de la linea tendencia
+
+```{r}
+plot(Demanda_electrico$Demanded_Gas, type="l")
+lines(Electrico_Demanded_gas_line_aplicada, col = "red")
+```
+
+
+### Ahora vamos a "quitar el efecto de la tendencia" de nuestra "serie original de datos"
+### En este caso se asumirá un "efecto multiplicativo" y por lo tanto se removerá dividiendo cada elemento de la serie original / valor de la linea de tendnecia en ese valor de x
+
+Se grafica la serie sin tendencia:
+
+```{r}
+Demanda_electrico_Sin_Tendencia<-Demanda_electrico$Demanded_Gas/Electrico_Demanded_gas_line_aplicada
+
+plot(Demanda_electrico_Sin_Tendencia, type="l")
+Demanda_electrico_Sin_Tendencia
+dim(Demanda_electrico_Sin_Tendencia)
+```
+### Se procederá al cálculo de los Factores Estacionales de la serie. 
+La idea de la asignación de estas estaciones es la siguiente: De manera historica el consumo de electricidad aumenta en los meses más calurosos (abril, mayo, junio) y también en los meses de extremos frio (dic, enero), contrario a los meses más 'templados' (Agosto, Sept) donde el consumo suele ser menor. Por lo tanto se propuso que el consumo de gas natural en el sector eléctrico en México puede seguir un comppartamiento trimestral. 
+
+De esta manera se procede a "crear las listas de los valores i-esimos de la serie" que corresponderán a los meses 1,2,3 para el triemestre 1 (T1), 4,5,6 para el triemestre 2 (T2), 7,8,9 para el triemestre 3 (T3), 10,11,12 para el triemestre 4 (T4) y de nuevo 13,14,15 para el triemestre 1 (T1), asu sicevicamente hasta tener los 212 meses de datos distribuidos en los 4 trimetres. 
+
+```{r}
+# Generate indices for T1, T2, T3, and T4
+# Define the indices for each subset
+T1_indices <- c(seq(1, 3), seq(13, 15), seq(25, 27), seq(37, 39), seq(49, 51), seq(61, 63), seq(73, 75), seq(85, 87), seq(97, 99), seq(109, 111), seq(121, 123), seq(133, 135), seq(145, 147), seq(157, 159), seq(169, 171), seq(181, 183), seq(193, 195))
+
+
+T2_indices <- c(seq(4, 6), seq(16, 18), seq(28, 30), seq(40, 42), seq(52, 54), seq(64, 66), seq(76, 78), seq(88, 90), seq(100, 102), seq(112, 114), seq(124, 126), seq(136, 138), seq(148, 150), seq(160, 162), seq(172, 174), seq(184, 186), seq(196, 198))
+
+T3_indices <- c(seq(7, 9), seq(19, 21), seq(31, 33), seq(43, 45), seq(55, 57), seq(67, 69), seq(79, 81), seq(91, 93), seq(103, 105), seq(115, 117), seq(127, 129), seq(139, 141), seq(151, 153), seq(163, 165), seq(175, 177), seq(187, 189), seq(199, 201))
+
+T4_indices <- c(seq(10, 12), seq(22, 24), seq(34, 36), seq(46, 48), seq(58, 60), seq(70, 72), seq(82, 84), seq(94, 96), seq(106, 108), seq(118, 120), seq(130, 132), seq(142, 144), seq(154, 156), seq(166, 168), seq(178, 180), seq(190, 192), seq(202, 204))
+
+
+# Create the subsets
+T1 <- Demanda_electrico_Sin_Tendencia[T1_indices]
+T1
+T2 <- Demanda_electrico_Sin_Tendencia[T2_indices]
+T2
+T3 <- Demanda_electrico_Sin_Tendencia[T3_indices]
+T3
+T4 <- Demanda_electrico_Sin_Tendencia[T4_indices]
+T4
+
+
+
+```
+
+
+Se calculan los Factores Estacionarios de la Serie dividiendo la media de aquellos valores asignados a cada trimestre (T1, T2, T3 y T4) /  la media de nuestra seria sin tendencia. Siendo ambos un valor escalar, será entonces los FEi valores escalares  
+
+```{r}
+
+FE1_electrico<-mean(T1)/mean(Demanda_electrico_Sin_Tendencia)
+FE1_electrico
+
+FE2_electrico<-mean(T2)/mean(Demanda_electrico_Sin_Tendencia)
+FE2_electrico
+
+FE3_electrico<-mean(T3)/mean(Demanda_electrico_Sin_Tendencia)
+FE3_electrico
+
+FE4_electrico<-mean(T4, na.rm = TRUE)/mean(Demanda_electrico_Sin_Tendencia)
+FE4_electrico
+```
+
+Una vez calculados los factores estacionales de la serie se puede obtener el 'ruido de la serie'  que se calcularía "quitando" el efecto de los factores estacionales previamente calculados a nuestra serie sin tendencia 
+```{r}
+
+Demanda_electrico_ruido<-Demanda_electrico_Sin_Tendencia/c(FE1_electrico, FE2_electrico, FE3_electrico, FE4_electrico)
+
+Demanda_electrico_ruido
+
+plot(Demanda_electrico_ruido, type="l")
+```
+
+
+
+Se determinan los errores estimados como Errores = Serie original - estacionalidad - tendecia - media. En nuestro caso, dichos errores será nuestra serie sin tendencia ni estacionalidad - media historica de dicha serie 
+
+Determinamos el filtro sin tendencia ni estacionalidad para nuestra serie de demanda_electrico 
+```{r}
+
+demanda_electrico_filtro_sinTendencia_NiEstacionalidad <-Demanda_electrico_ruido-mean(Demanda_electrico_ruido)
+
+plot(demanda_electrico_filtro_sinTendencia_NiEstacionalidad, type="l")
+
+## Se determina la desviación estandar del error 
+
+sd_est_demanda_electrico<-sd(demanda_electrico_filtro_sinTendencia_NiEstacionalidad)
+sd_est_demanda_electrico
+
+```
+
+
+Una vez teniendo nuestra seríe SIN TENDENCIA y SIN ESTACIONALIDAD lo que implicária que "unicamente tenemos el componente estocástico o de ruido en la serie" podemos proceder a llevar a cabo el pronóstico de 12 meses equivalente 1 año de datos.
+Como ha sido estudiado en la clase, nuestro mejor pronóstico dadas estas condiciones en la serie es la media de los datos históricos 
+```{r}
+
+Demanda_electrico_pronostico<-c(Demanda_electrico_ruido, rep(mean(Demanda_electrico_ruido), 12))
+
+plot(Demanda_electrico_pronostico, type="l")
+
+```
+
+
+Calculamos los límites de intervalos de confianza al 95% pata el pronostico 
+(Se considera 95% como +- 2 desviaciones estandar de la media)
+
+```{r}
+LI_demanda_electrico<-Demanda_electrico_pronostico[202:213]-2*sd_est_demanda_electrico*c(1:12)^.5
+LS_demanda_electrico<-Demanda_electrico_pronostico[202:213]+2*sd_est_demanda_electrico*c(1:12)^.5
+
+## Tambien se debe "crear la linea para nuestros limites" teniendo NA en los valores de datos historicos, así como los 12 valores de limites previamente calculados
+
+LI_demanda_electrico_ajustado<-c(rep(NA, times=201), LI_demanda_electrico)
+LI_demanda_electrico_ajustado
+
+LS_demanda_electrico_ajustado<-c(rep(NA, times=201), LS_demanda_electrico)
+LS_demanda_electrico_ajustado
+```
+
+
+Ahora vamos a "llevar nuestro pornóstico a las dimensiones reales"
+Para ello primero vamos a "devolver la esacionalidad y la tendencia a la serie" de nombre  demanda_electrico_filtro_sinTendencia_NiEstacionalidad 
+
+Empezemos como "devolver estacionalidad" y para ello recordamos que los valores de FE de la seria se calcularon asumiendo efecto multiplicativo y por lo tanto para "devolver ese efecto" se debe multiplicar los valores de Demanda_electrico_pronostico (que contiene los valores historicos de la seria con unicamente el componente ruido  + 12 meses pronósticados)* los valores de los Factores Estacionales de la serie 
+
+```{r}
+
+# Devolver estacionalidada
+
+Demanda_electrico_cest<-Demanda_electrico_pronostico*c(FE1_electrico, FE2_electrico,FE3_electrico, FE4_electrico)
+Demanda_electrico_cest
+
+
+LI_demanda_electrico_cest<-LI_demanda_electrico_ajustado*c(FE1_electrico, FE2_electrico,FE3_electrico, FE4_electrico)
+LI_demanda_electrico_cest
+
+
+
+LS_demanda_electrico_cest<-LS_demanda_electrico_ajustado*c(FE1_electrico, FE2_electrico,FE3_electrico, FE4_electrico)
+LS_demanda_electrico_cest
+
+
+plot(Demanda_electrico_cest, type="l")
+lines(LI_demanda_electrico_cest, col="violet")
+lines(LS_demanda_electrico_cest, col="violet")
+```
+
+
+Y ahora "Devolvemos el efecto de la tendencia" a la serie LS_demanda_electrico_cest
+
+
+
+Para eso primero necesitamos "crear un data frame que contenga la información histórica de demanded_gas" + 12 meses de pronóstico con un valor NA 
+```{r}
+# create a new data set with 12 additional months
+extended_dates_electrico <- seq(as.Date("2005-01-01"), as.Date("2022-09-01"), by = "month")
+
+# create a data frame with 225 rows
+extended_demanda_electrico <- data.frame(Date = extended_dates_electrico, 
+                                         Demanded_Gas = rep(NA, length(extended_dates_electrico)))
+
+# assign values to a subset of Demanded_Gas that corresponds to the length of Demanda_electrico$Demanded_Gas
+extended_demanda_electrico$Demanded_Gas[1:length(Demanda_electrico$Demanded_Gas)] <- Demanda_electrico$Demanded_Gas
+
+# print the resulting data frame
+extended_demanda_electrico
+
+extended_demanda_electrico$Date <- as.POSIXct(as.character(extended_demanda_electrico$Date), format = "%Y-%m-%d")
+
+extended_demanda_electrico
+
+
+```
+
+Posteriormente calculamos los valores historicos + 12 meses pronosticados a partir de la linea de tendencia que previamente se habia calculado de nombre Electrico_Demanded_gas_line
+
+```{r}
+Electrico_Demanded_gas_line_aplicada2 <- predict(Electrico_Demanded_gas_line, newdata = data.frame(Date = extended_demanda_electrico$Date))
+
+Electrico_Demanded_gas_line_aplicada2
+```
+
+Entonces para finalmente "devolver el efecto de la tendnecia a los datos de LS_demanda_electrico_cest" se multiplica cada valor de la serie por el valor calculado a partir de la linea de tencia que se llama: Electrico_Demanded_gas_line_aplicada2
+```{r}
+
+
+
+Demanda_electrico_pronostico_fin<-Demanda_electrico_cest*Electrico_Demanded_gas_line_aplicada2
+
+LI_demanda_electrico_fin<-LI_demanda_electrico_cest*Electrico_Demanded_gas_line_aplicada2
+LS_demanda_electrico_fin<-LS_demanda_electrico_cest*Electrico_Demanded_gas_line_aplicada2
+
+
+plot(Demanda_electrico_pronostico_fin, type="l", ylim=c(0, max(LS_demanda_electrico_fin, na.rm = TRUE)))
+lines(LI_demanda_electrico_fin, col="violet")
+lines(LS_demanda_electrico_fin, col="violet")
+
+```
+
+Visualizamos el Data.Frame con los valores históricos la "data original" + los resultados del pronóstico puntual y los intervalos de confianza al 95% 
+
+
+```{r}
+# Create a data frame with the predicted values and intervals
+df_demanda_electrico_pronostico <- data.frame(Demanded_Gas = c(Demanda_electrico$Demanded_Gas[1:201], rep(NA, 12)), 
+                                              Demanda_electrico_pronostico_fin = Demanda_electrico_pronostico_fin, 
+                                              LI_demanda_electrico_fin = LI_demanda_electrico_fin, 
+                                              LS_demanda_electrico_fin = LS_demanda_electrico_fin)
+
+# View the resulting data frame
+View(df_demanda_electrico_pronostico)
+
+```
+
+
+
+
+### Revisemos los errores en el pronóstico 
+
+Para ello importamos el Data Frame con la data historica completa, es decir, la que contiene los 201 meses propuestos aquí como "train data" + los 12 meses que se pronósticaron
+
+```{r}
+
+Demanda_electrico_completa <-read_excel("Demanda_electrico_2022_full1.xlsx")
+Demanda_electrico_completa
+```
+
+
+Se añade la colum a de Demanda_electrico_completa$Demanded_Gas al Data.Frame para vidualizar los valores reales vs los estimados con la técnica aplicada 
+```{r}
+# Create a data frame with the predicted values and intervals
+df_demanda_electrico_pronostico_completo <- data.frame(Demanded_Gas = Demanda_electrico_completa$Demanded_Gas, 
+                                              Demanda_electrico_pronostico_fin = Demanda_electrico_pronostico_fin, 
+                                              LI_demanda_electrico_fin = LI_demanda_electrico_fin, 
+                                              LS_demanda_electrico_fin = LS_demanda_electrico_fin)
+
+# View the resulting data frame
+View(df_demanda_electrico_pronostico_completo)
+```
+
+
+## Vamos a usar ahora el método de HoltWinters como "modelo de suaviazamiento y pronóstico NO ESTÁTICO" que si considera los cambios de nivel a tráves del tiempo. 
+
+Para ello debemos tener nuestra data a suavizar en el tipo de dato serie de tiempo ts en R 
+
+
+```{r}
+Demanda_electrico_ts <-ts(Demanda_electrico$Demanded_Gas, frequency =12, start =c(2005,1))
+Demanda_electrico_ts 
+```
+
+Graficamos la "data original de la demanda_electrico" que se usará como "train para el modelo" y que fue convertida a tipo de dato serie de tiempo 
+
+```{r}
+plot(Demanda_electrico_ts, main="Demanda electrico train data in time series data type")
+```
+
+
+### Se procede a "aplicar el método de Holt Winters" a la serie CON TENDENCIA Y ESTACIONALIDAD
+Como se observará este primer cálculo dejará como grados de libertad los valores de alpha, gamma y betha, así como los valores de arranque, de manera que el "el algoritmo de HltWinters de R" determine la "mejor combinaión posible"
+
+```{r}
+Demanda_electrico_ts_hw1 <-HoltWinters(Demanda_electrico_ts, seasonal = 'multiplicative')
+Demanda_electrico_ts_hw1
+```
+
+
+Graficamos los valores originales vs suavizados con el método de Holt-Winters
+
+```{r}
+plot(Demanda_electrico_ts_hw1, main="Aplicaicón del método de Holt Winters a Demanda electrico train data")
+```
+
+
+```{r}
+# Install the forecast package
+install.packages("forecast")
+
+# Load the forecast package
+library(forecast)
+```
+
+
+
+Ahora se llevará a cabo el pronóstico con la librería de forecast y basados en el método de Holt Winters. De igual manera se usará un intervalo de confianza del 95%
+
+```{r}
+Demanda_electrico_ts_hw1_fc <- forecast(Demanda_electrico_ts_hw1, h=12, level=0.95)
+Demanda_electrico_ts_hw1_fc
+```
+
+
+```{r}
+plot(Demanda_electrico_ts_hw1_fc)
+```
+
+

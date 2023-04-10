@@ -31,8 +31,6 @@ dim(nacimientos_mex)
 ```
 
 
-Vamos a graficar la serie 
-
 Graficamos la "data original" de nacimientos en México de los últimos 27 años (1995 al 2022)  
 
 ```{r}
@@ -42,7 +40,8 @@ plot(nacimientos_mex$Births,type="l")
 
 
 
-### Apliquemos el filtro de la linea de tendencia a la serie de nacimientos 
+### Primero se calculará la linea "general" de tendencia de nuestra serie de nacimientos_mex (que representa la tendencia de la "serie de datos originales") 
+
 
 ```{r}
 
@@ -55,33 +54,40 @@ linea_nacimientos
 
 Para eso primero debemos crear nuestra linea de tendencia con base en la linea_nacimientos calculada a partir de la data 
 ```{r}
-linea_nacimientos_aplicada2 <- predict(linea_nacimientos, newdata = data.frame(Date = nacimientos_mex$Date))
+linea_nacimientos_aplicada <- predict(linea_nacimientos, newdata = data.frame(Date = nacimientos_mex$Date))
 
-linea_nacimientos_aplicada2
+linea_nacimientos_aplicada
 
 ```
 
+
+
+Graficamos entonces a la "data original de nacimientos_mx" y a la data calculada a partir de la linea tendencia
 
 ```{r}
 plot(nacimientos_mex$Births, type="l")
-lines(linea_nacimientos_aplicada2, col = "red")
+lines(linea_nacimientos_aplicada, col = "red")
 ```
 
 
+
 ### Ahora vamos a "quitar el efecto de la tendencia" de nuestra "serie original de datos"
+### En este caso se asumirá un "efecto multiplicativo" y por lo tanto se removerá dividiendo cada elemento de la serie original / valor de la linea de tendnecia en ese valor de x
+
+Se grafica la serie sin tendencia:
 
 ```{r}
-nacimientos_Sin_Tendencia<-nacimientos_mex$Births/linea_nacimientos_aplicada2
+nacimientos_Sin_Tendencia<-nacimientos_mex$Births/linea_nacimientos_aplicada
 
 plot(nacimientos_Sin_Tendencia, type="l")
 ```
 
 
 
-### Una vez teniend la serie sin tendencia, podemos aplicar como nuestro "mejor filtro" a la media de la serie
+### Una vez teniendo la serie sin tendencia, podemos aplicar como nuestro "mejor filtro" a la media de la serie
 
 
-Calculamos la media de nuestra serie sin tendecia 
+Calculamos la media de nuestra serie sin tendecia que será nuestro pronóstico puntual para esta serie 
 ```{r}
 media_nacimientos_ST<-mean(nacimientos_Sin_Tendencia)
 media_nacimientos_ST
@@ -99,7 +105,38 @@ sd_est_nacimientos
 
 ```
 
-Se calculan los límites para el pronóstico de 12 datos 
+
+
+## Pronóstico
+
+Una vez teniendo nuestra seríe SIN TENDENCIA lo que implicária que "unicamente tenemos el componente estocástico o de ruido en la serie" podemos proceder a llevar a cabo el pronóstico de 5 años en el futuro  de datos.
+Como ha sido estudiado en la clase, nuestro mejor pronóstico dadas estas condiciones en la serie es la media de los datos históricos 
+
+
+### Vamos a hacer el pronóstico de la serie de naciemientos para los próximos 5 años
+
+
+
+```{r}
+##Creamos un eje x que incluya a los 27 datos + 5 que se pronosticarán
+Date_nacimientos2<-c(1:32)
+
+
+## Creamos el vector de datos que incluirá los  datos históricos de nacimientos sin tendencia + 5 valores NA a pronosticar
+nacimientos_Sin_Tendencia_para_pron<-c(nacimientos_Sin_Tendencia, rep(NA, times=5))
+nacimientos_Sin_Tendencia_para_pron
+
+
+## Entonces el mejor pronóstico que tenemos para eata técnica es la media de la serie sin tendencia 
+estimacion_nacimientos <- rep(media_nacimientos_ST, times=32)
+estimacion_nacimientos
+
+
+```
+
+
+Calculamos los límites de intervalos de confianza al 95% pata el pronostico 
+(Se considera 95% como +- 2 desviaciones estandar de la media)
 
 ```{r}
 tao<-c(1:5)
@@ -107,21 +144,12 @@ Lim_nacimientos<-2*sd_est_nacimientos*tao^.5
 Lim_nacimientos
 ```
 
-### Vamos a hacer el pronóstico de la serie de naciemientos para los próximos 5 años
 
+Calculamos los limites inferior y superiro como NA para los valores historicos y media +- 2 veces desciación estandar para los valores pronósticados 
 
-# Pronóstico
+Graficamos los valores pronósticadoos t los limites de confianza 
 
 ```{r}
-##Creamos un eje x que incluya a los 27 datos + 5 que se pronosticarán
-Date_nacimientos2<-c(1:32)
-
-nacimientos_Sin_Tendencia_para_pron<-c(nacimientos_Sin_Tendencia, rep(NA, times=5))
-nacimientos_Sin_Tendencia_para_pron
-
-estimacion_nacimientos <- rep(media_nacimientos_ST, times=32)
-estimacion_nacimientos
-
 
 LI_naci<-c(rep(NA, times=27), media_nacimientos_ST-Lim_nacimientos)
 LI_naci
@@ -134,13 +162,17 @@ plot(Date_nacimientos2, nacimientos_Sin_Tendencia_para_pron, type="l", ylim = c(
 lines(estimacion_nacimientos, col="Red")
 lines(LI_naci, col="Purple")
 lines(LS_naci, col="Purple")
-
 ```
+
 
 
 
 ### Llevando el pornóstico a la dimensión de los Datos reales
 
+Ahora vamos a "llevar nuestro pornóstico a las dimensiones reales"
+Para ello primero vamos a "devolver la tendencia a la serie" de nombre  nacimientos_Sin_Tendencia 
+
+Para eso primero necesitamos "crear un data frame que contenga la información histórica de demanded_gas" + 5 años  de pronóstico con un valor NA 
 
 ```{r}
 # create a new data set with 5 additional years
@@ -150,17 +182,6 @@ extended_nacimientos_mex <- data.frame(Date = extended_dates,
 
 extended_nacimientos_mex
 ```
-
-
-```{r}
-# create a new data set with 5 additional years
-extended_dates <- seq(as.Date("1995-01-01"), as.Date("2027-01-01"), by = "year")
-extended_nacimientos_mex <- data.frame(Date = extended_dates, 
-                                       Births = rep(NA, length(extended_dates)))
-
-extended_nacimientos_mex
-```
-
 
 ```{r}
 # copy the original data to the new data set
@@ -174,19 +195,20 @@ linea_nacimientos_extended
 ```
 
 
+
+Posteriormente calculamos los valores historicos + 5 años  pronosticados a partir de la linea de tendencia que previamente se habia calculado de nombre linea_nacimientos_extended
+
 ```{r}
 # predict values for the extended date range
-linea_nacimientos_aplicada_extended <- predict(linea_nacimientos_extended, 
+linea_nacimientos_extended_aplicada <- predict(linea_nacimientos_extended, 
                                                 newdata = data.frame(Date = extended_dates))
-linea_nacimientos_aplicada_extended
+linea_nacimientos_extended_aplicada
 
 # plot the predicted values
-plot(extended_dates, linea_nacimientos_aplicada_extended, type = "l")
+plot(extended_dates, linea_nacimientos_extended_aplicada, type = "l")
 ```
 
-
-
-
+Entonces para finalmente "devolver el efecto de la tendnecia a los datos de LS_demanda_electrico_cest" se multiplica cada valor de la serie por el valor calculado a partir de la linea de tencia que se llama: Electrico_Demanded_gas_line_aplicada2
 
 ```{r}
 
@@ -196,7 +218,7 @@ nacimientos_original_para_pron
 dim(nacimientos_original_para_pron)
 
 
-Est_punt_nacimientos<-c(rep(NA, times=27), media_nacimientos_ST*linea_nacimientos_aplicada_extended[28:33])
+Est_punt_nacimientos<-c(rep(NA, times=27), media_nacimientos_ST*linea_nacimientos_extended_aplicada[28:33])
 Est_punt_nacimientos
 
 # plot the original data and the predicted values together
@@ -213,10 +235,10 @@ Calculamos ahora los límites de estimación
 
 ```{r}
 
-LI_naci_ajustado<-c(rep(NA, times=27), LI_naci[28:33]*linea_nacimientos_aplicada_extended[28:33])
+LI_naci_ajustado<-c(rep(NA, times=27), LI_naci[28:33]*linea_nacimientos_extended_aplicada[28:33])
 LI_naci_ajustado
 
-LS_naci_ajustado<-c(rep(NA, times=27), LS_naci[28:33]*linea_nacimientos_aplicada_extended[28:33])
+LS_naci_ajustado<-c(rep(NA, times=27), LS_naci[28:33]*linea_nacimientos_extended_aplicada[28:33])
 LS_naci_ajustado
 
 # plot the original data and the predicted values together
@@ -226,6 +248,7 @@ lines(LI_naci_ajustado, col="purple")
 lines(LS_naci_ajustado, col="purple")
 
 ```
+
 
 
 
