@@ -1,0 +1,357 @@
+---
+title: "Serie2_PEA_MEX_v"
+author: "Sergi"
+date: "2023-03-27"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Serie CON TENDENCIA y SIN ESTACIONALIDAD: Historico anual de Población Económicamente Activa (PEA) en México
+
+Primero importamos la data de nacimientos en MEX
+Data obtenida de la página oficial del INEGI:  https://www.inegi.org.mx/temas/empleo/
+
+```{r}
+install.packages("readxl")
+
+library("readxl")
+
+
+PEA_mex <-read_excel("PEA_MEX_pp.xlsx")
+```
+
+
+Revisamos que la data de nacimientos MEX sehay importado correctamente 
+```{r}
+PEA_mex
+summary(PEA_mex)
+typeof(PEA_mex)
+dim(PEA_mex)
+```
+
+
+Graficamos la "data original" de PEA en México de los últimos años (2005 al 2021)  
+
+```{r}
+
+plot(PEA_mex$PEA,type="l")
+```
+
+
+
+### Primero se calculará la linea "general" de tendencia de nuestra serie de PEA (que representa la tendencia de la "serie de datos originales") 
+
+
+```{r}
+
+linea_PEA<-lm(PEA~Date, data=PEA_mex)
+linea_PEA
+```
+
+
+### Graficamos la "serie original" de nacimientos vs el filtro 
+
+Para eso primero debemos crear nuestra linea de tendencia con base en la linea_PEA calculada a partir de la data 
+```{r}
+linea_PEA_aplicada <- predict(linea_PEA, newdata = data.frame(Date = PAE_mex$Date))
+
+linea_PEA_aplicada
+
+```
+
+
+
+Graficamos entonces a la "data original de PAE_MX" y a la data calculada a partir de la linea tendencia
+
+```{r}
+plot(PEA_mex$PEA, type="l", main=" 'data original de PAE_MX' vs calculada a partir de la linea tendencia")
+lines(linea_PEA_aplicada, col = "red")
+```
+
+
+
+### Ahora vamos a "quitar el efecto de la tendencia" de nuestra "serie original de datos"
+### En este caso se asumirá un "efecto multiplicativo" y por lo tanto se removerá dividiendo cada elemento de la serie original / valor de la linea de tendnecia en ese valor de x
+
+Se grafica la serie sin tendencia:
+
+```{r}
+PEA_Sin_Tendencia<-PAE_mex$PEA/linea_PEA_aplicada
+
+plot(PEA_Sin_Tendencia, type="l", main=" data sin tendencia de PAE_MX ")
+```
+
+
+
+### Una vez teniendo la serie sin tendencia, podemos aplicar como nuestro "mejor filtro" o estimado de la serie que es la media historica de los datos que se considerarán como "de entrenamiento"
+
+
+Calculamos la media de nuestra serie sin tendecia que será nuestra estimación puntual para esta serie 
+```{r}
+media_PEA_ST<-mean(PEA_Sin_Tendencia)
+media_PEA_ST
+
+```
+
+Se determinan los errores estimados como Errores = Serie original - tendecia - media 
+Se calcula también la desviación estandar de esos errores 
+```{r}
+Error_est_PEA<-PEA_Sin_Tendencia-media_PEA_ST
+Error_est_PEA
+
+##Claculando la desviaicón estandar del error
+
+sd_est_PEA<-sd(Error_est_PEA)
+sd_est_PEA
+
+```
+
+
+
+## Pronóstico
+
+Una vez teniendo nuestra seríe SIN TENDENCIA lo que implicária que "unicamente tenemos el componente estocástico o de ruido en la serie" podemos proceder a llevar a cabo el pronóstico de 5 años en el futuro  de datos.
+Como ha sido estudiado en la clase, nuestro mejor pronóstico dadas estas condiciones en la serie es la media de los datos históricos 
+
+
+### Vamos a hacer el pronóstico de la serie de naciemientos para los próximos 5 años
+
+
+```{r}
+##Creamos un eje x que incluya a los 66 datos + 6 que se pronosticarán
+Date_PAE2<-c(1:72)
+
+
+## Creamos el vector de datos que incluirá los  datos históricos  sin tendencia + 6 valores NA a pronosticar
+PAE_Sin_Tendencia_para_pron<-c(PEA_Sin_Tendencia, rep(NA, times=6))
+PAE_Sin_Tendencia_para_pron
+
+
+## Entonces el mejor pronóstico que tenemos para eata técnica es la media de la serie sin tendencia 
+estimacion_PEA <- rep(media_PEA_ST, times=72)
+estimacion_PEA
+
+
+```
+
+
+Calculamos los límites de intervalos de confianza al 95% pata el pronostico 
+(Se considera 95% como +- 2 desviaciones estandar de la media)
+
+```{r}
+tao<-c(1:6)
+Lim_PEA<-2*sd_est_PEA*tao^.5
+Lim_PEA
+```
+
+
+Calculamos los limites inferior y superiro como NA para los valores historicos y media +- 2 veces desciación estandar para los valores pronósticados 
+
+Graficamos los valores pronósticadoos t los limites de confianza 
+
+```{r}
+
+LI_PEA<-c(rep(NA, times=66), media_PEA_ST-Lim_PEA)
+LI_PEA
+
+LS_PEA<-c(rep(NA, times=66), media_PEA_ST+Lim_PEA)
+LS_PEA
+
+plot(Date_PAE2, PAE_Sin_Tendencia_para_pron, type="l", ylim = c(0.7,1.3) ,main="Estimación puntual sin tendencia e intervalos de confianza para los 6 vaores pronósticados",col="Blue")
+
+lines(estimacion_PEA, col="Red")
+lines(LI_PEA, col="Purple")
+lines(LS_PEA, col="Purple")
+```
+
+
+
+
+### Llevando el pornóstico a la dimensión de los Datos reales
+
+Ahora vamos a "llevar nuestro pornóstico a las dimensiones reales"
+Para ello primero vamos a "devolver la tendencia a la serie" de nombre  nacimientos_Sin_Tendencia 
+
+Para eso primero necesitamos "crear un data frame que contenga la información histórica + 6 de pronóstico con un valor NA 
+
+
+```{r}
+# create a new data set with 72 rows
+extended_dates <- seq(as.Date("2005-01-01"), as.Date("2022-10-01"), by = "quarter")
+extended_trimester_PEA <- data.frame(Date = extended_dates, 
+                                       PEA = rep(NA, length(extended_dates)))
+
+extended_trimester_PEA
+
+```
+
+
+
+
+```{r}
+# copy the original data to the new data set
+#extended_trimester_PEA$PEA[1:length(PEA_mex$PEA)] <- PEA_mex$PEA
+#extended_trimester_PEA
+
+
+# copy the original data to the new data set for the first 66 rows
+for(i in 1:66){
+  extended_trimester_PEA$PEA[i] <- PEA_mex$PEA[i]
+}
+
+extended_trimester_PEA
+
+
+
+# fit the model with the extended data set
+linea_PEA_extended <- lm(PEA ~ Date, data = extended_trimester_PEA)
+linea_PEA_extended
+
+```
+
+
+
+Posteriormente calculamos los valores historicos + 6   pronosticados a partir de la linea de tendencia que previamente se habia calculado de nombre linea_PEA_extended
+
+```{r}
+# predict values for the extended date range
+linea_PEA_extended_aplicada <- predict(linea_PEA_extended, 
+                                                newdata = data.frame(Date = extended_dates))
+linea_PEA_extended_aplicada
+
+# plot the predicted values
+plot(extended_dates, linea_PEA_extended_aplicada, type = "l")
+```
+
+Entonces para finalmente "devolver el efecto de la tendnecia a los datos de media_nacimientos_ST" se multiplica cada valor de la serie por el valor calculado a partir de la linea de tencia que se llama: linea_PEA_extended_aplicada
+
+```{r}
+
+##Creando el vector original + los valores a predecir como NAs
+PEA_original_para_pron<-c(PEA_mex$PEA, rep(NA, times=6))
+PEA_original_para_pron
+dim(PEA_original_para_pron)
+
+
+Est_punt_PEA<-c(rep(NA, times=66), media_PEA_ST*linea_PEA_extended_aplicada[67:72])
+Est_punt_PEA
+
+# plot the original data and the predicted values together
+plot(extended_dates, PEA_original_para_pron, main="Estimación de 6 valores de la Población eocnomicamente activa",type="l", xlab="Year", ylab="PEA")
+lines(extended_dates, Est_punt_PEA, col="blue")
+
+
+
+
+```
+
+
+Calculamos ahora los límites de estimación devolviendo el efecto de tendencia 
+
+```{r}
+
+LI_PEA_ajustado<-c(rep(NA, times=66), LI_PEA[67:72]*linea_PEA_extended_aplicada[67:72])
+LI_PEA_ajustado
+
+LS_PEA_ajustado<-c(rep(NA, times=66), LS_PEA[67:72]*linea_PEA_extended_aplicada[67:72])
+LS_PEA_ajustado
+
+
+# Plot only non-NA values
+# plot the original data and the predicted values together
+
+
+PEA_original_para_pron<-c(PEA_mex$PEA, rep(NA, times=6))
+PEA_original_para_pron
+dim(PEA_original_para_pron)
+
+
+# plot the original data and the predicted values together
+plot(extended_dates,PEA_original_para_pron, main="Estimación de 6 valores de la Población eocnomicamente activa con intervalos de confianza al 95%", type="l", xlab="Year", ylab="PEA", ylim=c(40000000, 65000000))
+
+lines(extended_dates, Est_punt_PEA, col="blue")
+x_vals <- c(rep(NA, times = 66), extended_dates[67:72])
+
+lines(x_vals, LI_PEA_ajustado, col = "purple")
+lines(x_vals, LS_PEA_ajustado, col = "purple")
+
+
+
+
+```
+
+
+Visualizamos el Data.Frame con los valores históricos la "data original" + los resultados del pronóstico puntual y los intervalos de confianza al 95% 
+
+```{r}
+df_demanda_PEA_MX_pronostico<-data.frame(PEA_original_para_pron,
+                                                Est_punt_PEA, LI_PEA_ajustado, LS_PEA_ajustado)
+View(df_demanda_PEA_MX_pronostico)
+```
+
+
+
+
+
+## Vamos a usar ahora el método de Holt como "modelo de suaviazamiento y pronóstico NO ESTÁTICO" que si considera los cambios de nivel a tráves del tiempo. 
+
+Para ello debemos tener nuestra data a suavizar en el tipo de dato serie de tiempo ts en R 
+
+
+```{r}
+PEA_MEX_ts <-ts(PEA_mex$PEA, frequency =4, start =c(2005,1))
+PEA_MEX_ts
+```
+
+Graficamos la "data original de la demanda_electrico" que se usará como "train para el modelo" y que fue convertida a tipo de dato serie de tiempo 
+
+```{r}
+plot(PEA_MEX_ts, main="PAE MEX train data in time series data type")
+```
+
+
+### Se procede a "aplicar el método de Holt Winters" a la serie CON TENDENCIA Y ESTACIONALIDAD
+Como se observará este primer cálculo dejará como grados de libertad los valores de alpha, gamma y betha, así como los valores de arranque, de manera que el "el algoritmo de HltWinters de R" determine la "mejor combinaión posible".
+Como en este caso no tenemos componente de seasonalidad se indica que el parámetro gamma tendrá un valor "false"
+
+```{r}
+PEA_MEX_ts_h1 <-HoltWinters(PEA_MEX_ts, gamma=FALSE)
+PEA_MEX_ts_h1
+```
+
+
+Graficamos los valores originales vs suavizados con el método de Holt
+
+```{r}
+plot(PEA_MEX_ts_h1, main="Aplicaicón del método de Holt Winters a PEA MEX train data")
+```
+
+
+```{r}
+# Install the forecast package
+install.packages("forecast")
+
+# Load the forecast package
+library(forecast)
+```
+
+
+
+Ahora se llevará a cabo el pronóstico con la librería de forecast y basados en el método de Holt Winters. De igual manera se usará un intervalo de confianza del 95%
+
+```{r}
+PEA_MEX_ts_h1_fc <- forecast(PEA_MEX_ts_h1, h=6, level=0.95)
+PEA_MEX_ts_h1_fc
+```
+
+
+```{r}
+plot(PEA_MEX_ts_h1_fc, main="Forecast de PAE MX usando el Método de Holt Winters con parámetro gamma ='False'")
+```
+
+
+
+

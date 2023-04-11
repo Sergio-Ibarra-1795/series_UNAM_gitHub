@@ -369,7 +369,7 @@ Demanda_electrico_ts_hw1_fc
 
 
 ```{r}
-plot(Demanda_electrico_ts_hw1_fc)
+plot(Demanda_electrico_ts_hw1_fc, main="Forecast de Demanda_electrico usando el Método de Holt Winters")
 ```
 
 
