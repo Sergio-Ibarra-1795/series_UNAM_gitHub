@@ -139,6 +139,27 @@ FE4_electrico<-mean(T4, na.rm = TRUE)/mean(Demanda_electrico_Sin_Tendencia)
 FE4_electrico
 ```
 
+
+#### Interpretación de los Factores estacionales FE 
+
+Recordar que en general los factores estacionales nos dan una idea del PORCENTAJE DE AUMENTO o disminución en promedio, de la variable estudiada a lo largo de los periodos/ seasonalidades establecidas.
+En este caso un factor estacional 1 (que representa los primeros 3 meses del años) con un valor de 
+```{r}
+FE1_electrico
+```
+
+y un factor estacional 4 (que representa los ultimos 3 meses del años) con un valor de
+
+```{r}
+FE4_electrico
+```
+
+Indica que en promedio se tiene prácticamente la misma cantidad de demanda de gas natural en el sector eléctrico en estos periodos. 
+
+Sin embargo un valor de factor estacional 3 (que representa los  meses Abril, Mayo, Junio) indica que hay un aumento aproximado del 9% en la cantidad de gas natural demanda en el sector eléctrico durante los meses de Abril, Mayo, Junio, respecto a lo observado en los de Enero, Febrero y Marzo 
+
+
+
 Una vez calculados los factores estacionales de la serie se puede obtener el 'ruido de la serie'  que se calcularía "quitando" el efecto de los factores estacionales previamente calculados a nuestra serie sin tendencia 
 ```{r}
 
@@ -317,6 +338,35 @@ View(df_demanda_electrico_pronostico_completo)
 ```
 
 
+
+Calculemos el error entre los valores pronosticados con el "método de suavizamiento estático" y los valores reales de la serie 
+
+```{r}
+
+##Primero formemos un vector con los valores reales 
+Demanda_electrico_completa_reales12 <- Demanda_electrico_completa$Demanded_Gas[202:213]
+Demanda_electrico_completa_reales12
+
+## Despues formemos un vector con únicamente los valores pronósticados 
+Demanda_electrico_E_forecast12 <- Demanda_electrico_pronostico_fin[202:213]
+Demanda_electrico_E_forecast12
+
+##Calculemos el MAPE entre estos dos vectores 
+
+# First, calculate the absolute percentage error (APE) for each element in the vectors
+APE_electrico_estatico <- abs((Demanda_electrico_completa_reales12 - Demanda_electrico_E_forecast12) / Demanda_electrico_completa_reales12)
+
+# Calculate the mean APE across all elements in the vectors
+MAPE_electrico_estatico <- mean(APE_electrico_estatico) * 100
+
+# Print the MAPE value
+cat("MAPE error para el forecast calculado con el método de 'suavizamiento estático'es:", MAPE_electrico_estatico, "%")
+
+
+```
+
+
+
 ## Vamos a usar ahora el método de HoltWinters como "modelo de suaviazamiento y pronóstico NO ESTÁTICO" que si considera los cambios de nivel a tráves del tiempo. 
 
 Para ello debemos tener nuestra data a suavizar en el tipo de dato serie de tiempo ts en R 
@@ -342,6 +392,63 @@ Demanda_electrico_ts_hw1 <-HoltWinters(Demanda_electrico_ts, seasonal = 'multipl
 Demanda_electrico_ts_hw1
 ```
 
+
+
+#### Interpretación de los valores de los coeficientes del método de Holt Winters  
+
+Interpretación de los valores de coficientes $\alpha$, $\beta$ y $\gamma$ para el caso del pronóstico usando modelo de HoltWinters SIN ESPECIFICAR DATOS DE ARRANQUE    
+
+
+$$0<\alpha<1$$
+
+Recordemos que: 
+Valores de $\alpha$ cercano a 1 reflejan caminata aleatoria
+Valores de $\alpha$ cercano a 0 reflejan una "gran influencia" de los valores pasado, es decir, que "el ruido no es un componente de gran relevancia"
+
+En nuestro caso el valor de $\alpha$ es:
+```{r}
+Demanda_electrico_ts_hw1$alpha
+```
+Lo que indica que "La data historica NO tiene mayor relevancia vs el componente estocástico"
+
+
+$$0<\beta<1$$
+Recordemos que: 
+Valores de $\beta$ cercano a 1 reflejan cambios CONSTANTES de nivel a lo largo de la serie 
+Valores de $\beta$ cercano a 0 reflejan POCOS cambios denivel a lo largo de la serie  
+
+
+En nuestro caso el valor de $\beta$ es:
+```{r}
+Demanda_electrico_ts_hw1$beta
+```
+Lo que indica pocos cambios de nivel a lo largo de la serie o una especie de "pendiente constante"
+
+
+Y entonces para el caso de valores de $\alpha$ cercanos a 1 y de $\beta$ cercanos a cero (como es nuestra serie de demanda_electrico) indica una serie con TENDENCIA ESTABLE y con CAMBIOS DE NIVEL MUY BAJOS
+
+Afortunadamente no obtuvimos simultaneamente valores de$\alpha$ cercanos a 1 y de $\beta$ cercanos a 1 pues eso reflejaría una CAMINATA ALEATORIA con tendencia estocástica. 
+
+
+
+
+$$0<\gamma<1$$
+Recordemos que: 
+Valores de $\gamma$ cercano a 1 reflejan cambios CONSTANTES de nivel a lo largo de la serie 
+Valores de $\gamma$ cercano a 0 reflejan POCOS cambios denivel a lo largo de la serie  
+
+
+
+
+En nuestro caso el valor de $\gamma$ es:
+```{r}
+Demanda_electrico_ts_hw1$gamma
+```
+Lo que indica que cada dato nuevo en la serie cambia el valor del factor de estacionalidad 
+
+
+
+Ahora pasemos a realizar los pronósticos de la serie pero con el método de HoltWinters que considera cambios dinámicos de nivel 
 
 Graficamos los valores originales vs suavizados con el método de Holt-Winters
 
@@ -371,5 +478,58 @@ Demanda_electrico_ts_hw1_fc
 ```{r}
 plot(Demanda_electrico_ts_hw1_fc, main="Forecast de Demanda_electrico usando el Método de Holt Winters")
 ```
+
+
+```{r}
+Demanda_electrico_ts_hw1$SSE
+```
+
+Calculemos el error entre los valores pronosticados con el "método de Holt Winters" y los valores reales de la serie 
+
+```{r}
+
+
+## Despues formemos un vector con únicamente los valores pronósticados 
+Demanda_electrico_HW_forecast12 <- Demanda_electrico_ts_hw1_fc$mean
+Demanda_electrico_HW_forecast12
+
+
+
+```
+
+
+```{r}
+
+##Calculemos el MAPE entre estos dos vectores 
+
+# First, calculate the absolute percentage error (APE) for each element in the vectors
+APE_electrico_HW <- abs((Demanda_electrico_completa_reales12 - Demanda_electrico_HW_forecast12) / Demanda_electrico_completa_reales12)
+
+# Calculate the mean APE across all elements in the vectors
+MAPE_electrico_HW <- mean(APE_electrico_HW) * 100
+
+# Print the MAPE value
+cat("MAPE error para el forecast calculado con el método de 'HoltWinters'es:", MAPE_electrico_HW, "%")
+```
+
+
+#### Comparación del MAPE del pronostico hecho con métodos estáticos vs el pronóstico hecho con el método " de suavizamiento dinámico" de HoltWinters
+
+
+En este caso y dado un cálculo con el métodO de HOLTWinters sin valores de arranque especificados
+los errores de ambos métodos fueron los sigientes: 
+
+
+```{r}
+cat("MAPE error para el forecast calculado con el método de 'suavizamiento estático'es:", MAPE_electrico_estatico, "%")
+
+  
+cat("MAPE error para el forecast calculado con el método de 'HoltWinters'es:", MAPE_electrico_HW, "%")
+```
+
+Lo que indica que el método de suavizamiento estático resultó mejor en nuestro caso para el forecast de la demanda de gas natural en el sector eléctrico en México. 
+
+
+
 
 
