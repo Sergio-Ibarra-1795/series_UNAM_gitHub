@@ -1,5 +1,5 @@
 ---
-title: "Nacimientos_MEX1"
+title: "PAE_MEX"
 author: "Sergi"
 date: "2023-03-27"
 output: html_document
@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Serie CON TENDENCIA y SIN ESTACIONALIDAD (Historico anual de nacimientos en México)
 
 Primero importamos la data de nacimientos en MEX
-Data obtenida de la página oficial del INEGI:  https://www.inegi.org.mx/temas/natalidad/
+Data obtenida de la página oficial del INEGI:  https://www.inegi.org.mx/temas/empleo/
 
 ```{r}
 install.packages("readxl")
@@ -20,16 +20,16 @@ install.packages("readxl")
 library("readxl")
 
 
-nacimientos_mex <-read_excel("Nacimientos_MEX1.xlsx")
+PAE_mex <-read_excel("PAE_MEX_pp.xlsx")
 ```
 
 
 Revisamos que la data de nacimientos MEX sehay importado correctamente 
 ```{r}
-nacimientos_mex
-summary(nacimientos_mex)
-typeof(nacimientos_mex)
-dim(nacimientos_mex)
+PAE_mex
+summary(PAE_mex)
+typeof(PAE_mex)
+dim(PAE_mex)
 ```
 
 
