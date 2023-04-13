@@ -1,8 +1,10 @@
 ---
-title: "Demanda_electrico_wu"
+title: 'Serie3: Demanda_electrico'
 author: "Sergibar"
 date: "2023-03-28"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -135,20 +137,20 @@ T4_indices <- c(seq(10, 12), seq(22, 24), seq(34, 36), seq(46, 48), seq(58, 60),
 
 # Create the subsets
 T1 <- Demanda_electrico_Sin_Tendencia[T1_indices]
-T1
+head(T1)
 T2 <- Demanda_electrico_Sin_Tendencia[T2_indices]
-T2
+head(T2)
 T3 <- Demanda_electrico_Sin_Tendencia[T3_indices]
-T3
+head(T3)
 T4 <- Demanda_electrico_Sin_Tendencia[T4_indices]
-T4
+head(T4)
 
 
 
 ```
 
 
-Se calculan los Factores Estacionarios de la Serie dividiendo la media de aquellos valores asignados a cada trimestre (T1, T2, T3 y T4) /  la media de nuestra seria sin tendencia. Siendo ambos un valor escalar, será entonces los FEi valores escalares  
+Se calculan ahora los Factores Estacionarios de la Serie dividiendo la media de aquellos valores asignados a cada trimestre (T1, T2, T3 y T4) /  la media de nuestra seria sin tendencia. Siendo ambos un valor escalar, serán entonces los FEi valores escalares  
 
 ```{r}
 
@@ -166,9 +168,9 @@ FE4_electrico
 ```
 
 
-#### Interpretación de los Factores estacionales FE 
+#### Interpretación de los Factores estacionales FE de la serie de demanda de gas natural en sector eléctrico en México
 
-Recordar que en general los factores estacionales nos dan una idea del PORCENTAJE DE AUMENTO o disminución en promedio, de la variable estudiada a lo largo de los periodos/ seasonalidades establecidas.
+Recordar que en general los factores estacionales nos dan una idea del PORCENTAJE DE AUMENTO o DISMINUCIÓN PROMEDIO, de la variable estudiada a lo largo de los periodos/ seasonalidades establecidas.
 En este caso un factor estacional 1 (que representa los primeros 3 meses del años) con un valor de 
 ```{r}
 FE1_electrico
@@ -180,54 +182,114 @@ y un factor estacional 4 (que representa los ultimos 3 meses del años) con un v
 FE4_electrico
 ```
 
-Indica que en promedio se tiene prácticamente la misma cantidad de demanda de gas natural en el sector eléctrico en estos periodos. 
+Indica que en promedio se tiene prácticamente la misma cantidad de demanda de gas natural en el sector eléctrico en estos periodos (durante los últimos 3 meses de cada año y los primeros 3 del siguiente) 
 
-Sin embargo un valor de factor estacional 3 (que representa los  meses Abril, Mayo, Junio) indica que hay un aumento aproximado del 9% en la cantidad de gas natural demanda en el sector eléctrico durante los meses de Abril, Mayo, Junio, respecto a lo observado en los de Enero, Febrero y Marzo 
+Sin embargo un valor de factor estacional 2 (que representa los  meses Abril, Mayo, Junio) indica que hay un aumento aproximado del 9% en la cantidad de gas natural demanda en el sector eléctrico durante los meses de Abril, Mayo, Junio, respecto a lo observado en los de Enero, Febrero y Marzo 
+
+```{r}
+FE2_electrico
+```
 
 
+Y un factor estacional 3 (que representa los  meses Julio, Agosto, Sept) con respecto al factor 4 indica que en promedio se demanda un 10% menos de gas natural en el sector eléctrico los últomos 3 meses del año respecto a los 3 meses anteriores. 
+
+```{r}
+FE3_electrico
+FE4_electrico
+```
+
+### A.3 Tratamiendo del ruido blanco en la serie y pronostico puntual  
 
 Una vez calculados los factores estacionales de la serie se puede obtener el 'ruido de la serie'  que se calcularía "quitando" el efecto de los factores estacionales previamente calculados a nuestra serie sin tendencia 
+
 ```{r}
 
 Demanda_electrico_ruido<-Demanda_electrico_Sin_Tendencia/c(FE1_electrico, FE2_electrico, FE3_electrico, FE4_electrico)
 
-Demanda_electrico_ruido
+head(Demanda_electrico_ruido)
 
-plot(Demanda_electrico_ruido, type="l")
+
+plot(Demanda_electrico$Date, Demanda_electrico_ruido, type="l", 
+     main="Componente de ruido blanco o estocástico de la demanda de gas en sector eléctrico",
+     cex.main=0.9)
+
 ```
 
 
+Una vez que tenemos nuestra serie "sin los efectos de tendencia y estacionalidad" que se conoce como ruido blanco, es posible "extraer el ruido" de la serie y conocer así el error estimado (varianza)  y la desviación estandar. 
+La idea es que extrayendo de la serie del ruido blanco su media histórica, estaríamos "extrayendo el ruido" y determinando la varianza, de la siguiente manera:
 
-Se determinan los errores estimados como Errores = Serie original - estacionalidad - tendecia - media. En nuestro caso, dichos errores será nuestra serie sin tendencia ni estacionalidad - media historica de dicha serie 
+Varianza (errores al cuadrado) = Serie original - estacionalidad - tendecia - media. En nuestro caso, dichos errores será nuestra serie sin tendencia ni estacionalidad - media historica 
 
-Determinamos el filtro sin tendencia ni estacionalidad para nuestra serie de demanda_electrico 
+Determinemos entonces la varianza para nuestra serie de demanda_electrico 
 ```{r}
 
-demanda_electrico_filtro_sinTendencia_NiEstacionalidad <-Demanda_electrico_ruido-mean(Demanda_electrico_ruido)
+demanda_electrico_errores <-Demanda_electrico_ruido-mean(Demanda_electrico_ruido)
 
-plot(demanda_electrico_filtro_sinTendencia_NiEstacionalidad, type="l")
+plot(Demanda_electrico$Date, demanda_electrico_errores, type="l", main="Errores al cuadrado (varianza) de la aplicaicón del modelo de 'suavizamiento estático' a la serie de demanda de gas natural en sector eléctrico ", cex.main=0.6)
 
 ## Se determina la desviación estandar del error 
 
-sd_est_demanda_electrico<-sd(demanda_electrico_filtro_sinTendencia_NiEstacionalidad)
+sd_est_demanda_electrico<-sd(demanda_electrico_errores)
+
+
+## Se calcula la media del ruido 
+mean(Demanda_electrico_ruido)
+
+## Se calcula la varianza
+var(demanda_electrico_errores)
+
+## Se calcula la desviación estandar 
 sd_est_demanda_electrico
+
+```
+```{r}
+
+## Se calcula la media del ruido 
+mean(demanda_electrico_errores)
+```
+
+
+Se tiene una desviación estandar de aproximadamente un 10% de la media lo cual es totalmente concordante con le hehco de que "el ruido resultante" o errores tiene una distribución normal con media cero y una desviación estandar de 0.1 
+
+```{r}
+hist(demanda_electrico_errores, breaks = 20, col = "lightblue", main = "Frequency Distribution of demanda_electrico_errores", xlab = "Values", ylab = "Frequency")
 
 ```
 
 
-Una vez teniendo nuestra seríe SIN TENDENCIA y SIN ESTACIONALIDAD lo que implicária que "unicamente tenemos el componente estocástico o de ruido en la serie" podemos proceder a llevar a cabo el pronóstico de 12 meses equivalente 1 año de datos.
-Como ha sido estudiado en la clase, nuestro mejor pronóstico dadas estas condiciones en la serie es la media de los datos históricos 
+
+Una vez teniendo nuestra seríe SIN TENDENCIA y SIN ESTACIONALIDAD lo que como ya se mencionó, implica que, "unicamente tenemos el componente estocástico o de ruido blanco en la serie" podemos proceder a llevar a cabo el pronóstico de 12 meses equivalente 1 año de datos.
+
+Como ha sido estudiado en la clase, nuestro mejor pronóstico puntual dadas estas condiciones en la serie es la media de los datos históricos del ruido blanco
+
+
+Para ello importamos el Data Frame con la data historica completa, es decir, la que contiene los 201 meses propuestos aquí como "train data" + los 12 meses que se pronósticaron
+
+```{r}
+
+Demanda_electrico_completa <-read_excel("Demanda_electrico_2022_full1.xlsx")
+head(Demanda_electrico_completa)
+tail(Demanda_electrico_completa)
+```
+
+
+
+
 ```{r}
 
 Demanda_electrico_pronostico<-c(Demanda_electrico_ruido, rep(mean(Demanda_electrico_ruido), 12))
 
-plot(Demanda_electrico_pronostico, type="l")
+plot(Demanda_electrico_completa$Date,Demanda_electrico_pronostico, type="l", main = "Promostico de demanda de gas natrual para los siguientes 12 meses sobre el ruido blanco de la serie", , cex.main=0.8)
 
 ```
 
 
-Calculamos los límites de intervalos de confianza al 95% pata el pronostico 
-(Se considera 95% como +- 2 desviaciones estandar de la media)
+### A.4 Calculo de intervalos de confianza para el pronóstico
+
+
+Calculamos ahora los límites de intervalos de confianza al 95% para el pronostico de los siguientes 12 meses 
+(Se considera 95% como +- 2 desviaciones estandar de la media de la serie del ruido)
 
 ```{r}
 LI_demanda_electrico<-Demanda_electrico_pronostico[202:213]-2*sd_est_demanda_electrico*c(1:12)^.5
@@ -235,13 +297,18 @@ LS_demanda_electrico<-Demanda_electrico_pronostico[202:213]+2*sd_est_demanda_ele
 
 ## Tambien se debe "crear la linea para nuestros limites" teniendo NA en los valores de datos historicos, así como los 12 valores de limites previamente calculados
 
-LI_demanda_electrico_ajustado<-c(rep(NA, times=201), LI_demanda_electrico)
-LI_demanda_electrico_ajustado
+LI_demanda_electrico_lineaA<-c(rep(NA, times=201), LI_demanda_electrico)
+head(LI_demanda_electrico_lineaA)
+tail(LI_demanda_electrico_lineaA)
 
-LS_demanda_electrico_ajustado<-c(rep(NA, times=201), LS_demanda_electrico)
-LS_demanda_electrico_ajustado
+LS_demanda_electrico_lineaA<-c(rep(NA, times=201), LS_demanda_electrico)
+head(LI_demanda_electrico_lineaA)
+tail(LI_demanda_electrico_lineaA)
+
 ```
 
+
+### A.5 "Devolución de efectos de tendenci y estacionalidad a los pronósticos e intervalos calculados"
 
 Ahora vamos a "llevar nuestro pornóstico a las dimensiones reales"
 Para ello primero vamos a "devolver la esacionalidad y la tendencia a la serie" de nombre  demanda_electrico_filtro_sinTendencia_NiEstacionalidad 
@@ -252,22 +319,49 @@ Empezemos como "devolver estacionalidad" y para ello recordamos que los valores 
 
 # Devolver estacionalidada
 
-Demanda_electrico_cest<-Demanda_electrico_pronostico*c(FE1_electrico, FE2_electrico,FE3_electrico, FE4_electrico)
-Demanda_electrico_cest
+Demanda_electrico_pronostico_cest<-Demanda_electrico_pronostico*c(FE1_electrico, FE2_electrico,FE3_electrico, FE4_electrico)
+head(Demanda_electrico_pronostico_cest)
+tail(Demanda_electrico_pronostico_cest)
 
 
-LI_demanda_electrico_cest<-LI_demanda_electrico_ajustado*c(FE1_electrico, FE2_electrico,FE3_electrico, FE4_electrico)
-LI_demanda_electrico_cest
+LI_demanda_electrico_cest<-LI_demanda_electrico_lineaA*c(FE1_electrico, FE2_electrico,FE3_electrico, FE4_electrico)
+head(LI_demanda_electrico_cest)
+tail(LI_demanda_electrico_cest)
 
 
 
-LS_demanda_electrico_cest<-LS_demanda_electrico_ajustado*c(FE1_electrico, FE2_electrico,FE3_electrico, FE4_electrico)
-LS_demanda_electrico_cest
+
+LS_demanda_electrico_cest<-LS_demanda_electrico_lineaA*c(FE1_electrico, FE2_electrico,FE3_electrico, FE4_electrico)
+head(LS_demanda_electrico_cest)
+tail(LS_demanda_electrico_cest)
 
 
-plot(Demanda_electrico_cest, type="l")
+plot(Demanda_electrico_completa$Date, Demanda_electrico_pronostico_cest, type="l", main="Demanda electrico pronostico con componente de estacionalidad + intervalos", cex.main= 0.85)
 lines(LI_demanda_electrico_cest, col="violet")
 lines(LS_demanda_electrico_cest, col="violet")
+```
+```{r}
+# Repeat seasonal factors
+n <- length(Demanda_electrico_pronostico)
+repeated_FE <- rep(c(FE1_electrico, FE2_electrico, FE3_electrico, FE4_electrico), length.out = n)
+
+# Compute components with seasonal factor
+Demanda_electrico_pronostico_cest <- Demanda_electrico_pronostico * repeated_FE
+LI_demanda_electrico_cest <- LI_demanda_electrico_lineaA * repeated_FE
+tail(LI_demanda_electrico_cest)
+
+LS_demanda_electrico_cest <- LS_demanda_electrico_lineaA * repeated_FE
+tail(LS_demanda_electrico_cest)
+
+
+
+# Plot with confidence intervals
+plot(Demanda_electrico_pronostico_cest, 
+     type="l", main="Demanda electrico pronostico con componente de estacionalidad + intervalos", 
+     cex.main=0.85, ylim=c(0.4,1.8))
+lines(LI_demanda_electrico_cest, col="violet")
+lines(LS_demanda_electrico_cest, col="violet")
+
 ```
 
 
@@ -287,12 +381,11 @@ extended_demanda_electrico <- data.frame(Date = extended_dates_electrico,
 # assign values to a subset of Demanded_Gas that corresponds to the length of Demanda_electrico$Demanded_Gas
 extended_demanda_electrico$Demanded_Gas[1:length(Demanda_electrico$Demanded_Gas)] <- Demanda_electrico$Demanded_Gas
 
-# print the resulting data frame
-extended_demanda_electrico
 
 extended_demanda_electrico$Date <- as.POSIXct(as.character(extended_demanda_electrico$Date), format = "%Y-%m-%d")
 
-extended_demanda_electrico
+head(extended_demanda_electrico)
+tail(extended_demanda_electrico)
 
 
 ```
@@ -302,7 +395,8 @@ Posteriormente calculamos los valores historicos + 12 meses pronosticados a part
 ```{r}
 Electrico_Demanded_gas_line_aplicada2 <- predict(Electrico_Demanded_gas_line, newdata = data.frame(Date = extended_demanda_electrico$Date))
 
-Electrico_Demanded_gas_line_aplicada2
+head(Electrico_Demanded_gas_line_aplicada2)
+tail(Electrico_Demanded_gas_line_aplicada2)
 ```
 
 Entonces para finalmente "devolver el efecto de la tendnecia a los datos de LS_demanda_electrico_cest" se multiplica cada valor de la serie por el valor calculado a partir de la linea de tencia que se llama: Electrico_Demanded_gas_line_aplicada2
@@ -310,62 +404,47 @@ Entonces para finalmente "devolver el efecto de la tendnecia a los datos de LS_d
 
 
 
-Demanda_electrico_pronostico_fin<-Demanda_electrico_cest*Electrico_Demanded_gas_line_aplicada2
+Demanda_electrico_pronostico_ajustado<-Demanda_electrico_cest*Electrico_Demanded_gas_line_aplicada2
 
-LI_demanda_electrico_fin<-LI_demanda_electrico_cest*Electrico_Demanded_gas_line_aplicada2
-LS_demanda_electrico_fin<-LS_demanda_electrico_cest*Electrico_Demanded_gas_line_aplicada2
+LI_demanda_electrico_ajustado<-LI_demanda_electrico_cest*Electrico_Demanded_gas_line_aplicada2
+LS_demanda_electrico_ajustado<-LS_demanda_electrico_cest*Electrico_Demanded_gas_line_aplicada2
 
 
-plot(Demanda_electrico_pronostico_fin, type="l", ylim=c(0, max(LS_demanda_electrico_fin, na.rm = TRUE)))
-lines(LI_demanda_electrico_fin, col="violet")
-lines(LS_demanda_electrico_fin, col="violet")
+plot(Demanda_electrico_pronostico_ajustado, type="l", ylim=c(0, max(LS_demanda_electrico_ajustado, na.rm = TRUE)),  main="Demanda electrico pronostico con componente de estacionalidad y de trend + intervalos", 
+     cex.main=0.85)
+lines(LI_demanda_electrico_ajustado, col="violet")
+lines(LS_demanda_electrico_ajustado, col="violet")
 
 ```
+
+
 
 Visualizamos el Data.Frame con los valores históricos la "data original" + los resultados del pronóstico puntual y los intervalos de confianza al 95% 
 
 
 ```{r}
 # Create a data frame with the predicted values and intervals
-df_demanda_electrico_pronostico <- data.frame(Demanded_Gas = c(Demanda_electrico$Demanded_Gas[1:201], rep(NA, 12)), 
-                                              Demanda_electrico_pronostico_fin = Demanda_electrico_pronostico_fin, 
-                                              LI_demanda_electrico_fin = LI_demanda_electrico_fin, 
-                                              LS_demanda_electrico_fin = LS_demanda_electrico_fin)
+df_demanda_electrico_pronostico <- data.frame(Demanded_Gas_original = c(Demanda_electrico_completa$Demanded_Gas), 
+                                              Demanda_electrico_pronostico_ajustado = Demanda_electrico_pronostico_ajustado, 
+                                              LI_demanda_electrico_ajustado = LI_demanda_electrico_ajustado, 
+                                              LS_demanda_electrico_ajustado = LS_demanda_electrico_ajustado)
 
 # View the resulting data frame
 View(df_demanda_electrico_pronostico)
 
+tail(df_demanda_electrico_pronostico)
+
 ```
 
 
-
-
-### Revisemos los errores en el pronóstico 
-
-Para ello importamos el Data Frame con la data historica completa, es decir, la que contiene los 201 meses propuestos aquí como "train data" + los 12 meses que se pronósticaron
-
-```{r}
-
-Demanda_electrico_completa <-read_excel("Demanda_electrico_2022_full1.xlsx")
-Demanda_electrico_completa
-```
-
-
-Se añade la colum a de Demanda_electrico_completa$Demanded_Gas al Data.Frame para vidualizar los valores reales vs los estimados con la técnica aplicada 
-```{r}
-# Create a data frame with the predicted values and intervals
-df_demanda_electrico_pronostico_completo <- data.frame(Demanded_Gas = Demanda_electrico_completa$Demanded_Gas, 
-                                              Demanda_electrico_pronostico_fin = Demanda_electrico_pronostico_fin, 
-                                              LI_demanda_electrico_fin = LI_demanda_electrico_fin, 
-                                              LS_demanda_electrico_fin = LS_demanda_electrico_fin)
-
-# View the resulting data frame
-View(df_demanda_electrico_pronostico_completo)
-```
+Se observa que los pronósticos puntuales vs los reales parecen no estar muy alejados unos de otros, sin embargo los intervalos de confianza si "sufren bastante a medida que nos alejamos del último valor real" pues son cada vez más grandes hasta llegar a abarcar un rango de [1000,6000] para el 95% de intervalo de confianza en el 12vo mes pronósticado. 
+En general, con lo observado en este ejemplo y lo visto en clase se puede mencionar que: "Los métodos de suavizamiento estático son relativamente buenos para generar pronóstcos puntuales, pero los intervalos de confianza del pronóstico se ven severamente castigados mientras datos n 'en el t+n' quieran ser pronósticados"
 
 
 
-Calculemos el error entre los valores pronosticados con el "método de suavizamiento estático" y los valores reales de la serie 
+### A.6 Calculo del error tipo MAPE para los pronósticos hechos con los modelos estáticos de suavizamiento
+
+Calculemos el error tipo MAPE entre los valores pronosticados con el "método de suavizamiento estático" y los valores reales de la serie 
 
 ```{r}
 
@@ -374,7 +453,7 @@ Demanda_electrico_completa_reales12 <- Demanda_electrico_completa$Demanded_Gas[2
 Demanda_electrico_completa_reales12
 
 ## Despues formemos un vector con únicamente los valores pronósticados 
-Demanda_electrico_E_forecast12 <- Demanda_electrico_pronostico_fin[202:213]
+Demanda_electrico_E_forecast12 <- Demanda_electrico_pronostico_ajustado[202:213]
 Demanda_electrico_E_forecast12
 
 ##Calculemos el MAPE entre estos dos vectores 
@@ -386,32 +465,38 @@ APE_electrico_estatico <- abs((Demanda_electrico_completa_reales12 - Demanda_ele
 MAPE_electrico_estatico <- mean(APE_electrico_estatico) * 100
 
 # Print the MAPE value
-cat("MAPE error para el forecast calculado con el método de 'suavizamiento estático'es:", MAPE_electrico_estatico, "%")
+cat("El MAPE error para el forecast calculado con el método de 'suavizamiento estático'de la serie de demanda de gas natural en el sector eléctrico es:", MAPE_electrico_estatico, "%")
 
 
 ```
 
 
 
-## Vamos a usar ahora el método de HoltWinters como "modelo de suaviazamiento y pronóstico NO ESTÁTICO" que si considera los cambios de nivel a tráves del tiempo. 
+## B. Método de suavizamiento dinámico ó Holt-winters
+
+Vamos a usar ahora el método de HoltWinters como "modelo de suaviazamiento y pronóstico NO ESTÁTICO" que si considera los cambios de nivel a tráves del tiempo. 
 
 Para ello debemos tener nuestra data a suavizar en el tipo de dato serie de tiempo ts en R 
 
 
 ```{r}
 Demanda_electrico_ts <-ts(Demanda_electrico$Demanded_Gas, frequency =12, start =c(2005,1))
-Demanda_electrico_ts 
+head(Demanda_electrico_ts)
+tail(Demanda_electrico_ts)
 ```
 
 Graficamos la "data original de la demanda_electrico" que se usará como "train para el modelo" y que fue convertida a tipo de dato serie de tiempo 
 
 ```{r}
-plot(Demanda_electrico_ts, main="Demanda electrico train data in time series data type")
+plot(Demanda_electrico_ts, main="Demanda electrico train data en tipo time series (Valores de Enero de 2005 a Agosto de 2021)", cex.main=0.8)
 ```
 
 
-### Se procede a "aplicar el método de Holt Winters" a la serie CON TENDENCIA Y ESTACIONALIDAD
-Como se observará este primer cálculo dejará como grados de libertad los valores de alpha, gamma y betha, así como los valores de arranque, de manera que el "el algoritmo de HltWinters de R" determine la "mejor combinaión posible"
+### Aplicación del método de Holt Winters" a la serie de demanda de gas en el sector eléctrico 
+
+Como se observará para este primer cálculo se dejará como 'grados de libertad' los valores de alpha, gamma y betha, así como los valores de arranque, de manera que el "el algoritmo de HltWinters de R" determine la "mejor combinaión posible"
+Recordar también que para la presente serie se está asumiendo un efecto multiplicativo de los factores estacionales 
+
 
 ```{r}
 Demanda_electrico_ts_hw1 <-HoltWinters(Demanda_electrico_ts, seasonal = 'multiplicative')
@@ -420,7 +505,7 @@ Demanda_electrico_ts_hw1
 
 
 
-#### Interpretación de los valores de los coeficientes del método de Holt Winters  
+#### Interpretación de los valores de los coeficientes del método de Holt Winters para el caso de la serie de demanda de gas natural en el sector eléctrico en México
 
 Interpretación de los valores de coficientes $\alpha$, $\beta$ y $\gamma$ para el caso del pronóstico usando modelo de HoltWinters SIN ESPECIFICAR DATOS DE ARRANQUE    
 
@@ -441,29 +526,27 @@ Lo que indica que "La data historica NO tiene mayor relevancia vs el componente 
 $$0<\beta<1$$
 Recordemos que: 
 Valores de $\beta$ cercano a 1 reflejan cambios CONSTANTES de nivel a lo largo de la serie 
-Valores de $\beta$ cercano a 0 reflejan POCOS cambios denivel a lo largo de la serie  
+Valores de $\beta$ cercano a 0 reflejan POCOS cambios de nivel a lo largo de la serie  
 
 
 En nuestro caso el valor de $\beta$ es:
 ```{r}
 Demanda_electrico_ts_hw1$beta
 ```
-Lo que indica pocos cambios de nivel a lo largo de la serie o una especie de "pendiente constante"
+Lo que indica muy pocos cambios de nivel a lo largo de la serie o una especie de "pendiente constante"
 
 
 Y entonces para el caso de valores de $\alpha$ cercanos a 1 y de $\beta$ cercanos a cero (como es nuestra serie de demanda_electrico) indica una serie con TENDENCIA ESTABLE y con CAMBIOS DE NIVEL MUY BAJOS
 
-Afortunadamente no obtuvimos simultaneamente valores de$\alpha$ cercanos a 1 y de $\beta$ cercanos a 1 pues eso reflejaría una CAMINATA ALEATORIA con tendencia estocástica. 
+Afortunadamente no obtuvimos simultaneamente valores de$\alpha$ cercanos a 1 y de $\beta$ cercanos a 1 pues eso reflejaría una CAMINATA ALEATORIA con tendencia estocástica que sería prácticamente imposible de pronósticar. 
 
 
 
 
 $$0<\gamma<1$$
 Recordemos que: 
-Valores de $\gamma$ cercano a 1 reflejan cambios CONSTANTES de nivel a lo largo de la serie 
-Valores de $\gamma$ cercano a 0 reflejan POCOS cambios denivel a lo largo de la serie  
-
-
+Valores de $\gamma$ cercano a 1 reflejan cambios CONSTANTES de los factores de estacionalidad a lo largo de la serie 
+Valores de $\gamma$ cercano a 0 reflejan POCOS cambios en los factores de estacionalidad a lo largo de la serie  
 
 
 En nuestro caso el valor de $\gamma$ es:
@@ -473,6 +556,8 @@ Demanda_electrico_ts_hw1$gamma
 Lo que indica que cada dato nuevo en la serie cambia el valor del factor de estacionalidad 
 
 
+
+### Pronóstic de la serie de demanda de gas en el sector eléctrico con el método de Holt Winters 
 
 Ahora pasemos a realizar los pronósticos de la serie pero con el método de HoltWinters que considera cambios dinámicos de nivel 
 
@@ -506,16 +591,17 @@ plot(Demanda_electrico_ts_hw1_fc, main="Forecast de Demanda_electrico usando el 
 ```
 
 
+Veamos el valor la Suma de Errores al Cuadrado del pronóstico de la demanda de gas natural en el sector eléctrico usando el Método de suaviazamiento dinámico de HoltWinters
 ```{r}
 Demanda_electrico_ts_hw1$SSE
 ```
 
-Calculemos el error entre los valores pronosticados con el "método de Holt Winters" y los valores reales de la serie 
+Calculemos el error tipo MAPE entre los valores pronosticados con el "método de Holt Winters" y los valores reales de la serie 
 
 ```{r}
 
 
-## Despues formemos un vector con únicamente los valores pronósticados 
+## Formemos un vector con únicamente los valores pronósticados 
 Demanda_electrico_HW_forecast12 <- Demanda_electrico_ts_hw1_fc$mean
 Demanda_electrico_HW_forecast12
 
@@ -539,11 +625,10 @@ cat("MAPE error para el forecast calculado con el método de 'HoltWinters'es:", 
 ```
 
 
-#### Comparación del MAPE del pronostico hecho con métodos estáticos vs el pronóstico hecho con el método " de suavizamiento dinámico" de HoltWinters
+### Comparación del MAPE del pronostico hecho con métodos estáticos vs el pronóstico hecho con el método " de suavizamiento dinámico" de HoltWinters para el pronostico puntual
 
 
-En este caso y dado un cálculo con el métodO de HOLTWinters sin valores de arranque especificados
-los errores de ambos métodos fueron los sigientes: 
+En este caso y dado un cálculo con el métodO de HOLTWinters sin valores de arranque especificados los errores de ambos métodos (estático vs HoltWinters) fueron los sigientes: 
 
 
 ```{r}
@@ -553,8 +638,35 @@ cat("MAPE error para el forecast calculado con el método de 'suavizamiento est�
 cat("MAPE error para el forecast calculado con el método de 'HoltWinters'es:", MAPE_electrico_HW, "%")
 ```
 
-Lo que indica que el método de suavizamiento estático resultó mejor en nuestro caso para el forecast de la demanda de gas natural en el sector eléctrico en México. 
+Lo que indica que el método de suavizamiento estático resultó mejor en nuestro caso para el PRONOSTICO PUNTUAL de la demanda de gas natural en el sector eléctrico en México. 
 
+
+### Comparación de los intervalos del pronostico hecho con métodos estáticos vs el pronóstico hecho con el método " de suavizamiento dinámico" de HoltWinters 
+
+Como se sabe, la parte "más sustancial" o esencial de los pronósticos es el intervalo y no el pronóstico puntual, por lo que en nuestro caso se considerará en general como "un mejor mpetodo de pronóstico" no aquel que otorge el menor error tipo MAPE en las estimaciones puntuales, sino aquel cuyos intervalos de confianza al 95% sean menores incluso para valores pronósticados relativamente lejanos del último valor real. 
+
+
+
+Intervalos calculados con el método de suavizamiento estático
+```{r}
+LI_demanda_electrico_ajustado[202:213]
+
+LS_demanda_electrico_ajustado[202:213]
+
+intervalos_metodo_E<- data.frame(LI_demanda_electrico_ajustado =LI_demanda_electrico_ajustado[202:213], LS_demanda_electrico_ajustado= LS_demanda_electrico_ajustado[202:213])
+
+intervalos_metodo_E
+
+```
+
+
+
+Intervalos calculados con el método de suavizamiento dinámico Holt-Witers
+```{r}
+Demanda_electrico_ts_hw1_fc
+```
+
+Se observa claramente como el método de HoltWinters otorga mejores intervalos de confianza para pronósticos incluso para aquellos 'más alejados' del último valor real. 
 
 
 
