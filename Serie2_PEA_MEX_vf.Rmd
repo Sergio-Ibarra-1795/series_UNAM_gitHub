@@ -39,18 +39,31 @@ dim(PEA_mex)
 ```
 
 
-Graficamos la "data original" de PEA en México de los últimos años (2005 al 2021)  
+Graficamos la "data original" de PEA en México de los últimos años (Enero 2005 a Oct 2021)  
 
 ```{r}
 
-plot(PEA_mex$PEA,type="l")
+plot(PEA_mex$Date, PEA_mex$PEA,type="l", main="Data 'original' de Población Económicamente Activa (PEA) en México")
 ```
 
 
+## A. Método de "suavizamiento estático"
 
-### Primero se calculará la linea "general" de tendencia de nuestra serie de PEA (que representa la tendencia de la "serie de datos originales") 
+Comenzaremos tratando la serie con el método estático aplicando el siguiente flujo lógico de trabajo y considerando que estamos ene el caso de serie CON TENDECIA y SIN ESTACIONALIDAD: 
+
+1. Se removerá el factor de tendencia a la serie original obteniendo una serie sin tendencia, que en este caso será lo mismo que el "ruido blanco"
+2. Será sobre el "ruido blanco" que se llevará a cabo el "pronóstico puntual" de los siguientes 6 trimestre como la media historica de dicho componente estocástico 
+3. Se calcularán los intervalos de pronóstico al 95% de confianza 
+4. Se "devolverán" los efectos de tendencia de la serie con el fin de llevar los pronósticos a las dimensiones correctas
+5. Se calculará el error tipo MAPE entre los valores pronósticados con el "método estático" y los valores reales de la serie de los últimos 6 trimestres
 
 
+### A.1 Remoción de tendencia de serie original  
+
+Primero se calculará la linea "general" de tendencia de nuestra serie de (que representa la tendencia de la "serie de datos originales") y se removerá dicha tendencia de la 'data original' de PEA_mex
+
+
+Calculemos la linea de tendencia 
 ```{r}
 
 linea_PEA<-lm(PEA~Date, data=PEA_mex)
@@ -58,41 +71,42 @@ linea_PEA
 ```
 
 
-### Graficamos la "serie original" de nacimientos vs el filtro 
 
-Para eso primero debemos crear nuestra linea de tendencia con base en la linea_PEA calculada a partir de la data 
+Para graficar la "serie original" de PEA_MEX vs el filtro1 (Linea de tendencia) primero debemos "crear/simular" datos de Enero 2005 a Oct 2021 a partir de nuestra linea de previamente computada de nombre: linea_PEA
+
+
 ```{r}
-linea_PEA_aplicada <- predict(linea_PEA, newdata = data.frame(Date = PAE_mex$Date))
+linea_PEA_aplicada <- predict(linea_PEA, newdata = data.frame(Date = PEA_mex$Date))
 
-linea_PEA_aplicada
+head(linea_PEA_aplicada)
+tail(linea_PEA_aplicada)
 
 ```
-
 
 
 Graficamos entonces a la "data original de PAE_MX" y a la data calculada a partir de la linea tendencia
 
+
 ```{r}
-plot(PEA_mex$PEA, type="l", main=" 'data original de PAE_MX' vs calculada a partir de la linea tendencia")
-lines(linea_PEA_aplicada, col = "red")
+plot(PEA_mex$Date, PEA_mex$PEA, type="l", main=" 'data original de PAE_MX' y linea de tendencia calculada")
+lines(x = PEA_mex$Date, y = linea_PEA_aplicada, col = "red")
 ```
 
 
-
-### Ahora vamos a "quitar el efecto de la tendencia" de nuestra "serie original de datos"
-### En este caso se asumirá un "efecto multiplicativo" y por lo tanto se removerá dividiendo cada elemento de la serie original / valor de la linea de tendnecia en ese valor de x
+Ahora vamos a "quitar el efecto de la tendencia" de nuestra "serie original de datos"
+En este caso se asumirá un "efecto multiplicativo" y por lo tanto se removerá dividiendo cada elemento de la serie original / valor de la linea de tendnecia en ese valor de x
 
 Se grafica la serie sin tendencia:
 
 ```{r}
-PEA_Sin_Tendencia<-PAE_mex$PEA/linea_PEA_aplicada
+PEA_Sin_Tendencia<-PEA_mex$PEA/linea_PEA_aplicada
 
-plot(PEA_Sin_Tendencia, type="l", main=" data sin tendencia de PAE_MX ")
+plot(PEA_mex$Date, PEA_Sin_Tendencia, type="l", main=" Data sin tendencia de PAE_MX ")
 ```
 
+### A.2 Tratamiendo del ruido blanco en la serie y pronostico puntual  
 
-
-### Una vez teniendo la serie sin tendencia, podemos aplicar como nuestro "mejor filtro" o estimado de la serie que es la media historica de los datos que se considerarán como "de entrenamiento"
+Una vez teniendo la serie sin tendencia, podemos aplicar como nuestro "mejor filtro" o estimado de la serie que es la media historica de los datos que se considerarán como "de entrenamiento"
 
 
 Calculamos la media de nuestra serie sin tendecia que será nuestra estimación puntual para esta serie 
@@ -101,6 +115,24 @@ media_PEA_ST<-mean(PEA_Sin_Tendencia)
 media_PEA_ST
 
 ```
+
+
+Una vez teniendo la serie sin tendencia  podemos determinar el componente de "ruido blanco" de la serie 
+```{r}
+
+Demanda_electrico_ruido<-Demanda_electrico_Sin_Tendencia/c(FE1_electrico, FE2_electrico, FE3_electrico, FE4_electrico)
+
+head(Demanda_electrico_ruido)
+
+
+plot(Demanda_electrico$Date, Demanda_electrico_ruido, type="l", 
+     main="Componente de ruido blanco o estocástico de la demanda de gas en sector eléctrico",
+     cex.main=0.9)
+
+```
+
+
+
 
 Se determinan los errores estimados como Errores = Serie original - tendecia - media 
 Se calcula también la desviación estandar de esos errores 

@@ -11,10 +11,13 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Serie de tiempo CON tendencia y CON estacionalidad (Historico mensual de Demanda de Gas Natural para el sector eléctrico en México)
+# Serie de tiempo 3 CON tendencia y CON estacionalidad (Historico mensual de Demanda de Gas Natural para el sector eléctrico en México)
 
-Tenemos data mensual de Enero de 2005 a Agosto de 2022 sobre la demanda de gas natural para el sector eléctrico en México, son 213 datos. 
+Tenemos data mensual de Enero de 2005 a Agosto de 2022 sobre la demanda de gas natural para el sector eléctrico en México, son 213 datos en total. 
 La idea es usar 201 de esos 2013 para "aplicar los modelos" A) De suavizamiento "estático" y B) De "suavizamiento dinámico" o Holt-Winters para posteriormente predecir con cada modelo los valores de los 12 meses restantes y poder comparar contra los reales para detectar el mejor modelo entre los dos mencionados para modelar la demanda de gas natural en sector eléctrico. 
+
+
+
 
 
 Primero vamos a importar la data con los elementos del 1 al 201 
@@ -25,6 +28,8 @@ install.packages("readxl")
 library("readxl")
 ```
 
+
+Data obtenida de la página oficial de la Secretaria de Energía: https://sie.energia.gob.mx/bdiController.do
 
 ```{r}
 
@@ -49,7 +54,8 @@ plot(Demanda_electrico$Date, Demanda_electrico$Demanded_Gas, type = "l", main="D
 
 ## A. Método de "suavizamiento estático"
 
-Comenzaremos tratando la serie con el método estático aplicando el siguiente flujo lógico de trabajo: 
+Comenzaremos tratando la serie con el método estático aplicando el siguiente flujo lógico de trabajo y considerando que estamos ene el caso de serie CON TENDECIA y CON ESTACIONALIDAD: 
+
 1. Se removerá el factor de tendencia a la serie original obteniendo una serie sin tendencia
 2. A la serie sin tendencia se le removerán los Factores de Estacionalidad obtendiendo únicamente el componente de ruido blanco o componente estocástico de la serie
 3. Será sobre el "ruido blanco" que se llevará a cabo el "pronóstico puntual" de los siguientes 12 meses como la media historica de dicho componente estocástico 
@@ -404,7 +410,7 @@ Entonces para finalmente "devolver el efecto de la tendnecia a los datos de LS_d
 
 
 
-Demanda_electrico_pronostico_ajustado<-Demanda_electrico_cest*Electrico_Demanded_gas_line_aplicada2
+Demanda_electrico_pronostico_ajustado<-Demanda_electrico_pronostico_cest*Electrico_Demanded_gas_line_aplicada2
 
 LI_demanda_electrico_ajustado<-LI_demanda_electrico_cest*Electrico_Demanded_gas_line_aplicada2
 LS_demanda_electrico_ajustado<-LS_demanda_electrico_cest*Electrico_Demanded_gas_line_aplicada2
