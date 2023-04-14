@@ -284,7 +284,7 @@ Una vez teniendo nuestra seríe SIN TENDENCIA y SIN ESTACIONALIDAD lo que como y
 Como ha sido estudiado en la clase, nuestro mejor pronóstico puntual dadas estas condiciones en la serie es la media de los datos históricos del ruido blanco
 
 
-Para ello importamos el Data Frame con la data historica completa, es decir, la que contiene los 201 meses propuestos aquí como "train data" + los 12 meses que se pronósticaron
+Para ello importamos el Data Frame con la data historica completa, es decir, la que contiene los 201 meses propuestos aquí como "train data" + los 12 meses que se pronósticaran
 
 ```{r}
 
@@ -339,7 +339,7 @@ tail(LS_demanda_electrico_lineaA)
 ```{r}
 
 
-plot(Demanda_electrico_completa$Date,Demanda_electrico_pronostico, type="l", main = "Pronostico puntual e intervalos de confianza sin tendencia para Demanda gas natural en sector eléctrico MEX con el método de 'suavizamiento estático' ", cex.main=0.65, ylim=c(0.2,1.7))
+plot(Demanda_electrico_completa$Date,Demanda_electrico_pronostico, type="l", main = "Pronostico puntual e intervalos de confianza sin tendencia para Demanda gas natural en sector eléctrico MEX con el método de 'suavizamiento estático' ", cex.main=0.6, ylim=c(0.2,1.7))
 
 
 #lines(Demanda_electrico_pronostico, col="Red")
@@ -350,7 +350,7 @@ lines(Demanda_electrico_completa$Date, LS_demanda_electrico_lineaA, col="Purple"
 
 ### A.5 "Devolución de efectos de tendencia y estacionalidad a los pronósticos e intervalos calculados"
 
-Ahora vamos a "llevar nuestro pornóstico a las dimensiones reales"
+Ahora vamos a "llevar nuestro prOnóstico a las dimensiones reales"
 Para ello primero vamos a "devolver la esacionalidad y la tendencia a la serie" de nombre  demanda_electrico_filtro_sinTendencia_NiEstacionalidad 
 
 Empezemos como "devolver estacionalidad" y para ello recordamos que los valores de FE de la seria se calcularon asumiendo efecto multiplicativo y por lo tanto para "devolver ese efecto" se debe multiplicar los valores de Demanda_electrico_pronostico (que contiene los valores historicos de la seria con unicamente el componente ruido  + 12 meses pronósticados)* los valores de los Factores Estacionales de la serie 
@@ -398,7 +398,7 @@ tail(LS_demanda_electrico_cest)
 # Plot with confidence intervals
 plot(Demanda_electrico_pronostico_cest, 
      type="l", main="Demanda electrico pronostico (con método estático) ajustada con componente de estacionalidad + intervalos", 
-     cex.main=0.85, ylim=c(0.4,1.8))
+     cex.main=0.75, ylim=c(0.4,1.8))
 lines(LI_demanda_electrico_cest, col="violet")
 lines(LS_demanda_electrico_cest, col="violet")
 
@@ -457,7 +457,7 @@ lines(Demanda_electrico_completa$Date, LS_demanda_electrico_ajustado, col="viole
 lines(Demanda_electrico_completa$Date, Demanda_electrico_completa$Demanded_Gas, col="black")
 
 
-legend("bottomright", legend = c("Demanda electrico original", "Pron´sstico calculado con método estático"), 
+legend("bottomright", legend = c("Demanda electrico original", "Pronóstico calculado con método estático"), 
        col = c("black", "blue"), lty = 1)
 
 ```
@@ -482,8 +482,8 @@ tail(df_demanda_electrico_pronostico)
 ```
 
 
-Se observa que los pronósticos puntuales vs los reales parecen no estar muy alejados unos de otros, sin embargo los intervalos de confianza si "sufren bastante a medida que nos alejamos del último valor real" pues son cada vez más grandes hasta llegar a abarcar un rango de [1000,6000] para el 95% de intervalo de confianza en el 12vo mes pronósticado. 
-En general, con lo observado en este ejemplo y lo visto en clase se puede mencionar que: "Los métodos de suavizamiento estático son relativamente buenos para generar pronóstcos puntuales, pero los intervalos de confianza del pronóstico se ven severamente castigados mientras datos n 'en el t+n' quieran ser pronósticados"
+Se observa que los pronósticos puntuales vs los reales parecen no estar muy alejados unos de otros, sin embargo los intervalos de confianza si "sufren bastante a medida que nos alejamos del último valor real" pues son cada vez más grandes hasta llegar a abarcar un rango de [1000,6000] para el 95% de intervalo de confianza en el 12vo mes pronósticado. Lo que representaría que: nuestro intervalo de confianza al 95% para nuestros valores más alejados es del orden de caso el rango total de nuestra variable y.
+En general, con lo observado en este ejemplo y lo visto en clase se puede mencionar que: "Los métodos de suavizamiento estático son relativamente buenos para generar pronóstcos puntuales, pero los intervalos de confianza del pronóstico se ven severamente castigados mientras datos n 'en el tiempo t+n' quieran ser pronósticados"
 
 
 
@@ -510,7 +510,7 @@ APE_electrico_estatico <- abs((Demanda_electrico_completa_reales12 - Demanda_ele
 MAPE_electrico_estatico <- mean(APE_electrico_estatico) * 100
 
 # Print the MAPE value
-cat("El MAPE error para el forecast calculado con el método de 'suavizamiento estático'de la serie de demanda de gas natural en el sector eléctrico es:", MAPE_electrico_estatico, "%")
+cat("El error tipo MAPE  para el forecast calculado con el método de 'suavizamiento estático'de la serie de demanda de gas natural en el sector eléctrico es:", MAPE_electrico_estatico, "%")
 
 
 ```

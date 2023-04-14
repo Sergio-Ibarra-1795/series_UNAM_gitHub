@@ -265,7 +265,7 @@ lines(LS_PEA, col="Purple")
 
 
 
-### "Devolución de efectos de tendencia y estacionalidad a los pronósticos e intervalos calculados"
+### A.4 "Devolución de efectos de tendencia y estacionalidad a los pronósticos e intervalos calculados"
 
 
 Ahora vamos a "llevar nuestro pornóstico a las dimensiones reales"
@@ -324,18 +324,21 @@ Entonces para finalmente "devolver el efecto de la tendnecia a los datos de medi
 
 ##Creando el vector original + los valores a predecir como NAs
 PEA_original_para_pron<-c(PEA_mex$PEA, rep(NA, times=6))
-PEA_original_para_pron
-dim(PEA_original_para_pron)
+head(PEA_original_para_pron)
 
 
-Est_punt_PEA<-c(rep(NA, times=66), media_PEA_ST*linea_PEA_extended_aplicada[67:72])
-Est_punt_PEA
+
+Est_punt_PEA_ajustada<-c(rep(NA, times=66), mean(PEA_pronostico_puntual)*linea_PEA_extended_aplicada[67:72])
+head(Est_punt_PEA_ajustada)
+tail(Est_punt_PEA_ajustada)
 
 # plot the original data and the predicted values together
-plot(extended_dates, PEA_original_para_pron, main="Estimación de 6 valores de la Población eocnomicamente activa",type="l", xlab="Year", ylab="PEA")
-lines(extended_dates, Est_punt_PEA, col="blue")
+plot(extended_dates, PEA_original_para_pron, main="PEA pronóstico (con método estático) ajustado con componente de estacionalidad",type="l", xlab="Year", ylab="PEA", cex.main=0.8)
+lines(extended_dates, Est_punt_PEA_ajustada, col="blue")
 
 
+legend("bottomright", legend = c("PEA historico", "Pronóstico calculado con método estático"), 
+       col = c("black", "blue"), lty = 1)
 
 
 ```
@@ -362,15 +365,17 @@ dim(PEA_original_para_pron)
 
 
 # plot the original data and the predicted values together
-plot(extended_dates,PEA_original_para_pron, main="Estimación de 6 valores de la Población eocnomicamente activa con intervalos de confianza al 95%", type="l", xlab="Year", ylab="PEA", ylim=c(40000000, 65000000))
+plot(extended_dates,PEA_MEX_completa$PEA, main="PEA pronostico (con método estático) ajustada con componente de trend + intervalos vs PEA real", type="l", xlab="Year", ylab="PEA", ylim=c(40000000, 65000000), cex.main=0.7)
 
-lines(extended_dates, Est_punt_PEA, col="blue")
+lines(extended_dates, Est_punt_PEA_ajustada, col="blue")
 x_vals <- c(rep(NA, times = 66), extended_dates[67:72])
 
 lines(x_vals, LI_PEA_ajustado, col = "purple")
 lines(x_vals, LS_PEA_ajustado, col = "purple")
 
 
+legend("bottomright", legend = c("PEA original", "Pronóstico calculado con método estático"), 
+       col = c("black", "blue"), lty = 1)
 
 
 ```
@@ -379,32 +384,83 @@ lines(x_vals, LS_PEA_ajustado, col = "purple")
 Visualizamos el Data.Frame con los valores históricos la "data original" + los resultados del pronóstico puntual y los intervalos de confianza al 95% 
 
 ```{r}
-df_demanda_PEA_MX_pronostico<-data.frame(PEA_original_para_pron,
-                                                Est_punt_PEA, LI_PEA_ajustado, LS_PEA_ajustado)
+df_demanda_PEA_MX_pronostico<-data.frame(PEA_MEX_completa$PEA,
+                                                Est_punt_PEA_ajustada, LI_PEA_ajustado, LS_PEA_ajustado)
 View(df_demanda_PEA_MX_pronostico)
+
+tail(df_demanda_PEA_MX_pronostico)
+```
+
+
+Se observa que los pronósticos puntuales vs los reales parecen no estar muy alejados unos de otros, sin embargo los intervalos de confianza si "sufren a medida que nos alejamos del último valor real" pues son cada vez más grandes hasta llegar a abarcar un rango de [50,000000 a 65,000000] para el 95% de intervalo de confianza en el 6t0 valor pronósticado. Lo que representa alrededor del 25% del rango de nuestra variable y.
+
+
+### A.5 Calculo del error tipo MAPE para los pronósticos hechos con los modelos estáticos de suavizamiento
+
+Calculemos el error tipo MAPE entre los valores pronosticados con el "método de suavizamiento estático" y los valores reales de la serie 
+
+Para ello importamos el Data Frame con la data historica completa, es decir, la que contiene los 66 trimestres propuestos aquí como "train data" + los 6 trimestres que se pronósticaran
+
+```{r}
+install.packages("readxl")
+
+library("readxl")
+
+PEA_MEX_completa <-read_excel("PEA_MEX_full.xlsx")
+head(PEA_MEX_completa)
+tail(PEA_MEX_completa)
 ```
 
 
 
+```{r}
+
+##Primero formemos un vector con los valores reales 
+PEA_MEX_completa_reales6 <- PEA_MEX_completa$PEA[67:72]
+PEA_MEX_completa_reales6
+
+## Despues formemos un vector con únicamente los valores pronósticados 
+PEA_MEX_forecast6 <- Est_punt_PEA_ajustada[67:72]
+PEA_MEX_forecast6
+
+##Calculemos el MAPE entre estos dos vectores 
+
+# First, calculate the absolute percentage error (APE) for each element in the vectors
+APE_PEA_estatico <- abs((PEA_MEX_completa_reales6 - PEA_MEX_forecast6) / PEA_MEX_completa_reales6)
+
+# Calculate the mean APE across all elements in the vectors
+MAPE_PEA_estatico <- mean(APE_PEA_estatico) * 100
+
+# Print the MAPE value
+cat("El error tipo MAPE  para el forecast calculado con el método de 'suavizamiento estático'de la serie de PEA en MEX es:", MAPE_PEA_estatico, "%")
 
 
-## B Método de Holt como "modelo de suaviazamiento y pronóstico NO ESTÁTICO" que si considera los cambios de nivel a tráves del tiempo. 
+```
+
+
+
+## B. Método de Holt como "modelo de suaviazamiento y pronóstico NO ESTÁTICO" que si considera los cambios de nivel a tráves del tiempo. 
+
+Vamos a usar ahora el método de HoltWinters como "modelo de suaviazamiento y pronóstico NO ESTÁTICO" que si considera los cambios de nivel a tráves del tiempo. 
+
 
 Para ello debemos tener nuestra data a suavizar en el tipo de dato serie de tiempo ts en R 
 
 ```{r}
 PEA_MEX_ts <-ts(PEA_mex$PEA, frequency =4, start =c(2005,1))
-PEA_MEX_ts
+head(PEA_MEX_ts)
+tail(PEA_MEX_ts)
 ```
 
-Graficamos la "data original de la demanda_electrico" que se usará como "train para el modelo" y que fue convertida a tipo de dato serie de tiempo 
+Graficamos la "data original de la PEA_MEX" que se usará como "train para el modelo" y que fue convertida a tipo de dato serie de tiempo 
 
 ```{r}
-plot(PEA_MEX_ts, main="PAE MEX train data in time series data type")
+plot(PEA_MEX_ts, main="PAE MEX train data en tipo time series (Valores de Enero de 2005 a Agosto de 2021)", cex.main=0.8)
 ```
 
 
-### Se procede a "aplicar el método de Holt Winters" a la serie CON TENDENCIA Y ESTACIONALIDAD
+### Aplicación del método de Holt Winters" a la serie CON TENDENCIA y SIN ESTACIONALIDAD de PEA MEX
+
 Como se observará este primer cálculo dejará como grados de libertad los valores de alpha, gamma y betha, así como los valores de arranque, de manera que el "el algoritmo de HltWinters de R" determine la "mejor combinaión posible".
 Como en este caso no tenemos componente de seasonalidad se indica que el parámetro gamma tendrá un valor "false"
 
