@@ -266,6 +266,13 @@ var(demanda_electrico_errores)
 sd_est_demanda_electrico
 ```
 
+Se calcula la SSE de la demanda_electrico para el caso del método de suavizamiento estático 
+```{r}
+SSE_demanda_electrico_E <- sum(demanda_electrico_errores^2)
+SSE_demanda_electrico_E
+```
+
+
 Se tiene una desviación estandar de 0.1 y una  media muy cercana a cero para los errores lo cual es totalmente concordante con le hecho de que tras haber removido los componentes de tendencia y estacionalidad "el ruido blanco" o componente estocástico resultante tiende a tener una distribuión normal y que si a ese ruido blanco se le extrae su media tambien tiende a tener una distribución normal con media cero y en este caso una desviación estandar de 0.1 
 
 
@@ -670,6 +677,32 @@ cat("MAPE error para el forecast calculado con el método de 'HoltWinters'es:", 
 ```
 
 
+
+
+### Error cuadrado calculado con el Método de HoltWinters vs el calculado con el método de suafizamiento estático 
+
+
+
+```{r}
+Demanda_electrico_ts_hw1$SSE
+```
+
+Entonces el error asociado al pronóstico del cálculo de pronóstico PUNTUAL para el caso Demanda_eléctirco es:  
+```{r}
+sse_Demanda_electrico_hw <- ((Demanda_electrico_ts_hw1$SSE)/(length(Demanda_electrico_ts)))^0.5
+sse_Demanda_electrico_hw
+```
+
+
+Recordar que la SSE de la demanda_electrico para el caso del método de suavizamiento estático era:
+```{r}
+SSE_demanda_electrico_E <- sum(demanda_electrico_errores^2)
+SSE_demanda_electrico_E
+```
+
+Lo que indica que el método de suavizamiento estático resultó bastante mejor en nuestro caso para el PRONOSTICO PUNTUAL de la demanda de gas natural en el sector eléctrico en México vs el método de HoltWinters
+
+
 ### Comparación del MAPE del pronostico hecho con métodos estáticos vs el pronóstico hecho con el método " de suavizamiento dinámico" de HoltWinters para el pronostico puntual
 
 
@@ -683,7 +716,7 @@ cat("MAPE error para el forecast calculado con el método de 'suavizamiento est�
 cat("MAPE error para el forecast calculado con el método de 'HoltWinters'es:", MAPE_electrico_HW, "%")
 ```
 
-Lo que indica que el método de suavizamiento estático resultó mejor en nuestro caso para el PRONOSTICO PUNTUAL de la demanda de gas natural en el sector eléctrico en México. 
+Lo que de nuevo indica que el método de suavizamiento estático resultó mejor en nuestro caso para el PRONOSTICO PUNTUAL de la demanda de gas natural en el sector eléctrico en México. 
 
 
 ### Comparación de los intervalos del pronostico hecho con métodos estáticos vs el pronóstico hecho con el método " de suavizamiento dinámico" de HoltWinters 
@@ -712,6 +745,8 @@ Demanda_electrico_ts_hw1_fc
 ```
 
 Se observa claramente como el método de HoltWinters otorga mejores intervalos de confianza para pronósticos incluso para aquellos 'más alejados' del último valor real vs aquellos generados con el "método de suavizamiento estático"  
+
+
 
 
 
