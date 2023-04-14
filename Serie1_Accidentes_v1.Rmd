@@ -56,91 +56,45 @@ Comenzaremos tratando la serie con el método estático aplicando el siguiente f
 3. Se calculará el error tipo MAPE entre los valores pronósticados con el "método estático" y los valores reales de la serie de los últimos 6 trimestres
 
 
-### A.1 Remoción de tendencia de serie original  
-
-Primero se calculará la linea "general" de tendencia de nuestra serie de (que representa la tendencia de la "serie de datos originales") y se removerá dicha tendencia de la 'data original' de PEA_mex
-
-
-Calculemos la linea de tendencia 
-```{r}
-
-linea_PEA<-lm(PEA~Date, data=PEA_mex)
-linea_PEA
-```
-
-
-
-Para graficar la "serie original" de PEA_MEX vs el filtro1 (Linea de tendencia) primero debemos "crear/simular" datos de Enero 2005 a Oct 2021 a partir de nuestra linea de previamente computada de nombre: linea_PEA
-
-
-```{r}
-linea_PEA_aplicada <- predict(linea_PEA, newdata = data.frame(Date = PEA_mex$Date))
-
-head(linea_PEA_aplicada)
-tail(linea_PEA_aplicada)
-
-```
-
-
-Graficamos entonces a la "data original de PAE_MX" y a la data calculada a partir de la linea tendencia
-
-
-```{r}
-plot(PEA_mex$Date, PEA_mex$PEA, type="l", main=" 'data original de PAE_MX' y linea de tendencia calculada")
-lines(x = PEA_mex$Date, y = linea_PEA_aplicada, col = "red")
-```
-
-
-Ahora vamos a "quitar el efecto de la tendencia" de nuestra "serie original de datos"
-En este caso se asumirá un "efecto multiplicativo" y por lo tanto se removerá dividiendo cada elemento de la serie original / valor de la linea de tendnecia en ese valor de x
-
-Se grafica la serie sin tendencia:
-
-```{r}
-PEA_Sin_Tendencia<-PEA_mex$PEA/linea_PEA_aplicada
-
-plot(PEA_mex$Date, PEA_Sin_Tendencia, type="l", main=" Data sin tendencia de PAE_MX ", col="brown")
-```
-
-### A.2 Tratamiendo del ruido blanco en la serie y pronostico puntual  
+### A.1 Tratamiendo del ruido blanco en la serie y pronostico puntual  
 
 Considerese el siguiente razonamiento acerca de las series del tiempo: 
 Serie total = Componente de tendencia + Componente de estacionalidad + Componente estocástico 
 
-En este caso el Componente de estacionalidad = 0, por lo tanto tendríamos 
+En este caso el Componente de estacionalidad = 0 y el  Componente de tendencia = 0, por lo tanto tendríamos 
 
-Serie total PAEA MEX = Componente de tendencia + Componente estocástico, por lo tanto al haber previamente removido el componente estocástico de la serie lo que hemos hehco en realidad es obtener el componente estocástico o ruido blanco para este caso 
+Serie total Accidentes MEX = Componente estocástico
 
-Por simplicidad para cálculos posteriores, nombremos de esa manera a la variable 
+
+ 
 ```{r}
-PEA_MX_ruido_blanco <- PEA_Sin_Tendencia
-head(PEA_MX_ruido_blanco)
-tail(PEA_MX_ruido_blanco)
+Accidentes_transito_ruido_blanco <- mean(Accidentes_transito_MEX$Num)
+Accidentes_transito_ruido_blanco
 ```
 
 
 Una vez teniendo únicamente el componente estocástico de nuestra serie, es posible "extraer los errores" de la serie y conocer así el error estimado (varianza)  y la desviación estandar. 
 La idea es que extrayendo de la serie del ruido blanco su media histórica estaríamos determinando la varianza, de la siguiente manera:
 
-Varianza (errores al cuadrado) = Serie original - tendecia - media de componete estocástico. En nuestro caso, dichos errores será nuestra serie sin tendencia - mean(PEA_MX_ruido_blanco).  Nosotros hemos ya calculado el resultado de Serie original - tendecia y lo hemos llamada justamente ruido blanco y lo lo tanto el calculo del error podría resumirse a  
+Varianza (errores al cuadrado) = Serie original - media de componete estocástico. 
 
-Errores= Componente estocástico o ruido blanco - Media del componente estocástico o ruido blanco
 
+Errores= Valores originales de la serie - Media del componente estocástico o ruido blanco
 
 
 Se determinan la varianza (errores al cuadrado) de la serie de PEA_MEX y se calcula también la desviación estandar de esos errores 
 
 ```{r}
-Error_est_PEA<-PEA_MX_ruido_blanco-mean(PEA_MX_ruido_blanco)
-head(Error_est_PEA)
-tail(Error_est_PEA)
+Error_est_accidentes<-Accidentes_transito_MEX$Num-Accidentes_transito_ruido_blanco
+head(Error_est_accidentes)
+tail(Error_est_accidentes)
 
 ##Claculando la desviaicón estandar del error
 
-sd_est_PEA<-sd(Error_est_PEA)
-sd_est_PEA
+sd_est_accidentes<-sd(Error_est_accidentes)
+sd_est_accidentes
 
-plot(PEA_mex$Date, Error_est_PEA, type="l", main="Errores al cuadrado (varianza) de la aplicaicón del modelo de 'suavizamiento estático' a la serie de PAE MX ", cex.main=0.6)
+plot(Accidentes_transito_MEX$Date, Error_est_accidentes, type="l", main="Errores al cuadrado (varianza) de la aplicaicón del modelo de 'suavizamiento estático' a la serie de Accidentes terrestres MX ", cex.main=0.6)
 
 ```
 
@@ -149,233 +103,102 @@ Se calcula la media de los errores
 ```{r}
 
 
-mean(Error_est_PEA)
+mean(Error_est_accidentes)
 ```
 
 Se calcula la varianza  y desviación estandar de los errores 
 ```{r}
 ## Se calcula la varianza
-var(Error_est_PEA)
+var(Error_est_accidentes)
 
 ## Se calcula la desviación estandar 
-sd_est_PEA
+sd_est_accidentes
 ```
 
-Se tiene una desviación estandar de 0.025 y una  media muy cercana a cero para los errores lo cual es totalmente concordante con le hecho de que tras haber removido el componente de tendencia  "el ruido blanco" o componente estocástico resultante tiende a tener una distribuión normal y que si a ese ruido blanco se le extrae su media tambien tiende a tener una distribución normal con media cero y en este caso una desviación estandar de 0.025
+Se tiene una desviación estandar de 44,547 y una  media muy cercana a cero para los errores lo cual es totalmente concordante con le hecho de que "el ruido blanco" o componente estocástico resultante tiende a tener una distribuión normal y que si a ese ruido blanco se le extrae su media tambien tiende a tener una distribución normal con media cero y en este caso una desviación estandar de 44,547 que representa aproximadamente el 10% de la variable y: Número de accidentes terrestres anuales en México 
 
 
 
 Procedamos a observar como se comporta la Distribución de dichos errores:
 ```{r}
-hist(Error_est_PEA, breaks = 20, col = "lightblue", main = "Frequency Distribution of PEA MEX errors", xlab = "Values", ylab = "Frequency")
+hist(Error_est_accidentes, breaks = 20, col = "lightblue", main = "Frequency Distribution of Accidentes terrestres en Méxcio errors", xlab = "Values", ylab = "Frequency")
 
 ```
-Se observa como los errores de la serie siguen prácticamente todos una distribución normal con media cero y desviación estandar de 0.025, a excepción de los valores atípicos del año 2020 derivados de la pandemia de Covid-19.
-
-
-
-Una vez teniendo la serie sin tendencia, podemos aplicar como nuestro "mejor filtro" o estimado de la serie que es la media historica de los datos que se considerarán como "de entrenamiento"
-
-Calculamos la media de nuestra serie sin tendecia que será nuestra estimación puntual 
-
-```{r}
-estimacion_puntual_PEA_ST<-mean(PEA_Sin_Tendencia)
-estimacion_puntual_PEA_ST
-
-```
-
-
 
 #### Pronóstico puntual
 
-Una vez teniendo nuestra seríe SIN TENDENCIA lo que implicária que "unicamente tenemos el componente estocástico o de ruido blanco en la serie" podemos proceder a llevar a cabo el pronóstico de 6 trimestres en el futuro.
-Como ha sido estudiado en la clase, nuestro mejor pronóstico dadas estas condiciones en la serie es la media del ruido blanco
+Recordemos que para este caso donde no hay componente de tendencia ni estacionalidad y el valor de la serie es directamente el ruido blanco. Entonces, solo por cuestión de concordancia definamos a nuestra "mejor estimaicón puntual" como la media histórica de mi serie 
+
+```{r}
+estimacion_puntual_accidentes <- mean(Accidentes_transito_MEX$Num)
+estimacion_puntual_accidentes
+
+```
 
 
-Vamos a hacer el pronóstico de la serie de PEA MEX para los próximos 6 trimestres
+
+
+Vamos a hacer el pronóstico de la serie de PEA MEX para los próximos 3 años
 
 
 ```{r}
 ##Creamos un eje x que incluya a los 66 datos + 6 que se pronosticarán
-Date_PAE2<-c(1:72)
+Date_accidentes2<-c(1:22)
 
 
 ## Creamos el vector de datos que incluirá los  datos históricos  sin tendencia + 6 valores NA a pronosticar
-PAE_Sin_Tendencia_para_pron<-c(PEA_Sin_Tendencia, rep(NA, times=6))
-head(PAE_Sin_Tendencia_para_pron)
-tail(PAE_Sin_Tendencia_para_pron)
+accidentes_para_pron<-c(Accidentes_transito_MEX$Num, rep(NA, times=3))
 
 
-## Entonces el mejor pronóstico que tenemos para eata técnica es la media de la serie sin tendencia 
+head(accidentes_para_pron)
+tail(accidentes_para_pron)
 
 
-PEA_pronostico_puntual <- rep(estimacion_puntual_PEA_ST, times=72)
-head(PEA_pronostico_puntual)
-tail(PEA_pronostico_puntual)
+## Entonces el mejor pronóstico que tenemos para esta técnica es la media de la serie historica
 
-plot(Date_PAE2,PEA_pronostico_puntual, type="l", main = "Pronóstico de demanda de PEA en MEX para los siguientes 6 trimestres", cex.main=0.8, ylim=c(0.9, 1.1))
+
+Accidentes_pronostico_puntual <- rep(Accidentes_transito_ruido_blanco, times=22)
+head(Accidentes_pronostico_puntual)
+tail(Accidentes_pronostico_puntual)
+
+plot(Date_accidentes2,Accidentes_pronostico_puntual, type="l", main = "Pronóstico de accidentes terrestres en MEX para los siguientes 3 años", cex.main=0.8)
 ```
 
 
 
-Sobre el pronóstico puntual sin tendencia ni estacionalidad, que para el caso de la serie de demanda de gas natural en el sector eléctrico tiene un valor de:
-```{r}
-mean(PEA_MX_ruido_blanco)
-```
-Lo cual es bastante concordante con el hecho que. Al haber "quitado los componentes de tendencia de la serie original", es decir obtenido el ruido blanco de la serie los valores de nuestra variable y: PEA en Mex están en este momento del algoritmo en escala de la unidad: 1. Y por lo tanto la media de dichos valores será muy cercana a 1. 
-
-En general se podría decir dados los resultados del presente trabajo, así como los resultados de los ejercicios vistos en clase, que el valor de la media estimada o pronóstico puntual para la serie sin componente de tendencia tiende al valor de 1. 
-
-
-
-### A.3 Calculo de intervalos de confianza para el pronóstico
+### A.2 Calculo de intervalos de confianza para el pronóstico
 
 Calculamos los límites de intervalos de confianza al 95% pata el pronostico 
 Se considera 95% como +- 2 desviaciones estandar de la media
 
 ```{r}
-tao<-c(1:6)
-Lim_PEA<-2*sd_est_PEA*tao^.5
-Lim_PEA
+tao<-c(1:3)
+Lim_accidentes<-2*sd_est_accidentes*tao^.5
+Lim_accidentes
 ```
 
 
-Calculamos los limites inferior y superiro como NA para los valores historicos y media +- 2 veces desciación estandar para los valores pronósticados 
+Calculamos los limites inferior y superiror como NA para los valores historicos y media +- 2 veces desciación estandar para los valores pronósticados 
 
 Graficamos los valores pronósticadoos t los limites de confianza 
 
 ```{r}
 
-LI_PEA<-c(rep(NA, times=66), estimacion_puntual_PEA_ST-Lim_PEA)
-head(LI_PEA)
-tail(LI_PEA)
-
-LS_PEA<-c(rep(NA, times=66), estimacion_puntual_PEA_ST+Lim_PEA)
-head(LS_PEA)
-tail(LS_PEA)
-
-plot(Date_PAE2, PAE_Sin_Tendencia_para_pron, type="l", ylim = c(0.7,1.3) ,main="Estimación puntual e intervalos de confianza sin tendencia para PAE MEX con el método de 'suavizamiento estático'",col="Blue", cex.main=0.7)
-
-lines(PEA_pronostico_puntual, col="Red")
-lines(LI_PEA, col="Purple")
-lines(LS_PEA, col="Purple")
-```
+LI_accidentes<-c(rep(NA, times=19), Accidentes_pronostico_puntual[1]-Lim_accidentes)
+head(LI_accidentes)
+tail(LI_accidentes)
 
 
-
-### A.4 "Devolución de efectos de tendencia y estacionalidad a los pronósticos e intervalos calculados"
-
-
-Ahora vamos a "llevar nuestro pornóstico a las dimensiones reales"
-Para ello primero vamos a "devolver la tendencia a la serie" de nombre PEA_Sin_Tendencia   
-
-Para eso primero necesitamos "crear un data frame que contenga la información histórica + 6 de pronóstico con un valor NA 
+LS_accidentes<-c(rep(NA, times=19), Accidentes_pronostico_puntual[1]+Lim_accidentes)
+head(LS_accidentes)
+tail(LS_accidentes)
 
 
-```{r}
-# create a new data set with 72 rows
-extended_dates <- seq(as.Date("2005-01-01"), as.Date("2022-10-01"), by = "quarter")
-extended_trimester_PEA <- data.frame(Date = extended_dates, 
-                                       PEA = rep(NA, length(extended_dates)))
+plot(Date_accidentes2, accidentes_para_pron, type="l" ,main="Estimación puntual e intervalos de confianza para Accidentes terrestres MEX con el método de 'suavizamiento estático'",col="Blue", cex.main=0.7)
 
-head(extended_trimester_PEA)
-tail(extended_trimester_PEA)
-
-```
-
-
-
-```{r}
-
-
-# copy the original data to the new data set for the first 66 rows
-for(i in 1:66){
-  extended_trimester_PEA$PEA[i] <- PEA_mex$PEA[i]
-}
-
-extended_trimester_PEA
-
-
-# fit the model with the extended data set
-linea_PEA_extended <- lm(PEA ~ Date, data = extended_trimester_PEA)
-linea_PEA_extended
-
-```
-
-
-
-Posteriormente calculamos los valores historicos + 6  pronosticados a partir de la linea de tendencia que previamente se habia calculado de nombre linea_PEA_extended
-
-```{r}
-# predict values for the extended date range
-linea_PEA_extended_aplicada <- predict(linea_PEA_extended, 
-                                                newdata = data.frame(Date = extended_dates))
-linea_PEA_extended_aplicada
-
-# plot the predicted values
-plot(extended_dates, linea_PEA_extended_aplicada, type = "l")
-```
-
-Entonces para finalmente "devolver el efecto de la tendnecia a los datos de media_nacimientos_ST" se multiplica cada valor de la serie por el valor calculado a partir de la linea de tencia que se llama: linea_PEA_extended_aplicada
-
-```{r}
-
-##Creando el vector original + los valores a predecir como NAs
-PEA_original_para_pron<-c(PEA_mex$PEA, rep(NA, times=6))
-head(PEA_original_para_pron)
-
-
-
-Est_punt_PEA_ajustada<-c(rep(NA, times=66), mean(PEA_pronostico_puntual)*linea_PEA_extended_aplicada[67:72])
-head(Est_punt_PEA_ajustada)
-tail(Est_punt_PEA_ajustada)
-
-# plot the original data and the predicted values together
-plot(extended_dates, PEA_original_para_pron, main="PEA pronóstico (con método estático) ajustado con componente de estacionalidad",type="l", xlab="Year", ylab="PEA", cex.main=0.8)
-lines(extended_dates, Est_punt_PEA_ajustada, col="blue")
-
-
-legend("bottomright", legend = c("PEA historico", "Pronóstico calculado con método estático"), 
-       col = c("black", "blue"), lty = 1)
-
-
-```
-
-
-Calculamos ahora los límites de estimación devolviendo el efecto de tendencia 
-
-```{r}
-
-LI_PEA_ajustado<-c(rep(NA, times=66), LI_PEA[67:72]*linea_PEA_extended_aplicada[67:72])
-LI_PEA_ajustado
-
-LS_PEA_ajustado<-c(rep(NA, times=66), LS_PEA[67:72]*linea_PEA_extended_aplicada[67:72])
-LS_PEA_ajustado
-
-
-# Plot only non-NA values
-# plot the original data and the predicted values together
-
-
-PEA_original_para_pron<-c(PEA_mex$PEA, rep(NA, times=6))
-PEA_original_para_pron
-dim(PEA_original_para_pron)
-
-
-# plot the original data and the predicted values together
-plot(extended_dates,PEA_MEX_completa$PEA, main="PEA pronostico (con método estático) ajustada con componente de trend + intervalos vs PEA real", type="l", xlab="Year", ylab="PEA", ylim=c(40000000, 65000000), cex.main=0.7)
-
-lines(extended_dates, Est_punt_PEA_ajustada, col="blue")
-x_vals <- c(rep(NA, times = 66), extended_dates[67:72])
-
-lines(x_vals, LI_PEA_ajustado, col = "purple")
-lines(x_vals, LS_PEA_ajustado, col = "purple")
-
-
-legend("bottomright", legend = c("PEA original", "Pronóstico calculado con método estático"), 
-       col = c("black", "blue"), lty = 1)
-
-
+lines(Accidentes_pronostico_puntual, col="Red")
+lines(LI_accidentes, col="Purple")
+lines(LS_accidentes, col="Purple")
 ```
 
 
@@ -445,31 +268,31 @@ Vamos a usar ahora el método de HoltWinters como "modelo de suaviazamiento y pr
 Para ello debemos tener nuestra data a suavizar en el tipo de dato serie de tiempo ts en R 
 
 ```{r}
-PEA_MEX_ts <-ts(PEA_mex$PEA, frequency =4, start =c(2005,1))
-head(PEA_MEX_ts)
-tail(PEA_MEX_ts)
+acidentes_MEX_ts <-ts(Accidentes_transito_MEX$Num, frequency =1, start =c(2000,1))
+head(acidentes_MEX_ts)
+tail(acidentes_MEX_ts)
 ```
 
 Graficamos la "data original de la PEA_MEX" que se usará como "train para el modelo" y que fue convertida a tipo de dato serie de tiempo 
 
 ```{r}
-plot(PEA_MEX_ts, main="PAE MEX train data en tipo time series (Valores de Enero de 2005 a Agosto de 2021)", cex.main=0.8)
+plot(acidentes_MEX_ts, main="Accidentes MEX train data en tipo time series (Valores de  2000 a 2018)", cex.main=0.8)
 ```
 
 
-### Aplicación del método de Holt Winters" a la serie CON TENDENCIA y SIN ESTACIONALIDAD de PEA MEX
+### Aplicación del método de Holt Winters" a la serie SIN  TENDENCIA y SIN ESTACIONALIDAD de Accidentes terrestres en MX
 
-Como se observará este primer cálculo dejará como grados de libertad los valores de alpha, gamma y betha, así como los valores de arranque, de manera que el "el algoritmo de HoltWinters de R" determine la "mejor combinaión posible".
-Como en este caso no tenemos componente de seasonalidad se indica que el parámetro gamma tendrá un valor "false"
+Como se observará este primer cálculo dejará como grados de libertad los valores de alpha, así como los valores de arranque, de manera que el "el algoritmo de HoltWinters de R" determine la "mejor combinaión posible".
+Como en este caso no tenemos componente de seasonalidad ni ne tndencia se indica que el parámetro beta y gamma tendrán un valor "false"
 
 ```{r}
-PEA_MEX_ts_h1 <-HoltWinters(PEA_MEX_ts, gamma=FALSE)
-PEA_MEX_ts_h1
+accidentes_MEX_ts_h1 <-HoltWinters(acidentes_MEX_ts, beta=FALSE, gamma=FALSE)
+accidentes_MEX_ts_h1
 ```
 
 
 
-#### Interpretación de los valores de los coeficientes del método de Holt Winters para el caso de la serie de PEA en México
+#### Interpretación de los valores de los coeficientes del método de Holt Winters para el caso de la serie de accidentes terrestres México
 
 Interpretación de los valores de coficientes $\alpha$ y $\beta$ para el caso del pronóstico usando modelo de HoltWinters SIN ESPECIFICAR DATOS DE ARRANQUE    
 
@@ -482,30 +305,9 @@ Valores de $\alpha$ cercano a 0 reflejan una "gran influencia" de los valores pa
 
 En nuestro caso el valor de $\alpha$ es:
 ```{r}
-PEA_MEX_ts_h1$alpha
+accidentes_MEX_ts_h1$alpha
 ```
-Lo que indica que "La data historica SI tiene UNA RELEVANCIA SIGNIFICATIVA vs el componente meramente estocástico"
-
-
-$$0<\beta<1$$
-Recordemos que: 
-Valores de $\beta$ cercano a 1 reflejan cambios CONSTANTES de nivel a lo largo de la serie 
-Valores de $\beta$ cercano a 0 reflejan POCOS cambios de nivel a lo largo de la serie  
-
-
-En nuestro caso el valor de $\beta$ es:
-```{r}
-PEA_MEX_ts_h1$beta
-
-```
-Lo que indica muy pocos cambios de nivel a lo largo de la serie o una especie de "pendiente constante"
-
-
-Y entonces para el caso de valores de $\alpha$ cercanos a 0 y de $\beta$ cercanos a cero (como es nuestra serie de demanda_electrico) indica una serie que otorga mucha relevancia a los valores históricos  y con CAMBIOS DE NIVEL MUY BAJOS
-
-Afortunadamente no obtuvimos simultaneamente valores de$\alpha$ cercanos a 1 y de $\beta$ cercanos a 1 pues eso reflejaría una CAMINATA ALEATORIA con tendencia estocástica que sería prácticamente imposible de pronósticar. 
-
-
+Lo que indica que nuestra data histórica es prácticamente una caminata aleatoria
 
 
 ### Pronóstico de la serie de PEA en MEX con el método de Holt Winters 
@@ -516,7 +318,7 @@ Graficamos los valores originales vs suavizados con el método de Holt-Winters
 
 
 ```{r}
-plot(PEA_MEX_ts_h1, main="Aplicaicón del método de Holt Winters a PEA MEX train data")
+plot(accidentes_MEX_ts_h1, main="Aplicaicón del método de Holt Winters a accidentes MEX train data")
 ```
 
 
@@ -533,22 +335,39 @@ library(forecast)
 Ahora se llevará a cabo el pronóstico con la librería de forecast y basados en el método de Holt Winters. De igual manera se usará un intervalo de confianza del 95%
 
 ```{r}
-PEA_MEX_ts_h1_fc <- forecast(PEA_MEX_ts_h1, h=6, level=0.95)
-PEA_MEX_ts_h1_fc
+accidentes_MEX_ts_h1_fc <- forecast(accidentes_MEX_ts_h1, h=3, level=0.95)
+accidentes_MEX_ts_h1_fc
 ```
 
 
 ```{r}
-plot(PEA_MEX_ts_h1_fc, main="Forecast de PAE MX usando el Método de Holt Winters con parámetro gamma ='False'", cex.main=0.8)
+plot(accidentes_MEX_ts_h1_fc, main="Forecast de Accidentes MX usando el Método de Holt Winters con parámetro gamma ='False'", type="l", cex.main=0.8)
 ```
-
 
 
 
 Veamos el valor la Suma de Errores al Cuadrado del pronóstico de PEA en MEX  usando el Método de suaviazamiento dinámico de HoltWinters
 ```{r}
-PEA_MEX_ts_h1$SSE
+accidentes_MEX_ts_h1$SSE
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 Calculemos el error tipo MAPE entre los valores pronosticados con el "método de Holt Winters" y los valores reales de la serie 
 
