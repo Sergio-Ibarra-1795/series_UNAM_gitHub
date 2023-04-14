@@ -233,7 +233,7 @@ En general se podría decir dados los resultados del presente trabajo, así como
 ### A.3 Calculo de intervalos de confianza para el pronóstico
 
 Calculamos los límites de intervalos de confianza al 95% pata el pronostico 
-(Se considera 95% como +- 2 desviaciones estandar de la media)
+Se considera 95% como +- 2 desviaciones estandar de la media
 
 ```{r}
 tao<-c(1:6)
@@ -248,26 +248,28 @@ Graficamos los valores pronósticadoos t los limites de confianza
 
 ```{r}
 
-LI_PEA<-c(rep(NA, times=66), media_PEA_ST-Lim_PEA)
-LI_PEA
+LI_PEA<-c(rep(NA, times=66), estimacion_puntual_PEA_ST-Lim_PEA)
+head(LI_PEA)
+tail(LI_PEA)
 
-LS_PEA<-c(rep(NA, times=66), media_PEA_ST+Lim_PEA)
-LS_PEA
+LS_PEA<-c(rep(NA, times=66), estimacion_puntual_PEA_ST+Lim_PEA)
+head(LS_PEA)
+tail(LS_PEA)
 
-plot(Date_PAE2, PAE_Sin_Tendencia_para_pron, type="l", ylim = c(0.7,1.3) ,main="Estimación puntual sin tendencia e intervalos de confianza para los 6 vaores pronósticados",col="Blue")
+plot(Date_PAE2, PAE_Sin_Tendencia_para_pron, type="l", ylim = c(0.7,1.3) ,main="Estimación puntual e intervalos de confianza sin tendencia para PAE MEX con el método de 'suavizamiento estático'",col="Blue", cex.main=0.7)
 
-lines(estimacion_PEA, col="Red")
+lines(PEA_pronostico_puntual, col="Red")
 lines(LI_PEA, col="Purple")
 lines(LS_PEA, col="Purple")
 ```
 
 
 
+### "Devolución de efectos de tendencia y estacionalidad a los pronósticos e intervalos calculados"
 
-### Llevando el pornóstico a la dimensión de los Datos reales
 
 Ahora vamos a "llevar nuestro pornóstico a las dimensiones reales"
-Para ello primero vamos a "devolver la tendencia a la serie" de nombre  nacimientos_Sin_Tendencia 
+Para ello primero vamos a "devolver la tendencia a la serie" de nombre PEA_Sin_Tendencia   
 
 Para eso primero necesitamos "crear un data frame que contenga la información histórica + 6 de pronóstico con un valor NA 
 
@@ -278,17 +280,14 @@ extended_dates <- seq(as.Date("2005-01-01"), as.Date("2022-10-01"), by = "quarte
 extended_trimester_PEA <- data.frame(Date = extended_dates, 
                                        PEA = rep(NA, length(extended_dates)))
 
-extended_trimester_PEA
+head(extended_trimester_PEA)
+tail(extended_trimester_PEA)
 
 ```
 
 
 
-
 ```{r}
-# copy the original data to the new data set
-#extended_trimester_PEA$PEA[1:length(PEA_mex$PEA)] <- PEA_mex$PEA
-#extended_trimester_PEA
 
 
 # copy the original data to the new data set for the first 66 rows
@@ -299,7 +298,6 @@ for(i in 1:66){
 extended_trimester_PEA
 
 
-
 # fit the model with the extended data set
 linea_PEA_extended <- lm(PEA ~ Date, data = extended_trimester_PEA)
 linea_PEA_extended
@@ -308,7 +306,7 @@ linea_PEA_extended
 
 
 
-Posteriormente calculamos los valores historicos + 6   pronosticados a partir de la linea de tendencia que previamente se habia calculado de nombre linea_PEA_extended
+Posteriormente calculamos los valores historicos + 6  pronosticados a partir de la linea de tendencia que previamente se habia calculado de nombre linea_PEA_extended
 
 ```{r}
 # predict values for the extended date range
@@ -390,10 +388,9 @@ View(df_demanda_PEA_MX_pronostico)
 
 
 
-## Vamos a usar ahora el método de Holt como "modelo de suaviazamiento y pronóstico NO ESTÁTICO" que si considera los cambios de nivel a tráves del tiempo. 
+## B Método de Holt como "modelo de suaviazamiento y pronóstico NO ESTÁTICO" que si considera los cambios de nivel a tráves del tiempo. 
 
 Para ello debemos tener nuestra data a suavizar en el tipo de dato serie de tiempo ts en R 
-
 
 ```{r}
 PEA_MEX_ts <-ts(PEA_mex$PEA, frequency =4, start =c(2005,1))

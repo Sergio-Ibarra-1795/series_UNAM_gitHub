@@ -277,6 +277,7 @@ hist(demanda_electrico_errores, breaks = 20, col = "lightblue", main = "Frequenc
 Se comprueba como los errores de la serie siguen una distribución normal con media cero y desviación estandar de 0.1
 
 
+#### Pronóstico puntual
 
 Una vez teniendo nuestra seríe SIN TENDENCIA y SIN ESTACIONALIDAD lo que como ya se mencionó, implica que, "unicamente tenemos el componente estocástico o de ruido blanco en la serie" podemos proceder a llevar a cabo el pronóstico de 12 meses equivalente 1 año de datos.
 
@@ -294,12 +295,11 @@ tail(Demanda_electrico_completa)
 
 
 
-
 ```{r}
 
 Demanda_electrico_pronostico<-c(Demanda_electrico_ruido_blanco, rep(mean(Demanda_electrico_ruido_blanco), 12))
 
-plot(Demanda_electrico_completa$Date,Demanda_electrico_pronostico, type="l", main = "Promostico de demanda de gas natrual para los siguientes 12 meses sobre el ruido blanco de la serie", , cex.main=0.8)
+plot(Demanda_electrico_completa$Date,Demanda_electrico_pronostico, type="l", main = "Pronóstico de demanda de gas natrual para los siguientes 12", cex.main=0.8)
 
 ```
 
@@ -318,7 +318,7 @@ En general se podría decir dados los resultados del presente trabajo, así como
 
 
 Calculamos ahora los límites de intervalos de confianza al 95% para el pronostico de los siguientes 12 meses 
-(Se considera 95% como +- 2 desviaciones estandar de la media de la serie del ruido)
+Se considera 95% como +- 2 desviaciones estandar de la media de la serie del ruido
 
 ```{r}
 LI_demanda_electrico<-Demanda_electrico_pronostico[202:213]-2*sd_est_demanda_electrico*c(1:12)^.5
@@ -331,13 +331,24 @@ head(LI_demanda_electrico_lineaA)
 tail(LI_demanda_electrico_lineaA)
 
 LS_demanda_electrico_lineaA<-c(rep(NA, times=201), LS_demanda_electrico)
-head(LI_demanda_electrico_lineaA)
-tail(LI_demanda_electrico_lineaA)
+head(LS_demanda_electrico_lineaA)
+tail(LS_demanda_electrico_lineaA)
 
 ```
 
+```{r}
 
-### A.5 "Devolución de efectos de tendenci y estacionalidad a los pronósticos e intervalos calculados"
+
+plot(Demanda_electrico_completa$Date,Demanda_electrico_pronostico, type="l", main = "Pronostico puntual e intervalos de confianza sin tendencia para Demanda gas natural en sector eléctrico MEX con el método de 'suavizamiento estático' ", cex.main=0.65, ylim=c(0.2,1.7))
+
+
+#lines(Demanda_electrico_pronostico, col="Red")
+lines(Demanda_electrico_completa$Date, LI_demanda_electrico_lineaA, col="Purple")
+lines(Demanda_electrico_completa$Date, LS_demanda_electrico_lineaA, col="Purple")
+```
+
+
+### A.5 "Devolución de efectos de tendencia y estacionalidad a los pronósticos e intervalos calculados"
 
 Ahora vamos a "llevar nuestro pornóstico a las dimensiones reales"
 Para ello primero vamos a "devolver la esacionalidad y la tendencia a la serie" de nombre  demanda_electrico_filtro_sinTendencia_NiEstacionalidad 
