@@ -10,15 +10,15 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-# Serie de tiempo 2 CON tendencia y SIN estacionalidad: Historico trimestral de Población Económicamente Activa (PEA) en México
+# Serie de tiempo 1 SIN tendencia y SIN estacionalidad: Historico anual Accidentes terrestres en México
 
-Tenemos data trimestral de Enero de 2005 a Agosto de 2022 sobre la Población Económicamente activa en México, son 72 datos en total. 
-La idea es usar 66 de esos 72 para "aplicar los modelos" A) De suavizamiento "estático" y B) De "suavizamiento dinámico" o Holt-Winters para posteriormente predecir con cada modelo los valores de los 6 trimestres restantes y poder comparar contra los reales para detectar el mejor modelo entre los dos mencionados para modelar la Población Económicamente Activa en México 
+Tenemos data anual desde 2005 a 2021 sobre el número de accidentes terrestres que ha habido en México, son 22 datos en total. 
+La idea es usar 19 de esos 22 para "aplicar los modelos" A) De suavizamiento "estático" y B) De "suavizamiento dinámico" o Holt-Winters para posteriormente predecir con cada modelo los valores de los 3 años restantes y poder comparar contra los reales para detectar el mejor modelo entre los dos mencionados para modelar la los accidentes terrestres en México 
 
 
 
-Primero importamos la data de PEA en MEX
-Data obtenida de la página oficial del INEGI:  https://www.inegi.org.mx/temas/empleo/
+Primero importamos la data de Accidentes terrestres en MEX
+Data obtenida de la página oficial del INEGI:  https://www.inegi.org.mx/temas/accidentes/
 
 ```{r}
 install.packages("readxl")
@@ -26,24 +26,24 @@ install.packages("readxl")
 library("readxl")
 
 
-PEA_mex <-read_excel("PEA_MEX_pp.xlsx")
+Accidentes_transito_MEX <-read_excel("Accidentes_transito_pp.xlsx")
 ```
 
 
 Revisamos que la data de nacimientos MEX sehay importado correctamente 
 ```{r}
-head(PEA_mex)
-summary(PEA_mex)
-typeof(PEA_mex)
-dim(PEA_mex)
+Accidentes_transito_MEX
+summary(Accidentes_transito_MEX)
+typeof(Accidentes_transito_MEX)
+dim(Accidentes_transito_MEX)
 ```
 
 
-Graficamos la "data original" de PEA en México de los últimos años (Enero 2005 a Oct 2021)  
+Graficamos la "data original" de Accidentes terrestres en México de los últimos años De 2000 a 2018)  
 
 ```{r}
 
-plot(PEA_mex$Date, PEA_mex$PEA,type="l", main="Data 'original' de Población Económicamente Activa (PEA) en México")
+plot(Accidentes_transito_MEX$Date, Accidentes_transito_MEX$Num, type="l", main="Data 'original' de Accidentes terrestres en México")
 ```
 
 
@@ -51,11 +51,9 @@ plot(PEA_mex$Date, PEA_mex$PEA,type="l", main="Data 'original' de Población Eco
 
 Comenzaremos tratando la serie con el método estático aplicando el siguiente flujo lógico de trabajo y considerando que estamos ene el caso de serie CON TENDECIA y SIN ESTACIONALIDAD: 
 
-1. Se removerá el factor de tendencia a la serie original obteniendo una serie sin tendencia, que en este caso será lo mismo que el "ruido blanco"
-2. Será sobre el "ruido blanco" que se llevará a cabo el "pronóstico puntual" de los siguientes 6 trimestre como la media historica de dicho componente estocástico 
-3. Se calcularán los intervalos de pronóstico al 95% de confianza 
-4. Se "devolverán" los efectos de tendencia de la serie con el fin de llevar los pronósticos a las dimensiones correctas
-5. Se calculará el error tipo MAPE entre los valores pronósticados con el "método estático" y los valores reales de la serie de los últimos 6 trimestres
+1. Se llevará a cabo el "pronóstico puntual" de los siguientes 3 años como la media historica 
+2. Se calcularán los intervalos de pronóstico al 95% de confianza 
+3. Se calculará el error tipo MAPE entre los valores pronósticados con el "método estático" y los valores reales de la serie de los últimos 6 trimestres
 
 
 ### A.1 Remoción de tendencia de serie original  
