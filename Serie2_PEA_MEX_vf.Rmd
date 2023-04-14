@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Serie de tiempo 2 CON tendencia y SIN estacionalidad Historico anual de Población Económicamente Activa (PEA) en México
 
-Tenemos data trimestral de Enero de 2005 a Agosto de 2022 sobre la Población Económicamente activa  en México, son 72 datos en total. 
+Tenemos data trimestral de Enero de 2005 a Agosto de 2022 sobre la Población Económicamente activa en México, son 72 datos en total. 
 La idea es usar 66 de esos 72 para "aplicar los modelos" A) De suavizamiento "estático" y B) De "suavizamiento dinámico" o Holt-Winters para posteriormente predecir con cada modelo los valores de los 6 trimestres restantes y poder comparar contra los reales para detectar el mejor modelo entre los dos mencionados para modelar la Población Económicamente Activa en México 
 
 
@@ -101,35 +101,33 @@ Se grafica la serie sin tendencia:
 ```{r}
 PEA_Sin_Tendencia<-PEA_mex$PEA/linea_PEA_aplicada
 
-plot(PEA_mex$Date, PEA_Sin_Tendencia, type="l", main=" Data sin tendencia de PAE_MX ")
+plot(PEA_mex$Date, PEA_Sin_Tendencia, type="l", main=" Data sin tendencia de PAE_MX ", col="brown")
 ```
 
 ### A.2 Tratamiendo del ruido blanco en la serie y pronostico puntual  
 
-Una vez teniendo la serie sin tendencia, podemos aplicar como nuestro "mejor filtro" o estimado de la serie que es la media historica de los datos que se considerarán como "de entrenamiento"
+Considerese el siguiente razonamiento acerca de las series del tiempo: 
+Serie total = Componente de tendencia + Componente de estacionalidad + Componente estocástico 
 
+En este caso el Componente de estacionalidad = 0, por lo tanto tendríamos 
 
-Calculamos la media de nuestra serie sin tendecia que será nuestra estimación puntual para esta serie 
+Serie total PAEA MEX = Componente de tendencia + Componente estocástico, por lo tanto al haber previamente removido el componente estocástico de la serie lo que hemos hehco en realidad es obtener el componente estocástico o ruido blanco para este caso 
+
+Por simplicidad para cálculos posteriores, nombremos de esa manera a la variable 
 ```{r}
-media_PEA_ST<-mean(PEA_Sin_Tendencia)
-media_PEA_ST
-
+PEA_MX_ruido_blanco <- PEA_Sin_Tendencia
+head(PEA_MX_ruido_blanco)
+tail(PEA_MX_ruido_blanco)
 ```
 
 
-Una vez teniendo la serie sin tendencia  podemos determinar el componente de "ruido blanco" de la serie 
-```{r}
+Una vez teniendo únicamente el componente estocástico de nuestra serie, es posible "extraer los errores" de la serie y conocer así el error estimado (varianza)  y la desviación estandar. 
+La idea es que extrayendo de la serie del ruido blanco su media histórica estaríamos determinando la varianza, de la siguiente manera:
 
-Demanda_electrico_ruido<-Demanda_electrico_Sin_Tendencia/c(FE1_electrico, FE2_electrico, FE3_electrico, FE4_electrico)
+Varianza (errores al cuadrado) = Serie original - tendecia - media de componete estocástico. En nuestro caso, dichos errores será nuestra serie sin tendencia - mean(PEA_MX_ruido_blanco).  Nosotros hemos ya calculado el resultado de Serie original - tendecia y lo hemos llamada justamente ruido blanco y lo lo tanto el calculo del error podría resumirse a  
 
-head(Demanda_electrico_ruido)
+Errores= Componente estocástico o ruido blanco - Media del componente estocástico o ruido blanco
 
-
-plot(Demanda_electrico$Date, Demanda_electrico_ruido, type="l", 
-     main="Componente de ruido blanco o estocástico de la demanda de gas en sector eléctrico",
-     cex.main=0.9)
-
-```
 
 
 
@@ -146,6 +144,21 @@ sd_est_PEA<-sd(Error_est_PEA)
 sd_est_PEA
 
 ```
+
+
+
+Una vez teniendo la serie sin tendencia, podemos aplicar como nuestro "mejor filtro" o estimado de la serie que es la media historica de los datos que se considerarán como "de entrenamiento"
+
+Calculamos la media de nuestra serie sin tendecia que será nuestra estimación puntual 
+
+```{r}
+estimacion_puntual_PEA_ST<-mean(PEA_Sin_Tendencia)
+estimacion_puntual_PEA_ST
+
+```
+
+
+
 
 
 

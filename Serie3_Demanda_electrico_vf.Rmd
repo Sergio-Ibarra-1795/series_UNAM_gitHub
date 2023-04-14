@@ -206,57 +206,67 @@ FE4_electrico
 
 ### A.3 Tratamiendo del ruido blanco en la serie y pronostico puntual  
 
-Una vez calculados los factores estacionales de la serie se puede obtener el 'ruido de la serie'  que se calcularía "quitando" el efecto de los factores estacionales previamente calculados a nuestra serie sin tendencia 
+Una vez calculados los factores estacionales de la serie se puede obtener el unicamente el 'componente estocástico o ruido blanco de la serie'  que se calcularía "quitando" el efecto de los factores estacionales previamente calculados a nuestra serie YA SIN tendencia 
+
+Esto bajo el siguiente razonamiento: 
+
+Serie total = Componente de tendencia + Componente de estacionalidad + Componente estocástico 
+
+por lo tanto al haber "extraido" los componentes de tendencia y estacionalidad tenemos únicamente el componente estocástico de la serie 
 
 ```{r}
 
-Demanda_electrico_ruido<-Demanda_electrico_Sin_Tendencia/c(FE1_electrico, FE2_electrico, FE3_electrico, FE4_electrico)
+Demanda_electrico_ruido_blanco<-Demanda_electrico_Sin_Tendencia/c(FE1_electrico, FE2_electrico, FE3_electrico, FE4_electrico)
 
-head(Demanda_electrico_ruido)
+head(Demanda_electrico_ruido_blanco)
 
 
-plot(Demanda_electrico$Date, Demanda_electrico_ruido, type="l", 
+plot(Demanda_electrico$Date, Demanda_electrico_ruido_blanco, type="l", 
      main="Componente de ruido blanco o estocástico de la demanda de gas en sector eléctrico",
      cex.main=0.9)
 
 ```
 
 
-Una vez que tenemos nuestra serie "sin los efectos de tendencia y estacionalidad" que se conoce como ruido blanco, es posible "extraer el ruido" de la serie y conocer así el error estimado (varianza)  y la desviación estandar. 
-La idea es que extrayendo de la serie del ruido blanco su media histórica, estaríamos "extrayendo el ruido" y determinando la varianza, de la siguiente manera:
+Una vez teniendo únicamente el componente estocástico de nuestra serie, es posible "extraer los errores" de la serie y conocer así el error estimado (varianza)  y la desviación estandar. 
+La idea es que extrayendo de la serie del ruido blanco su media histórica, estaríamos determinando la varianza, de la siguiente manera:
 
-Varianza (errores al cuadrado) = Serie original - estacionalidad - tendecia - media. En nuestro caso, dichos errores será nuestra serie sin tendencia ni estacionalidad - media historica 
+Varianza (errores al cuadrado) = Serie original - estacionalidad - tendecia - media de componete estocástico. En nuestro caso, dichos errores será nuestra serie sin tendencia ni estacionalidad - mean(Demanda_electrico_ruido_blanco).  Nosotros hemos ya calculado el resultado de Serie original - estacionalidad - tendecia y lo hemos llamada justamente ruido blanco y lor lo tanto el calculo del error podría resumirse a  
 
-Determinemos entonces la varianza para nuestra serie de demanda_electrico 
+Errores= Componente estocástico o ruido blanco - Media del componente estocástico o ruido blanco
+
+
+Determinemos entonces la varianza (errores al cuadrado) para nuestra serie de demanda_electrico 
 ```{r}
 
-demanda_electrico_errores <-Demanda_electrico_ruido-mean(Demanda_electrico_ruido)
+## Se calcula la media del ruido blanco o componente estocástico de la serie 
+mean(Demanda_electrico_ruido)
+
+
+## Se calculan los errores como Errores= Componente estocástico o ruido blanco - Media del componente estocástico o ruido blanco
+demanda_electrico_errores <-Demanda_electrico_ruido_blanco-mean(Demanda_electrico_ruido_blanco)
 
 plot(Demanda_electrico$Date, demanda_electrico_errores, type="l", main="Errores al cuadrado (varianza) de la aplicaicón del modelo de 'suavizamiento estático' a la serie de demanda de gas natural en sector eléctrico ", cex.main=0.6)
 
-## Se determina la desviación estandar del error 
+```
 
-sd_est_demanda_electrico<-sd(demanda_electrico_errores)
+Se calcula la media de los errores 
+```{r}
 
 
-## Se calcula la media del ruido 
-mean(Demanda_electrico_ruido)
+mean(demanda_electrico_errores)
+```
 
+Se calcula la varianza  y desviación estandar de los errores 
+```{r}
 ## Se calcula la varianza
 var(demanda_electrico_errores)
 
 ## Se calcula la desviación estandar 
 sd_est_demanda_electrico
-
-```
-```{r}
-
-## Se calcula la media del ruido 
-mean(demanda_electrico_errores)
 ```
 
-
-Se tiene una desviación estandar de aproximadamente un 10% de la media lo cual es totalmente concordante con le hehco de que "el ruido resultante" o errores tiene una distribución normal con media cero y una desviación estandar de 0.1 
+Se tiene una desviación estandar de 0.1 y una  media muy cercana a cero para los errores lo cual es totalmente concordante con le hecho de que tras haber removido los componentes de tendencia y estacionalidad "el ruido blanco" o componente estocástico resultante tiende a tener una distribuión normal y que si a ese ruido blanco se le extrae su media tambien tiende a tener una distribución normal con media cero y en este caso una desviación estandar de 0.1 
 
 ```{r}
 hist(demanda_electrico_errores, breaks = 20, col = "lightblue", main = "Frequency Distribution of demanda_electrico_errores", xlab = "Values", ylab = "Frequency")
@@ -284,11 +294,21 @@ tail(Demanda_electrico_completa)
 
 ```{r}
 
-Demanda_electrico_pronostico<-c(Demanda_electrico_ruido, rep(mean(Demanda_electrico_ruido), 12))
+Demanda_electrico_pronostico<-c(Demanda_electrico_ruido_blanco, rep(mean(Demanda_electrico_ruido_blanco), 12))
 
 plot(Demanda_electrico_completa$Date,Demanda_electrico_pronostico, type="l", main = "Promostico de demanda de gas natrual para los siguientes 12 meses sobre el ruido blanco de la serie", , cex.main=0.8)
 
 ```
+
+
+
+Sobre el pronóstico puntual sin tendencia ni estacionalidad, que para el caso de la serie de demanda de gas natural en el sector eléctrico tiene un valor de:
+```{r}
+mean(Demanda_electrico_ruido_blanco)
+```
+Lo cual es bastante concordante con el hecho que. Al haber "quitado los componentes de tendencia y estacionaldad de la serie original", es decir obtenido el ruido blanco de la serie los valores de nuestra variable y: gas demandado están en este momento del algoritmo en escala de la unidad: 1. Y por lo tanto la media de dichos valores será muy cercana a 1. 
+
+En general se podría decir dados los resultados del presente trabajo, así como los resultados de los ejercicios vistos en clase, que el valor de la media estimada o pronóstico puntual para la serie sin componente de tendencia tiende al valor de 1. 
 
 
 ### A.4 Calculo de intervalos de confianza para el pronóstico
@@ -363,7 +383,7 @@ tail(LS_demanda_electrico_cest)
 
 # Plot with confidence intervals
 plot(Demanda_electrico_pronostico_cest, 
-     type="l", main="Demanda electrico pronostico con componente de estacionalidad + intervalos", 
+     type="l", main="Demanda electrico pronostico (con método estático) ajustada con componente de estacionalidad + intervalos", 
      cex.main=0.85, ylim=c(0.4,1.8))
 lines(LI_demanda_electrico_cest, col="violet")
 lines(LS_demanda_electrico_cest, col="violet")
@@ -416,10 +436,15 @@ LI_demanda_electrico_ajustado<-LI_demanda_electrico_cest*Electrico_Demanded_gas_
 LS_demanda_electrico_ajustado<-LS_demanda_electrico_cest*Electrico_Demanded_gas_line_aplicada2
 
 
-plot(Demanda_electrico_pronostico_ajustado, type="l", ylim=c(0, max(LS_demanda_electrico_ajustado, na.rm = TRUE)),  main="Demanda electrico pronostico con componente de estacionalidad y de trend + intervalos", 
-     cex.main=0.85)
-lines(LI_demanda_electrico_ajustado, col="violet")
-lines(LS_demanda_electrico_ajustado, col="violet")
+plot(Demanda_electrico_completa$Date, Demanda_electrico_pronostico_ajustado, type="l", ylim=c(0, max(LS_demanda_electrico_ajustado, na.rm = TRUE)),  main="Demanda electrico pronostico (con método estático) ajustada con componentes de estacionalidad y de trend + intervalos vs Demanda real", 
+     cex.main=0.6, col="blue")
+lines(Demanda_electrico_completa$Date,LI_demanda_electrico_ajustado, col="violet")
+lines(Demanda_electrico_completa$Date, LS_demanda_electrico_ajustado, col="violet")
+lines(Demanda_electrico_completa$Date, Demanda_electrico_completa$Demanded_Gas, col="black")
+
+
+legend("bottomright", legend = c("Demanda electrico original", "Pron´sstico calculado con método estático"), 
+       col = c("black", "blue"), lty = 1)
 
 ```
 
