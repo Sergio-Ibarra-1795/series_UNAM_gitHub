@@ -537,7 +537,7 @@ plot(Demanda_electrico_ts, main="Demanda electrico train data en tipo time serie
 ```
 
 
-### Aplicación del método de Holt Winters" a la serie de demanda de gas en el sector eléctrico 
+### Aplicación del método de Holt Winters" a la serie CON TENDENCIA y CON ESTACIONALIDAD de demanda de gas en el sector eléctrico 
 
 Como se observará para este primer cálculo se dejará como 'grados de libertad' los valores de alpha, gamma y betha, así como los valores de arranque, de manera que el "el algoritmo de HltWinters de R" determine la "mejor combinaión posible"
 Recordar también que para la presente serie se está asumiendo un efecto multiplicativo de los factores estacionales 
@@ -602,7 +602,7 @@ Lo que indica que cada dato nuevo en la serie cambia el valor del factor de esta
 
 
 
-### Pronóstic de la serie de demanda de gas en el sector eléctrico con el método de Holt Winters 
+### Pronóstico de la serie de demanda de gas en el sector eléctrico con el método de Holt Winters 
 
 Ahora pasemos a realizar los pronósticos de la serie pero con el método de HoltWinters que considera cambios dinámicos de nivel 
 
@@ -673,7 +673,7 @@ cat("MAPE error para el forecast calculado con el método de 'HoltWinters'es:", 
 ### Comparación del MAPE del pronostico hecho con métodos estáticos vs el pronóstico hecho con el método " de suavizamiento dinámico" de HoltWinters para el pronostico puntual
 
 
-En este caso y dado un cálculo con el métodO de HOLTWinters sin valores de arranque especificados los errores de ambos métodos (estático vs HoltWinters) fueron los sigientes: 
+En este caso y dado un cálculo con el métodO de HoltWinters sin valores de arranque especificados los errores de ambos métodos (estático vs HoltWinters) fueron los sigientes: 
 
 
 ```{r}
@@ -711,7 +711,7 @@ Intervalos calculados con el método de suavizamiento dinámico Holt-Witers
 Demanda_electrico_ts_hw1_fc
 ```
 
-Se observa claramente como el método de HoltWinters otorga mejores intervalos de confianza para pronósticos incluso para aquellos 'más alejados' del último valor real. 
+Se observa claramente como el método de HoltWinters otorga mejores intervalos de confianza para pronósticos incluso para aquellos 'más alejados' del último valor real vs aquellos generados con el "método de suavizamiento estático"  
 
 
 

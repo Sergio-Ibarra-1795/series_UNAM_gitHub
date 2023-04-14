@@ -461,7 +461,7 @@ plot(PEA_MEX_ts, main="PAE MEX train data en tipo time series (Valores de Enero 
 
 ### Aplicación del método de Holt Winters" a la serie CON TENDENCIA y SIN ESTACIONALIDAD de PEA MEX
 
-Como se observará este primer cálculo dejará como grados de libertad los valores de alpha, gamma y betha, así como los valores de arranque, de manera que el "el algoritmo de HltWinters de R" determine la "mejor combinaión posible".
+Como se observará este primer cálculo dejará como grados de libertad los valores de alpha, gamma y betha, así como los valores de arranque, de manera que el "el algoritmo de HoltWinters de R" determine la "mejor combinaión posible".
 Como en este caso no tenemos componente de seasonalidad se indica que el parámetro gamma tendrá un valor "false"
 
 ```{r}
@@ -470,7 +470,52 @@ PEA_MEX_ts_h1
 ```
 
 
-Graficamos los valores originales vs suavizados con el método de Holt
+
+#### Interpretación de los valores de los coeficientes del método de Holt Winters para el caso de la serie de PEA en México
+
+Interpretación de los valores de coficientes $\alpha$ y $\beta$ para el caso del pronóstico usando modelo de HoltWinters SIN ESPECIFICAR DATOS DE ARRANQUE    
+
+
+$$0<\alpha<1$$
+
+Recordemos que: 
+Valores de $\alpha$ cercano a 1 reflejan caminata aleatoria
+Valores de $\alpha$ cercano a 0 reflejan una "gran influencia" de los valores pasado, es decir, que "el ruido no es un componente de gran relevancia"
+
+En nuestro caso el valor de $\alpha$ es:
+```{r}
+PEA_MEX_ts_h1$alpha
+```
+Lo que indica que "La data historica SI tiene UNA RELEVANCIA SIGNIFICATIVA vs el componente meramente estocástico"
+
+
+$$0<\beta<1$$
+Recordemos que: 
+Valores de $\beta$ cercano a 1 reflejan cambios CONSTANTES de nivel a lo largo de la serie 
+Valores de $\beta$ cercano a 0 reflejan POCOS cambios de nivel a lo largo de la serie  
+
+
+En nuestro caso el valor de $\beta$ es:
+```{r}
+PEA_MEX_ts_h1$beta
+
+```
+Lo que indica muy pocos cambios de nivel a lo largo de la serie o una especie de "pendiente constante"
+
+
+Y entonces para el caso de valores de $\alpha$ cercanos a 0 y de $\beta$ cercanos a cero (como es nuestra serie de demanda_electrico) indica una serie que otorga mucha relevancia a los valores históricos  y con CAMBIOS DE NIVEL MUY BAJOS
+
+Afortunadamente no obtuvimos simultaneamente valores de$\alpha$ cercanos a 1 y de $\beta$ cercanos a 1 pues eso reflejaría una CAMINATA ALEATORIA con tendencia estocástica que sería prácticamente imposible de pronósticar. 
+
+
+
+
+### Pronóstico de la serie de PEA en MEX con el método de Holt Winters 
+
+Ahora pasemos a realizar los pronósticos de la serie pero con el método de HoltWinters que considera cambios dinámicos de nivel 
+
+Graficamos los valores originales vs suavizados con el método de Holt-Winters
+
 
 ```{r}
 plot(PEA_MEX_ts_h1, main="Aplicaicón del método de Holt Winters a PEA MEX train data")
@@ -496,8 +541,93 @@ PEA_MEX_ts_h1_fc
 
 
 ```{r}
-plot(PEA_MEX_ts_h1_fc, main="Forecast de PAE MX usando el Método de Holt Winters con parámetro gamma ='False'")
+plot(PEA_MEX_ts_h1_fc, main="Forecast de PAE MX usando el Método de Holt Winters con parámetro gamma ='False'", cex.main=0.8)
 ```
+
+
+
+
+Veamos el valor la Suma de Errores al Cuadrado del pronóstico de PEA en MEX  usando el Método de suaviazamiento dinámico de HoltWinters
+```{r}
+PEA_MEX_ts_h1$SSE
+```
+
+Calculemos el error tipo MAPE entre los valores pronosticados con el "método de Holt Winters" y los valores reales de la serie 
+
+```{r}
+
+## Formemos un vector con únicamente los valores reales de los ultimos 6 trimestres 
+PEA_completo_realest6 <- PEA_MEX_completa$PEA[67:72]
+PEA_completo_realest6
+
+
+## Formemos un vector con únicamente los valores pronósticados 
+PEA_HW_forecast6 <- PEA_MEX_ts_h1_fc$mean
+PEA_HW_forecast6
+
+
+
+```
+
+
+```{r}
+
+##Calculemos el MAPE entre estos dos vectores 
+
+# First, calculate the absolute percentage error (APE) for each element in the vectors
+APE_PEA_HW <- abs((PEA_completo_realest6 - PEA_HW_forecast6) / PEA_completo_realest6)
+
+# Calculate the mean APE across all elements in the vectors
+MAPE_PEA_HW <- mean(APE_PEA_HW) * 100
+
+# Print the MAPE value
+cat("MAPE error para el forecast calculado con el método de 'HoltWinters'es:", MAPE_PEA_HW, "%")
+```
+
+
+### Comparación del MAPE del pronostico hecho con métodos estáticos vs el pronóstico hecho con el método " de suavizamiento dinámico" de HoltWinters para el pronostico puntual
+
+
+En este caso y dado un cálculo con el métodO de HolttWinters sin valores de arranque especificados los errores de ambos métodos (estático vs HoltWinters) fueron los sigientes: 
+
+
+```{r}
+cat("MAPE error para el forecast calculado con el método de 'suavizamiento estático'es:", MAPE_PEA_estatico, "%")
+
+  
+cat("MAPE error para el forecast calculado con el método de 'HoltWinters'es:", MAPE_PEA_HW, "%")
+```
+
+Lo que indica que el método de suavizamiento estático resultó mejor en nuestro caso para el PRONOSTICO PUNTUAL de la PEA en México. 
+
+
+### Comparación de los intervalos del pronostico hecho con métodos estáticos vs el pronóstico hecho con el método " de suavizamiento dinámico" de HoltWinters 
+
+Como se sabe, la parte "más sustancial" o esencial de los pronósticos es el intervalo y no el pronóstico puntual, por lo que en nuestro caso se considerará en general como "un mejor mpetodo de pronóstico" no aquel que otorge el menor error tipo MAPE en las estimaciones puntuales, sino aquel cuyos intervalos de confianza al 95% sean menores incluso para valores pronósticados relativamente lejanos del último valor real. 
+
+
+
+Intervalos calculados con el método de suavizamiento estático
+```{r}
+LI_PEA_ajustado[67:72]
+LS_PEA_ajustado[67:72]
+
+
+intervalos_metodo_E<- data.frame(LI_PEA_ajustado_E =LI_PEA_ajustado[67:72], LS_PEA_ajustado_E= LS_PEA_ajustado[67:72])
+
+intervalos_metodo_E
+
+```
+
+
+
+Intervalos calculados con el método de suavizamiento dinámico Holt-Witers
+```{r}
+PEA_MEX_ts_h1_fc
+```
+
+Se observa claramente como el método de HoltWinters otorga mejores intervalos de confianza para pronósticos incluso para aquellos 'más alejados' del último valor real vs aquellos generados con el "método de suavizamiento estático" 
+
 
 
 
