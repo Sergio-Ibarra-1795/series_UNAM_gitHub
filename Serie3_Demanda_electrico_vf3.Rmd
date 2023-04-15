@@ -742,5 +742,32 @@ Se observa claramente como el método de HoltWinters otorga mejores intervalos d
 
 
 
+## Conclusiones generales sobre las técnicas de suavizamiento estáticas y dinámicas (HoltWinters)
+
+### Comparación entre ambas técnicas de suavizamiento y pronóstico de series de tiempo 
+
+En general se podrían mencionar las siguientes carácterísticas sobre las "técnicas de suavizamiento estáticas":
+
+- Al no considerar los "cambios históricos en el nivel" pueden ser relativamente buenos para generar estimaciones puntuales para valores en tiempo t+n con n pequeña, apenas más grande que 1, pero si el valor de n va creciendo, es decir, si nos alejamos del ultimo valor conocido, el pronóstico suele ir tendiendo cada vez más error. 
+- Suele ser "un método extremadamente sensible a valores atípicos", pues de nuevo, al tener en cuenta una especie de "nivel constante" es incapaz de caputrar datos muy lejanos a esa constante. 
+- Tiende producir valores de límites de pronóstico muy grandes y crecientes "de manera casi exponencial" a medida que nos alejamos del ultimo valor conocido en la serie 
+- Se sugiere intentar estimar solo 1 a 5 datos del tiempo t + n=5 después del último valor conocido, ya que en los siguientes datos el error de pronóstico y los intervalos son muy grandes 
+- Es una "ténica estática de suavizamiento" que pricipalmente se basa en la "forma histórica" de los datos e intenta reproducir esa forma en los pronósticos 
+
+
+En general se podrían mencionar las siguientes carácterísticas sobre las "técnicas de suavizamiento dinámicas o de HoltWinters":
+
+- Al SI considerar los "cambios históricos en el nivel" suelen ser "menos adecuados" para calcular estimaciones puntuales en comparación con los "métodos estáticos" 
+- Es capaz de modelar estacionalidad y cambios en "la forma histórica de los datos" de mejor manera respecto a los métodos estáticos
+- Tiende producir valores de límites de pronóstico mucho mas "constantes" incluso para valores de tiempo muy alejados del ultimo valor conocido 
+- Se sugiere intentar estimar de 1 a 12 datos del tiempo t + n=12 después del último valor conocido, ya que incluso para valores relativamente alejados al ultimo valor conocido produce resultados de estimación puntual e intervalos de confianza buenos.  
+- Es una "ténica recursiva de suavizamiento" que pricipalmente se basa en la "importancia histórica" de los datos e intenta reproducir esa importancia para estimar los siguientes valores de la serie  
+
+
+Ambas técnicas presentan dificicultades para modelar datos cuya carianza en el tiempo cambie significativamente y también para manekar datos atípicos "outliers"
+
+
+
+
 
 
