@@ -22,7 +22,7 @@ La idea es usar 201 de esos 2013 como una especie de "data de entreaniemto" para
 Primero vamos a importar la data con los elementos del 1 al 201 
 
 ```{r}
-install.packages("readxl")
+##install.packages("readxl")
 
 library("readxl")
 ```
@@ -615,7 +615,7 @@ plot(Demanda_electrico_ts_hw1, main="Aplicaicón del método de Holt Winters a D
 
 ```{r}
 # Install the forecast package
-install.packages("forecast")
+#install.packages("forecast")
 
 # Load the forecast package
 library(forecast)

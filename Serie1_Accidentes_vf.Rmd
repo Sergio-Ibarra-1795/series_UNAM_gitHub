@@ -21,7 +21,7 @@ Primero importamos la data de Accidentes terrestres en MEX
 Data obtenida de la página oficial del INEGI:  https://www.inegi.org.mx/temas/accidentes/
 
 ```{r}
-install.packages("readxl")
+#install.packages("readxl")
 
 library("readxl")
 
@@ -415,119 +415,6 @@ Como se sabe, la parte "más sustancial" o esencial de los pronósticos es el in
 
 Se observa claramente como el método de HoltWinters otorga mejores intervalos de confianza para pronósticos incluso para aquellos 'más alejados' del último valor real vs aquellos generados con el "método de suavizamiento estático" 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-Calculemos el error tipo MAPE entre los valores pronosticados con el "método de Holt Winters" y los valores reales de la serie 
-
-```{r}
-
-## Formemos un vector con únicamente los valores reales de los ultimos 6 trimestres 
-PEA_completo_realest6 <- PEA_MEX_completa$PEA[67:72]
-PEA_completo_realest6
-
-
-## Formemos un vector con únicamente los valores pronósticados 
-PEA_HW_forecast6 <- PEA_MEX_ts_h1_fc$mean
-PEA_HW_forecast6
-
-
-
-```
-
-
-```{r}
-
-##Calculemos el MAPE entre estos dos vectores 
-
-# First, calculate the absolute percentage error (APE) for each element in the vectors
-APE_PEA_HW <- abs((PEA_completo_realest6 - PEA_HW_forecast6) / PEA_completo_realest6)
-
-# Calculate the mean APE across all elements in the vectors
-MAPE_PEA_HW <- mean(APE_PEA_HW) * 100
-
-# Print the MAPE value
-cat("MAPE error para el forecast calculado con el método de 'HoltWinters'es:", MAPE_PEA_HW, "%")
-```
-
-
-
-### Error cuadrado calculado con el Método de HoltWinters vs el calculado con el método de suafizamiento estático 
-
-
-```{r}
-PEA_MEX_ts_h1$SSE
-```
-
-Entonces el error asociado al pronóstico del cálculo de pronóstico PUNTUAL para el caso Demanda_eléctirco es:  
-```{r}
-sse_PEA_hw <- ((PEA_MEX_ts_h1$SSE)/(length(PEA_MEX_ts)))^0.5
-sse_PEA_hw
-```
-
-
-Recordar que la SSE de la demanda_electrico para el caso del método de suavizamiento estático era:
-```{r}
-SSE_PEA_E <- sum(PEA_MX_ruido_blanco^2)
-SSE_PEA_E
-```
-
-Lo que indica que el método de suavizamiento estático resultó bastante mejor en nuestro caso para el PRONOSTICO PUNTUAL de la demanda de gas natural en el sector eléctrico en México vs el método de HoltWinters
-
-
-
-### Comparación del MAPE del pronostico hecho con métodos estáticos vs el pronóstico hecho con el método " de suavizamiento dinámico" de HoltWinters para el pronostico puntual
-
-
-En este caso y dado un cálculo con el métodO de HolttWinters sin valores de arranque especificados los errores de ambos métodos (estático vs HoltWinters) fueron los sigientes: 
-
-
-```{r}
-cat("MAPE error para el forecast calculado con el método de 'suavizamiento estático'es:", MAPE_PEA_estatico, "%")
-
-  
-cat("MAPE error para el forecast calculado con el método de 'HoltWinters'es:", MAPE_PEA_HW, "%")
-```
-
-Lo que confirma que el método de suavizamiento estático resultó mejor en nuestro caso para el PRONOSTICO PUNTUAL de la PEA en México. 
-
-
-### Comparación de los intervalos del pronostico hecho con métodos estáticos vs el pronóstico hecho con el método " de suavizamiento dinámico" de HoltWinters 
-
-Como se sabe, la parte "más sustancial" o esencial de los pronósticos es el intervalo y no el pronóstico puntual, por lo que en nuestro caso se considerará en general como "un mejor mpetodo de pronóstico" no aquel que otorge el menor error tipo MAPE en las estimaciones puntuales, sino aquel cuyos intervalos de confianza al 95% sean menores incluso para valores pronósticados relativamente lejanos del último valor real. 
-
-
-
-Intervalos calculados con el método de suavizamiento estático
-```{r}
-LI_PEA_ajustado[67:72]
-LS_PEA_ajustado[67:72]
-
-
-intervalos_metodo_E<- data.frame(LI_PEA_ajustado_E =LI_PEA_ajustado[67:72], LS_PEA_ajustado_E= LS_PEA_ajustado[67:72])
-
-intervalos_metodo_E
-
-```
-
-
-
-Intervalos calculados con el método de suavizamiento dinámico Holt-Witers
-```{r}
-PEA_MEX_ts_h1_fc
-```
-
-Se observa claramente como el método de HoltWinters otorga mejores intervalos de confianza para pronósticos incluso para aquellos 'más alejados' del último valor real vs aquellos generados con el "método de suavizamiento estático" 
 
 
 
