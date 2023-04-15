@@ -115,7 +115,7 @@ var(Error_est_accidentes)
 sd_est_accidentes
 ```
 
-Se tiene una desviación estandar de 44,547 y una  media muy cercana a cero para los errores lo cual es totalmente concordante con le hecho de que "el ruido blanco" o componente estocástico tiende a tener una distribuión normal y que si a ese ruido blanco se le extrae su media tambien tiende a tener una distribución normal con media cero y en este caso una desviación estandar de 44,547 que representa aproximadamente el 10% del valor de la variable a pronosticar y: Número de accidentes terrestres anuales en México.  
+Se tiene una desviación estandar de ~37 mil y una  media muy cercana a cero para los errores lo cual es totalmente concordante con le hecho de que "el ruido blanco" o componente estocástico tiende a tener una distribuión normal y que si a ese ruido blanco se le extrae su media tambien tiende a tener una distribución normal con media cero y en este caso una desviación estandar de  ~37 mil que representa aproximadamente el 10% del valor de la variable a pronosticar y: Número de accidentes terrestres anuales en México.  
 
 
 
@@ -159,14 +159,22 @@ tail(accidentes_para_pron)
 ## Entonces el mejor pronóstico que tenemos para esta técnica es la media de la serie historica
 
 
-Accidentes_pronostico_puntual <- rep(Accidentes_transito_ruido_blanco, times=22)
+Accidentes_pronostico_puntual <- rep(estimacion_puntual_accidentes, times=22)
 head(Accidentes_pronostico_puntual)
 tail(Accidentes_pronostico_puntual)
 
-plot(Date_accidentes2,Accidentes_pronostico_puntual, type="l", main = "Pronóstico de accidentes terrestres en MEX para los siguientes 3 años", cex.main=0.8)
+plot(Date_accidentes2,Accidentes_pronostico_puntual, type="l", main = "Estimación puntual de accidentes terrestres en MEX", cex.main=0.8)
 ```
 
 
+
+Comentario sobre el pronóstico puntual sin tendencia ni estacionalidad, que para el caso de la serie de esta serie tiene un valor de:
+```{r}
+estimacion_puntual_accidentes <- mean(Accidentes_transito_MEX$Num)
+estimacion_puntual_accidentes
+```
+
+Este valor es bastante concordante con los datos historicos, ya que en general el rango de accidentes se encuentra entre 330 mil y 440 mil, por lo que ese valor de "estimación puntual" sueva bastante razonable 
 
 ### A.2 Calculo de intervalos de confianza para el pronóstico
 
@@ -196,26 +204,36 @@ head(LS_accidentes)
 tail(LS_accidentes)
 
 
-plot(Date_accidentes2, accidentes_para_pron, type="l" ,main="Estimación puntual e intervalos de confianza para Accidentes terrestres MEX con el método de 'suavizamiento estático'",col="Blue", cex.main=0.7)
+plot(Date_accidentes2, accidentes_para_pron, type="l" ,main="Estimación puntual e intervalos de confianza para Accidentes terrestres MEX con el método de 'suavizamiento estático'",col="Blue", cex.main=0.7, ylim=c(200000, 500000))
 
 lines(Accidentes_pronostico_puntual, col="Red")
 lines(LI_accidentes, col="Purple")
 lines(LS_accidentes, col="Purple")
 ```
 
+```{r}
+#install.packages("readxl")
+
+library("readxl")
+
+
+Accidentes_transito_MEX_completo <-read_excel("Accidentes_transito_full_.xlsx")
+```
+
 
 Visualizamos el Data.Frame con los valores históricos la "data original" + los resultados del pronóstico puntual y los intervalos de confianza al 95% 
 
 ```{r}
-df_demanda_PEA_MX_pronostico<-data.frame(PEA_MEX_completa$PEA,
-                                                Est_punt_PEA_ajustada, LI_PEA_ajustado, LS_PEA_ajustado)
-View(df_demanda_PEA_MX_pronostico)
+df_Accidentes_MX_pronostico<-data.frame(Accidentes_transito_MEX_completo$Num,
+                                                Accidentes_pronostico_puntual, LI_accidentes, LS_accidentes)
+View(df_Accidentes_MX_pronostico)
 
-tail(df_demanda_PEA_MX_pronostico)
+tail(df_Accidentes_MX_pronostico)
 ```
 
 
-Se observa que los pronósticos puntuales vs los reales parecen no estar muy alejados unos de otros, sin embargo los intervalos de confianza si "sufren a medida que nos alejamos del último valor real" pues son cada vez más grandes hasta llegar a abarcar un rango de [50,000000 a 65,000000] para el 95% de intervalo de confianza en el 6t0 valor pronósticado. Lo que representa alrededor del 25% del rango de nuestra variable y.
+Se observa que los pronósticos puntuales vs los reales parecen no estar muy alejados unos de otros, sin embargo los intervalos de confianza si "sufren DEMASIADO a medida que nos alejamos del último valor real" pues son cada vez más grandes hasta llegar a abarcar un rango de [~260 mil a 517 mil] para el 95% de intervalo de confianza apenas en el 3er valor pronósticado.
+
 
 
 ### A.5 Calculo del error tipo MAPE para los pronósticos hechos con los modelos estáticos de suavizamiento
@@ -223,17 +241,6 @@ Se observa que los pronósticos puntuales vs los reales parecen no estar muy ale
 Calculemos el error tipo MAPE entre los valores pronosticados con el "método de suavizamiento estático" y los valores reales de la serie 
 
 Para ello importamos el Data Frame con la data historica completa, es decir, la que contiene los 66 trimestres propuestos aquí como "train data" + los 6 trimestres que se pronósticaran
-
-```{r}
-install.packages("readxl")
-
-library("readxl")
-
-PEA_MEX_completa <-read_excel("PEA_MEX_full.xlsx")
-head(PEA_MEX_completa)
-tail(PEA_MEX_completa)
-```
-
 
 
 ```{r}

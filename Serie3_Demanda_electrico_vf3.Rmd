@@ -741,8 +741,7 @@ Se observa claramente como el método de HoltWinters otorga mejores intervalos d
 
 
 
-
-## Conclusiones generales sobre las técnicas de suavizamiento estáticas y dinámicas (HoltWinters)
+## C. Conclusiones generales sobre las técnicas de suavizamiento estáticas y dinámicas (HoltWinters)
 
 ### Comparación entre ambas técnicas de suavizamiento y pronóstico de series de tiempo 
 
@@ -767,7 +766,12 @@ En general se podrían mencionar las siguientes carácterísticas sobre las "té
 Ambas técnicas presentan dificicultades para modelar datos cuya carianza en el tiempo cambie significativamente y también para manekar datos atípicos "outliers"
 
 
+### Referencias
 
+Bowerman, B. L., O'Connell, R. T., & Koehler, A. B. (2005). Forecasting, time series, and regression: An applied approach. Thomson/Brooks/Cole.
+
+
+Box, G. E. P., Jenkins, G. M., & Reinsel, G. C. (2015). Time series analysis: forecasting and control (5th ed.). John Wiley & Sons.
 
 
 
