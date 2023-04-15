@@ -218,12 +218,12 @@ PEA_pronostico_puntual <- rep(estimacion_puntual_PEA_ST, times=72)
 head(PEA_pronostico_puntual)
 tail(PEA_pronostico_puntual)
 
-plot(Date_PAE2,PEA_pronostico_puntual, type="l", main = "Pronóstico 'puntual' de PEA en MEX", cex.main=0.8, ylim=c(0.9, 1.1))
+plot(Date_PAE2,PEA_pronostico_puntual, type="l", main = "Estimación 'puntual' de PEA en MEX", cex.main=0.8, ylim=c(0.9, 1.1))
 ```
 
 
 
-Comentario sobre el pronóstico puntual sin tendencia ni estacionalidad, que para el caso de la serie de demanda de gas natural en el sector eléctrico tiene un valor de:
+Comentario sobre el pronóstico puntual sin tendencia ni estacionalidad, que para el caso de la serie de esta serie tiene un valor de:
 ```{r}
 mean(PEA_MX_ruido_blanco)
 ```
@@ -541,6 +541,9 @@ Ahora se llevará a cabo el pronóstico con la librería de forecast y basados e
 PEA_MEX_ts_h1_fc <- forecast(PEA_MEX_ts_h1, h=6, level=0.95)
 PEA_MEX_ts_h1_fc
 ```
+
+Se observa como el pronóstico puntual es "relativamente bueno" y es muy parecido en valor al obtenido previamente con el método estático, sin embargo los Intervalos de confianza obtenidos con este método son BASTANTE MEJORES en comparación con los del anterior 
+
 
 
 ```{r}

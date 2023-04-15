@@ -737,7 +737,8 @@ Intervalos calculados con el método de suavizamiento dinámico Holt-Witers
 Demanda_electrico_ts_hw1_fc
 ```
 
-Se observa claramente como el método de HoltWinters otorga mejores intervalos de confianza para pronósticos incluso para aquellos 'más alejados' del último valor real vs aquellos generados con el "método de suavizamiento estático"  
+Se observa de nuevo claramente como el método de HoltWinters otorga mejores intervalos de confianza incluso para aquellos valores'más alejados' del último valor real vs aquellos generados con el "método de suavizamiento estático"  
+
 
 
 

@@ -246,30 +246,30 @@ Para ello importamos el Data Frame con la data historica completa, es decir, la 
 ```{r}
 
 ##Primero formemos un vector con los valores reales 
-PEA_MEX_completa_reales6 <- PEA_MEX_completa$PEA[67:72]
-PEA_MEX_completa_reales6
+accidentes_MEX_completa_reales3 <- Accidentes_transito_MEX_completo$Num[19:22]
+accidentes_MEX_completa_reales3
 
 ## Despues formemos un vector con únicamente los valores pronósticados 
-PEA_MEX_forecast6 <- Est_punt_PEA_ajustada[67:72]
-PEA_MEX_forecast6
+accidentes_MEX_forecast3 <-  Accidentes_pronostico_puntual[19:22]
+accidentes_MEX_forecast3
 
 ##Calculemos el MAPE entre estos dos vectores 
 
 # First, calculate the absolute percentage error (APE) for each element in the vectors
-APE_PEA_estatico <- abs((PEA_MEX_completa_reales6 - PEA_MEX_forecast6) / PEA_MEX_completa_reales6)
+APE_accidentes_estatico <- abs((accidentes_MEX_completa_reales3 - accidentes_MEX_forecast3) / accidentes_MEX_completa_reales3)
 
 # Calculate the mean APE across all elements in the vectors
-MAPE_PEA_estatico <- mean(APE_PEA_estatico) * 100
+MAPE_accidentes_estatico <- mean(APE_accidentes_estatico) * 100
 
 # Print the MAPE value
-cat("El error tipo MAPE  para el forecast calculado con el método de 'suavizamiento estático'de la serie de PEA en MEX es:", MAPE_PEA_estatico, "%")
+cat("El error tipo MAPE  para el forecast calculado con el método de 'suavizamiento estático'de la serie de accidnetes en MEX es:", MAPE_accidentes_estatico, "%")
 
 
 ```
 
 
 
-1## B. Método de Holt como "modelo de suaviazamiento y pronóstico NO ESTÁTICO" que si considera los cambios de nivel a tráves del tiempo. 
+## B. Método de Holt como "modelo de suaviazamiento y pronóstico NO ESTÁTICO" que si considera los cambios de nivel a tráves del tiempo. 
 
 Vamos a usar ahora el método de HoltWinters como "modelo de suaviazamiento y pronóstico NO ESTÁTICO" que si considera los cambios de nivel a tráves del tiempo. 
 
@@ -292,7 +292,7 @@ plot(acidentes_MEX_ts, main="Accidentes MEX train data en tipo time series (Valo
 ### Aplicación del método de Holt Winters" a la serie SIN  TENDENCIA y SIN ESTACIONALIDAD de Accidentes terrestres en MX
 
 Como se observará este primer cálculo dejará como grados de libertad los valores de alpha, así como los valores de arranque, de manera que el "el algoritmo de HoltWinters de R" determine la "mejor combinaión posible".
-Como en este caso no tenemos componente de seasonalidad ni ne tndencia se indica que el parámetro beta y gamma tendrán un valor "false"
+Como en este caso no tenemos componente de seasonalidad ni ne tendencia se indica que el parámetro beta y gamma tendrán un valor "false"
 
 ```{r}
 accidentes_MEX_ts_h1 <-HoltWinters(acidentes_MEX_ts, beta=FALSE, gamma=FALSE)
@@ -316,7 +316,8 @@ En nuestro caso el valor de $\alpha$ es:
 ```{r}
 accidentes_MEX_ts_h1$alpha
 ```
-Lo que indica que nuestra data histórica es prácticamente una caminata aleatoria
+Lo que indica que nuestra data es prácticamente una caminata aleatoria
+
 
 
 ### Pronóstico de la serie de PEA en MEX con el método de Holt Winters 
@@ -333,7 +334,7 @@ plot(accidentes_MEX_ts_h1, main="Aplicaicón del método de Holt Winters a accid
 
 ```{r}
 # Install the forecast package
-install.packages("forecast")
+#install.packages("forecast")
 
 # Load the forecast package
 library(forecast)
@@ -350,8 +351,12 @@ accidentes_MEX_ts_h1_fc
 
 
 ```{r}
-plot(accidentes_MEX_ts_h1_fc, main="Forecast de Accidentes MX usando el Método de Holt Winters con parámetro gamma ='False'", type="l", cex.main=0.8)
+plot(accidentes_MEX_ts_h1_fc, main="Forecast de Accidentes MX usando el Método de Holt Winters con parámetro gamma ='False'", cex.main=0.8)
 ```
+
+
+Se observa como el prronostico puntual es "relativamente bueno" y es parecido en valor al obtenido previamente con el método estático, sin embargo los Intervalos de confianza obtenidos con este método son MEJORES en comparación con los del anterior 
+
 
 
 
@@ -362,8 +367,53 @@ accidentes_MEX_ts_h1$SSE
 
 
 
+Calculemos el error tipo MAPE entre los valores pronosticados con el "método de Holt Winters" y los valores reales de la serie 
+
+```{r}
+accidentes_MEX_completa_forecast3_HW  <- accidentes_MEX_ts_h1_fc$mean[1:3]
+accidentes_MEX_completa_forecast3_HW
+```
 
 
+```{r}
+
+##Calculemos el MAPE entre estos dos vectores 
+
+# First, calculate the absolute percentage error (APE) for each element in the vectors
+APE_accidentes_HW <- abs((accidentes_MEX_completa_reales3 - accidentes_MEX_completa_forecast3_HW) / accidentes_MEX_completa_reales3)
+
+# Calculate the mean APE across all elements in the vectors
+MAPE_accidentes_HW <- mean(APE_accidentes_HW) * 100
+
+# Print the MAPE value
+cat("MAPE error para el forecast calculado con el método de 'HoltWinters'es:", MAPE_accidentes_HW, "%")
+```
+
+
+
+### Comparación del MAPE del pronostico hecho con métodos estáticos vs el pronóstico hecho con el método " de suavizamiento dinámico" de HoltWinters para el pronostico puntual
+
+
+En este caso y dado un cálculo con el métodO de HolttWinters sin valores de arranque especificados los errores de ambos métodos (estático vs HoltWinters) fueron los sigientes: 
+
+
+```{r}
+cat("MAPE error para el forecast calculado con el método de 'suavizamiento estático'es:", MAPE_accidentes_estatico, "%")
+
+  
+cat("MAPE error para el forecast calculado con el método de 'HoltWinters'es:", MAPE_accidentes_HW, "%")
+```
+
+Lo que indica que para este caso el Método de HoltWinters fue ligeramente mejor para el cálculo de las estimaciones puntuales  
+
+
+### Comparación de los intervalos del pronostico hecho con métodos estáticos vs el pronóstico hecho con el método " de suavizamiento dinámico" de HoltWinters 
+
+Como se sabe, la parte "más sustancial" o esencial de los pronósticos es el intervalo y no el pronóstico puntual, por lo que en nuestro caso se considerará en general como "un mejor mpetodo de pronóstico" no aquel que otorge el menor error tipo MAPE en las estimaciones puntuales, sino aquel cuyos intervalos de confianza al 95% sean menores incluso para valores pronósticados relativamente lejanos del último valor real. 
+
+
+
+Se observa claramente como el método de HoltWinters otorga mejores intervalos de confianza para pronósticos incluso para aquellos 'más alejados' del último valor real vs aquellos generados con el "método de suavizamiento estático" 
 
 
 
