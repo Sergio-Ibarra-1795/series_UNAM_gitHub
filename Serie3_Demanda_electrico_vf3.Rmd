@@ -299,7 +299,7 @@ tail(Demanda_electrico_completa)
 
 Demanda_electrico_pronostico<-c(Demanda_electrico_ruido_blanco, rep(mean(Demanda_electrico_ruido_blanco), 12))
 
-plot(Demanda_electrico_completa$Date,Demanda_electrico_pronostico, type="l", main = "Pronóstico de demanda de gas natrual para los siguientes 12", cex.main=0.8)
+plot(Demanda_electrico_completa$Date,Demanda_electrico_pronostico, type="l", main = "Estimación puntual de demanda de gas natrual para los siguientes 12 meses (sin componentes de estacionalidad ni tendencia) con el método de 'suavizamiento estático' ", cex.main=0.5)
 
 ```
 
@@ -376,7 +376,7 @@ head(LS_demanda_electrico_cest)
 tail(LS_demanda_electrico_cest)
 
 
-plot(Demanda_electrico_completa$Date, Demanda_electrico_pronostico_cest, type="l", main="Demanda electrico estimación puntual e intervalos con componente de estacionalidad ", cex.main= 0.85)
+plot(Demanda_electrico_completa$Date, Demanda_electrico_pronostico_cest, type="l", main="Demanda electrico estimaciones puntuales ajustada con componente de estacionalidad (con método estático) ", cex.main= 0.75)
 lines(LI_demanda_electrico_cest, col="violet")
 lines(LS_demanda_electrico_cest, col="violet")
 ```
@@ -397,8 +397,8 @@ tail(LS_demanda_electrico_cest)
 
 # Plot with confidence intervals
 plot(Demanda_electrico_pronostico_cest, 
-     type="l", main="Demanda electrico pronostico (con método estático) ajustada con componente de estacionalidad + intervalos", 
-     cex.main=0.75, ylim=c(0.4,1.8))
+     type="l", main="Demanda electrico estimación puntual e intervalos de confianza ajustada con componente de estacionalidad (con método estático)", 
+     cex.main=0.65, ylim=c(0.4,1.8))
 lines(LI_demanda_electrico_cest, col="violet")
 lines(LS_demanda_electrico_cest, col="violet")
 
@@ -450,8 +450,8 @@ LI_demanda_electrico_ajustado<-LI_demanda_electrico_cest*Electrico_Demanded_gas_
 LS_demanda_electrico_ajustado<-LS_demanda_electrico_cest*Electrico_Demanded_gas_line_aplicada2
 
 
-plot(Demanda_electrico_completa$Date, Demanda_electrico_pronostico_ajustado, type="l", ylim=c(0, max(LS_demanda_electrico_ajustado, na.rm = TRUE)),  main="Demanda electrico pronostico (con método estático) ajustada con componentes de estacionalidad y de trend + intervalos vs Demanda real", 
-     cex.main=0.6, col="blue")
+plot(Demanda_electrico_completa$Date, Demanda_electrico_pronostico_ajustado, type="l", ylim=c(0, max(LS_demanda_electrico_ajustado, na.rm = TRUE)),  main="Demanda electrico estimación puntual e intervalos de condianza  ajustada con componentes de estacionalidad y de trend (con método estático) vs Demanda real", 
+     cex.main=0.5, col="blue")
 lines(Demanda_electrico_completa$Date,LI_demanda_electrico_ajustado, col="violet")
 lines(Demanda_electrico_completa$Date, LS_demanda_electrico_ajustado, col="violet")
 lines(Demanda_electrico_completa$Date, Demanda_electrico_completa$Demanded_Gas, col="black")
@@ -482,8 +482,8 @@ tail(df_demanda_electrico_pronostico)
 ```
 
 
-Se observa que los pronósticos puntuales vs los reales parecen no estar muy alejados unos de otros, sin embargo los intervalos de confianza si "sufren bastante a medida que nos alejamos del último valor real" pues son cada vez más grandes hasta llegar a abarcar un rango de [1000,6000] para el 95% de intervalo de confianza en el 12vo mes pronósticado. Lo que representaría que: nuestro intervalo de confianza al 95% para nuestros valores más alejados es del orden de caso el rango total de nuestra variable y.
-En general, con lo observado en este ejemplo y lo visto en clase se puede mencionar que: "Los métodos de suavizamiento estático son relativamente buenos para generar pronóstcos puntuales, pero los intervalos de confianza del pronóstico se ven severamente castigados mientras datos n 'en el tiempo t+n' quieran ser pronósticados"
+Se observa que los pronósticos puntuales vs los reales parecen no estar muy alejados unos de otros, sin embargo los intervalos de confianza si "sufren bastante a medida que nos alejamos del último valor real" pues son cada vez más grandes hasta llegar a abarcar un rango de [1000,6800] para el 95% de intervalo de confianza en el 12vo mes pronósticado. Lo que representaría que: nuestro intervalo de confianza al 95% para nuestros valores más alejados es del orden de casi el rango total de nuestra variable y.
+En general, con lo observado en este ejemplo y lo visto en clase se puede mencionar que: "Los métodos de suavizamiento estático son relativamente buenos para generar pronóstcos puntuales, pero los intervalos de confianza del pronóstico se ven severamente castigados mientras más datos n 'en el tiempo t+n' quieran ser pronósticados"
 
 
 

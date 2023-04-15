@@ -316,7 +316,7 @@ linea_PEA_extended_aplicada <- predict(linea_PEA_extended,
 linea_PEA_extended_aplicada
 
 # plot the predicted values
-plot(extended_dates, linea_PEA_extended_aplicada, type = "l")
+plot(extended_dates, linea_PEA_extended_aplicada, type = "l", main="Linea de tendencia aplicada a los datos históricos de PEA MEX")
 ```
 
 Entonces para finalmente "devolver el efecto de la tendnecia a los datos de media_nacimientos_ST" se multiplica cada valor de la serie por el valor calculado a partir de la linea de tencia que se llama: linea_PEA_extended_aplicada
@@ -334,11 +334,11 @@ head(Est_punt_PEA_ajustada)
 tail(Est_punt_PEA_ajustada)
 
 # plot the original data and the predicted values together
-plot(extended_dates, PEA_original_para_pron, main="PEA pronóstico (con método estático) ajustado con componente de estacionalidad",type="l", xlab="Year", ylab="PEA", cex.main=0.8)
+plot(extended_dates, PEA_original_para_pron, main="PEA estimación puntual ajustada con componente de estacionalidad (con método estático)",type="l", xlab="Year", ylab="PEA", cex.main=0.8)
 lines(extended_dates, Est_punt_PEA_ajustada, col="blue")
 
 
-legend("bottomright", legend = c("PEA historico", "Pronóstico calculado con método estático"), 
+legend("bottomright", legend = c("PEA historico", "Pronóstico puntual calculado con método estático"), 
        col = c("black", "blue"), lty = 1)
 
 
@@ -346,6 +346,21 @@ legend("bottomright", legend = c("PEA historico", "Pronóstico calculado con mé
 
 
 Calculamos ahora los límites de estimación devolviendo el efecto de tendencia 
+
+
+Para ello importamos el Data Frame con la data historica completa, es decir, la que contiene los 66 trimestres propuestos aquí como "train data" + los 6 trimestres que se pronósticaran
+
+```{r}
+install.packages("readxl")
+
+library("readxl")
+
+PEA_MEX_completa <-read_excel("PEA_MEX_full.xlsx")
+head(PEA_MEX_completa)
+tail(PEA_MEX_completa)
+```
+
+
 
 ```{r}
 
@@ -366,7 +381,7 @@ dim(PEA_original_para_pron)
 
 
 # plot the original data and the predicted values together
-plot(extended_dates,PEA_MEX_completa$PEA, main="PEA pronostico (con método estático) ajustada con componente de trend + intervalos vs PEA real", type="l", xlab="Year", ylab="PEA", ylim=c(40000000, 65000000), cex.main=0.7)
+plot(extended_dates,PEA_MEX_completa$PEA, main="PEA estimación puntual e intervalos de confianza ajustada con componente de trend (con método estático) vs PEA real", type="l", xlab="Year", ylab="PEA", ylim=c(40000000, 65000000), cex.main=0.6)
 
 lines(extended_dates, Est_punt_PEA_ajustada, col="blue")
 x_vals <- c(rep(NA, times = 66), extended_dates[67:72])
@@ -375,7 +390,7 @@ lines(x_vals, LI_PEA_ajustado, col = "purple")
 lines(x_vals, LS_PEA_ajustado, col = "purple")
 
 
-legend("bottomright", legend = c("PEA original", "Pronóstico calculado con método estático"), 
+legend("bottomright", legend = c("PEA original", "Pronóstico puntual calculado con método estático"), 
        col = c("black", "blue"), lty = 1)
 
 
@@ -399,19 +414,6 @@ Se observa que los pronósticos puntuales vs los reales parecen no estar muy ale
 ### A.5 Calculo del error tipo MAPE para los pronósticos hechos con los modelos estáticos de suavizamiento
 
 Calculemos el error tipo MAPE entre los valores pronosticados con el "método de suavizamiento estático" y los valores reales de la serie 
-
-Para ello importamos el Data Frame con la data historica completa, es decir, la que contiene los 66 trimestres propuestos aquí como "train data" + los 6 trimestres que se pronósticaran
-
-```{r}
-install.packages("readxl")
-
-library("readxl")
-
-PEA_MEX_completa <-read_excel("PEA_MEX_full.xlsx")
-head(PEA_MEX_completa)
-tail(PEA_MEX_completa)
-```
-
 
 
 ```{r}
