@@ -21,17 +21,9 @@ La idea es usar 201 de esos 2013 como una especie de "data de entreaniemto" para
 
 Primero vamos a importar la data con los elementos del 1 al 201 
 
-```{r}
-##install.packages("readxl")
 
+```{r}
 library("readxl")
-```
-
-
-Data obtenida de la página oficial de la Secretaria de Energía: https://sie.energia.gob.mx/bdiController.do
-
-```{r}
-
 Demanda_electrico <-read_excel("Demanda_electrico_2022_full1_pp.xlsx")
 ```
 
@@ -262,11 +254,11 @@ Se calcula la varianza  y desviación estandar de los errores
 var(demanda_electrico_errores)
 
 ## Se calcula la desviación estandar 
-sd_est_demanda_electrico
+sd_est_demanda_electrico <-sd(demanda_electrico_errores)
 ```
 
 
-Se tiene una desviación estandar de 0.1 y una  media muy cercana a cero para los errores lo cual es totalmente concordante con le hecho de que tras haber removido los componentes de tendencia y estacionalidad, "el ruido blanco" o componente estocástico resultante tiende a tener una distribuión normal. Y que si a ese ruido blanco se le extrae su media tambien tiende a tener una distribución normal con media cero y en este caso una desviación estandar de 0.1 
+Se tiene una desviación estandar de 0.01 y una  media muy cercana a cero para los errores lo cual es totalmente concordante con le hecho de que tras haber removido los componentes de tendencia y estacionalidad, "el ruido blanco" o componente estocástico resultante tiende a tener una distribuión normal. Y que si a ese ruido blanco se le extrae su media tambien tiende a tener una distribución normal con media cero y en este caso una desviación estandar de 0.01 
 
 
 Procedamos a observar como se comporta la Distribución de dichos errores:
@@ -299,7 +291,7 @@ tail(Demanda_electrico_completa)
 
 Demanda_electrico_pronostico<-c(Demanda_electrico_ruido_blanco, rep(mean(Demanda_electrico_ruido_blanco), 12))
 
-plot(Demanda_electrico_completa$Date,Demanda_electrico_pronostico, type="l", main = "Estimación puntual de demanda de gas natrual para los siguientes 12 meses (sin componentes de estacionalidad ni tendencia) con el método de 'suavizamiento estático' ", cex.main=0.5)
+plot(Demanda_electrico_completa$Date,Demanda_electrico_pronostico, type="l", main = "Estimación puntual de demanda de gas natrual para los siguientes 12 meses (sin componentes de estacionalidad ni tendencia) con el método de 'suavizamiento estático' ", cex.main=0.55)
 
 ```
 
@@ -339,7 +331,7 @@ tail(LS_demanda_electrico_lineaA)
 ```{r}
 
 
-plot(Demanda_electrico_completa$Date,Demanda_electrico_pronostico, type="l", main = "Estimación puntual e intervalos de confianza sin tendencia para Demanda gas natural en sector eléctrico MEX con el método de 'suavizamiento estático' ", cex.main=0.6, ylim=c(0.2,1.7))
+plot(Demanda_electrico_completa$Date,Demanda_electrico_pronostico, type="l", main = "Estimación puntual e intervalos de confianza sin tendencia para Demanda gas natural en sector eléctrico MEX con el método de 'suavizamiento estático' ", cex.main=0.55, ylim=c(0.2,1.7))
 
 
 #lines(Demanda_electrico_pronostico, col="Red")
@@ -614,8 +606,6 @@ plot(Demanda_electrico_ts_hw1, main="Aplicaicón del método de Holt Winters a D
 
 
 ```{r}
-# Install the forecast package
-#install.packages("forecast")
 
 # Load the forecast package
 library(forecast)

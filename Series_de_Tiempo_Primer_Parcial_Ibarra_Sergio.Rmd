@@ -1,0 +1,1824 @@
+---
+title: "Series_de_Tiempo_Primer_Parcial_Ibarra_Sergio"
+author: "Sergibar"
+date: "2023-04-15"
+output: html_document
+---
+
+
+
+# Serie de tiempo 1 SIN tendencia y SIN estacionalidad: Historico anual Accidentes terrestres en México
+
+Tenemos data anual desde 2005 a 2021 sobre el número de accidentes terrestres que ha habido en México, son 22 datos en total. 
+La idea es usar 19 de esos 22 como una especie de "data de entrenamiento" para aplicar los modelos A) De suavizamiento "estático" y B) De "suavizamiento dinámico" o Holt-Winters para posteriormente predecir con cada modelo los valores de los 3 años restantes y poder comparar contra los reales e identificar el mejor modelo entre los dos mencionados para modelar los accidentes terrestres en México 
+
+
+
+Primero importamos la data de Accidentes terrestres en MEX
+Data obtenida de la página oficial del INEGI:  https://www.inegi.org.mx/temas/accidentes/
+
+```{r}
+library("readxl")
+
+
+Accidentes_transito_MEX <-read_excel("Accidentes_transito_pp_.xlsx")
+```
+
+
+Revisamos que la data de nacimientos MEX sehay importado correctamente 
+```{r}
+Accidentes_transito_MEX
+summary(Accidentes_transito_MEX)
+typeof(Accidentes_transito_MEX)
+dim(Accidentes_transito_MEX)
+```
+
+
+Graficamos la "data original" de Accidentes terrestres en México de los últimos años De 2000 a 2018)  
+
+```{r}
+
+plot(Accidentes_transito_MEX$Date, Accidentes_transito_MEX$Num, type="l", main="Data 'original' de Accidentes terrestres en México")
+```
+
+
+## A. Método de "suavizamiento estático"
+
+Comenzaremos tratando la serie con el método estático aplicando el siguiente flujo lógico de trabajo y considerando que estamos en el caso de serie CON TENDECIA y SIN ESTACIONALIDAD: 
+
+1. Se llevará a cabo el "pronóstico puntual" de los siguientes 3 años como la media historica 
+2. Se calcularán los intervalos de pronóstico al 95% de confianza 
+3. Se calculará el error tipo MAPE entre los valores pronósticados con el "método estático" y los valores reales de la serie de los últimos 6 trimestres
+
+
+### A.1 Tratamiendo del ruido blanco en la serie y pronostico puntual  
+
+Considerese el siguiente razonamiento acerca de las series del tiempo: 
+Serie total = Componente de tendencia + Componente de estacionalidad + Componente estocástico 
+
+En este caso el Componente de estacionalidad = 0 y el  Componente de tendencia = 0, por lo tanto tendríamos 
+
+Serie total Accidentes MEX = Componente estocástico
+
+
+Calculamos el "ruido blanco de la serie" como la media de los datos hisóricos
+```{r}
+Accidentes_transito_ruido_blanco <- mean(Accidentes_transito_MEX$Num)
+Accidentes_transito_ruido_blanco
+```
+
+
+Una vez teniendo únicamente el componente estocástico de nuestra serie, es posible "extraer los errores" de la serie y conocer así el error estimado (varianza)  y la desviación estandar. 
+La idea es que extrayendo de la serie del ruido blanco su media histórica estaríamos determinando la varianza, de la siguiente manera:
+
+Varianza (errores al cuadrado) = Serie original - media de componete estocástico. 
+
+
+Errores= Valores originales de la serie - Media del componente estocástico o ruido blanco
+
+
+Se determinan la varianza (errores al cuadrado) de la serie de PEA_MEX y se calcula también la desviación estandar de esos errores 
+
+```{r}
+Error_est_accidentes<-Accidentes_transito_MEX$Num-Accidentes_transito_ruido_blanco
+head(Error_est_accidentes)
+tail(Error_est_accidentes)
+
+##Claculando la desviaicón estandar del error
+
+sd_est_accidentes<-sd(Error_est_accidentes)
+sd_est_accidentes
+
+plot(Accidentes_transito_MEX$Date, Error_est_accidentes, type="l", main="Errores al cuadrado (varianza) de la aplicaicón del modelo de 'suavizamiento estático' a la serie de Accidentes terrestres MX ", cex.main=0.6)
+
+```
+
+
+Se calcula la media de los errores 
+```{r}
+
+
+mean(Error_est_accidentes)
+```
+
+Se calcula la varianza  y desviación estandar de los errores 
+```{r}
+## Se calcula la varianza
+var(Error_est_accidentes)
+
+## Se calcula la desviación estandar 
+sd_est_accidentes
+```
+
+Se tiene una desviación estandar de ~37 mil y una  media muy cercana a cero para los errores lo cual es totalmente concordante con le hecho de que "el ruido blanco" o componente estocástico tiende a tener una distribuión normal y que si a ese ruido blanco se le extrae su media tambien tiende a tener una distribución normal con media cero y en este caso una desviación estandar de  ~37 mil que representa aproximadamente el 10% del valor de la variable a pronosticar y: Número de accidentes terrestres anuales en México.  
+
+
+
+Procedamos a observar como se comporta la Distribución de dichos errores:
+```{r}
+hist(Error_est_accidentes, breaks = 20, col = "lightblue", main = "Frequency Distribution of Accidentes terrestres en Méxcio errors", xlab = "Values", ylab = "Frequency")
+
+```
+Se observa como los errores de la serie se acercan a una distribución normal con media cero y desviación estandar de 50,000, a excepción de los valores atípicos del año 2020 derivados de la pandemia de Covid-19.
+
+
+#### Pronóstico puntual
+
+Recordemos que para este caso donde no hay componente de tendencia ni estacionalidad y el valor de la serie es directamente el ruido blanco. Entonces, solo por cuestión de concordancia definamos a nuestra "mejor estimaicón puntual" como la media histórica de mi serie 
+
+```{r}
+estimacion_puntual_accidentes <- mean(Accidentes_transito_MEX$Num)
+estimacion_puntual_accidentes
+
+```
+
+
+
+
+Vamos a hacer el pronóstico de la serie de PEA MEX para los próximos 3 años
+
+
+```{r}
+##Creamos un eje x que incluya a los 66 datos + 6 que se pronosticarán
+Date_accidentes2<-c(1:22)
+
+
+## Creamos el vector de datos que incluirá los  datos históricos  sin tendencia + 6 valores NA a pronosticar
+accidentes_para_pron<-c(Accidentes_transito_MEX$Num, rep(NA, times=3))
+
+
+head(accidentes_para_pron)
+tail(accidentes_para_pron)
+
+
+## Entonces el mejor pronóstico que tenemos para esta técnica es la media de la serie historica
+
+
+Accidentes_pronostico_puntual <- rep(estimacion_puntual_accidentes, times=22)
+head(Accidentes_pronostico_puntual)
+tail(Accidentes_pronostico_puntual)
+
+plot(Date_accidentes2,Accidentes_pronostico_puntual, type="l", main = "Estimación puntual de accidentes terrestres en MEX", cex.main=0.8)
+```
+
+
+
+Comentario sobre el pronóstico puntual sin tendencia ni estacionalidad, que para el caso de la serie de esta serie tiene un valor de:
+```{r}
+estimacion_puntual_accidentes <- mean(Accidentes_transito_MEX$Num)
+estimacion_puntual_accidentes
+```
+
+Este valor es bastante concordante con los datos historicos, ya que en general el rango de accidentes se encuentra entre 330 mil y 440 mil, por lo que ese valor de "estimación puntual" sueva bastante razonable 
+
+### A.2 Calculo de intervalos de confianza para el pronóstico
+
+Calculamos los límites de intervalos de confianza al 95% pata el pronostico 
+Se considera 95% como +- 2 desviaciones estandar de la media
+
+```{r}
+tao<-c(1:3)
+Lim_accidentes<-2*sd_est_accidentes*tao^.5
+Lim_accidentes
+```
+
+
+Calculamos los limites inferior y superiror como NA para los valores historicos y media +- 2 veces desciación estandar para los valores pronósticados 
+
+Graficamos los valores pronósticadoos t los limites de confianza 
+
+```{r}
+
+LI_accidentes<-c(rep(NA, times=19), Accidentes_pronostico_puntual[1]-Lim_accidentes)
+head(LI_accidentes)
+tail(LI_accidentes)
+
+
+LS_accidentes<-c(rep(NA, times=19), Accidentes_pronostico_puntual[1]+Lim_accidentes)
+head(LS_accidentes)
+tail(LS_accidentes)
+
+
+plot(Date_accidentes2, accidentes_para_pron, type="l" ,main="Estimación puntual e intervalos de confianza para Accidentes terrestres MEX con el método de 'suavizamiento estático'",col="Blue", cex.main=0.7, ylim=c(200000, 500000))
+
+lines(Accidentes_pronostico_puntual, col="Red")
+lines(LI_accidentes, col="Purple")
+lines(LS_accidentes, col="Purple")
+```
+
+```{r}
+
+library("readxl")
+
+
+Accidentes_transito_MEX_completo <-read_excel("Accidentes_transito_full_.xlsx")
+```
+
+
+Visualizamos el Data.Frame con los valores históricos la "data original" + los resultados del pronóstico puntual y los intervalos de confianza al 95% 
+
+```{r}
+df_Accidentes_MX_pronostico<-data.frame(Accidentes_transito_MEX_completo$Num,
+                                                Accidentes_pronostico_puntual, LI_accidentes, LS_accidentes)
+View(df_Accidentes_MX_pronostico)
+
+tail(df_Accidentes_MX_pronostico)
+```
+
+
+Se observa que los pronósticos puntuales vs los reales parecen no estar muy alejados unos de otros, sin embargo los intervalos de confianza si "sufren DEMASIADO a medida que nos alejamos del último valor real" pues son cada vez más grandes hasta llegar a abarcar un rango de [~260 mil a 517 mil] para el 95% de intervalo de confianza apenas en el 3er valor pronósticado.
+
+
+
+### A.5 Calculo del error tipo MAPE para los pronósticos hechos con los modelos estáticos de suavizamiento
+
+Calculemos el error tipo MAPE entre los valores pronosticados con el "método de suavizamiento estático" y los valores reales de la serie 
+
+Para ello importamos el Data Frame con la data historica completa, es decir, la que contiene los 66 trimestres propuestos aquí como "train data" + los 6 trimestres que se pronósticaran
+
+
+```{r}
+
+##Primero formemos un vector con los valores reales 
+accidentes_MEX_completa_reales3 <- Accidentes_transito_MEX_completo$Num[19:22]
+accidentes_MEX_completa_reales3
+
+## Despues formemos un vector con únicamente los valores pronósticados 
+accidentes_MEX_forecast3 <-  Accidentes_pronostico_puntual[19:22]
+accidentes_MEX_forecast3
+
+##Calculemos el MAPE entre estos dos vectores 
+
+# First, calculate the absolute percentage error (APE) for each element in the vectors
+APE_accidentes_estatico <- abs((accidentes_MEX_completa_reales3 - accidentes_MEX_forecast3) / accidentes_MEX_completa_reales3)
+
+# Calculate the mean APE across all elements in the vectors
+MAPE_accidentes_estatico <- mean(APE_accidentes_estatico) * 100
+
+# Print the MAPE value
+cat("El error tipo MAPE  para el forecast calculado con el método de 'suavizamiento estático'de la serie de accidnetes en MEX es:", MAPE_accidentes_estatico, "%")
+
+
+```
+
+
+
+## B. Método de Holt como "modelo de suaviazamiento y pronóstico NO ESTÁTICO" que si considera los cambios de nivel a tráves del tiempo. 
+
+Vamos a usar ahora el método de HoltWinters como "modelo de suaviazamiento y pronóstico NO ESTÁTICO" que si considera los cambios de nivel a tráves del tiempo. 
+
+
+Para ello debemos tener nuestra data a suavizar en el tipo de dato serie de tiempo ts en R 
+
+```{r}
+acidentes_MEX_ts <-ts(Accidentes_transito_MEX$Num, frequency =1, start =c(2000,1))
+head(acidentes_MEX_ts)
+tail(acidentes_MEX_ts)
+```
+
+Graficamos la "data original de la PEA_MEX" que se usará como "train para el modelo" y que fue convertida a tipo de dato serie de tiempo 
+
+```{r}
+plot(acidentes_MEX_ts, main="Accidentes MEX train data en tipo time series (Valores de  2000 a 2018)", cex.main=0.8)
+```
+
+
+### Aplicación del método de Holt Winters" a la serie SIN  TENDENCIA y SIN ESTACIONALIDAD de Accidentes terrestres en MX
+
+Como se observará este primer cálculo dejará como grados de libertad los valores de alpha, así como los valores de arranque, de manera que el "el algoritmo de HoltWinters de R" determine la "mejor combinaión posible".
+Como en este caso no tenemos componente de seasonalidad ni ne tendencia se indica que el parámetro beta y gamma tendrán un valor "false"
+
+```{r}
+accidentes_MEX_ts_h1 <-HoltWinters(acidentes_MEX_ts, beta=FALSE, gamma=FALSE)
+accidentes_MEX_ts_h1
+```
+
+
+
+#### Interpretación de los valores de los coeficientes del método de Holt Winters para el caso de la serie de accidentes terrestres México
+
+Interpretación de los valores de coficientes $\alpha$ y $\beta$ para el caso del pronóstico usando modelo de HoltWinters SIN ESPECIFICAR DATOS DE ARRANQUE    
+
+
+$$0<\alpha<1$$
+
+Recordemos que: 
+Valores de $\alpha$ cercano a 1 reflejan caminata aleatoria
+Valores de $\alpha$ cercano a 0 reflejan una "gran influencia" de los valores pasado, es decir, que "el ruido no es un componente de gran relevancia"
+
+En nuestro caso el valor de $\alpha$ es:
+```{r}
+accidentes_MEX_ts_h1$alpha
+```
+Lo que indica que nuestra data es prácticamente una caminata aleatoria
+
+
+
+### Pronóstico de la serie de PEA en MEX con el método de Holt Winters 
+
+Ahora pasemos a realizar los pronósticos de la serie pero con el método de HoltWinters que considera cambios dinámicos de nivel 
+
+Graficamos los valores originales vs suavizados con el método de Holt-Winters
+
+
+```{r}
+plot(accidentes_MEX_ts_h1, main="Aplicaicón del método de Holt Winters a accidentes MEX train data")
+```
+
+
+```{r}
+# Load the forecast package
+library(forecast)
+```
+
+
+
+Ahora se llevará a cabo el pronóstico con la librería de forecast y basados en el método de Holt Winters. De igual manera se usará un intervalo de confianza del 95%
+
+```{r}
+accidentes_MEX_ts_h1_fc <- forecast(accidentes_MEX_ts_h1, h=3, level=0.95)
+accidentes_MEX_ts_h1_fc
+```
+
+
+```{r}
+plot(accidentes_MEX_ts_h1_fc, main="Forecast de Accidentes MX usando el Método de Holt Winters con parámetro gamma ='False'", cex.main=0.8)
+```
+
+
+Se observa como el prronostico puntual es "relativamente bueno" y es parecido en valor al obtenido previamente con el método estático, sin embargo los Intervalos de confianza obtenidos con este método son MEJORES en comparación con los del anterior 
+
+
+
+
+Veamos el valor la Suma de Errores al Cuadrado del pronóstico de PEA en MEX  usando el Método de suaviazamiento dinámico de HoltWinters
+```{r}
+accidentes_MEX_ts_h1$SSE
+```
+
+
+
+Calculemos el error tipo MAPE entre los valores pronosticados con el "método de Holt Winters" y los valores reales de la serie 
+
+```{r}
+accidentes_MEX_completa_forecast3_HW  <- accidentes_MEX_ts_h1_fc$mean[1:3]
+accidentes_MEX_completa_forecast3_HW
+```
+
+
+```{r}
+
+##Calculemos el MAPE entre estos dos vectores 
+
+# First, calculate the absolute percentage error (APE) for each element in the vectors
+APE_accidentes_HW <- abs((accidentes_MEX_completa_reales3 - accidentes_MEX_completa_forecast3_HW) / accidentes_MEX_completa_reales3)
+
+# Calculate the mean APE across all elements in the vectors
+MAPE_accidentes_HW <- mean(APE_accidentes_HW) * 100
+
+# Print the MAPE value
+cat("MAPE error para el forecast calculado con el método de 'HoltWinters'es:", MAPE_accidentes_HW, "%")
+```
+
+
+
+### Comparación del MAPE del pronostico hecho con métodos estáticos vs el pronóstico hecho con el método " de suavizamiento dinámico" de HoltWinters para el pronostico puntual
+
+
+En este caso y dado un cálculo con el métodO de HolttWinters sin valores de arranque especificados los errores de ambos métodos (estático vs HoltWinters) fueron los sigientes: 
+
+
+```{r}
+cat("MAPE error para el forecast calculado con el método de 'suavizamiento estático'es:", MAPE_accidentes_estatico, "%")
+
+  
+cat("MAPE error para el forecast calculado con el método de 'HoltWinters'es:", MAPE_accidentes_HW, "%")
+```
+
+Lo que indica que para este caso el Método de HoltWinters fue ligeramente mejor para el cálculo de las estimaciones puntuales  
+
+
+### Comparación de los intervalos del pronostico hecho con métodos estáticos vs el pronóstico hecho con el método " de suavizamiento dinámico" de HoltWinters 
+
+Como se sabe, la parte "más sustancial" o esencial de los pronósticos es el intervalo y no el pronóstico puntual, por lo que en nuestro caso se considerará en general como "un mejor mpetodo de pronóstico" no aquel que otorge el menor error tipo MAPE en las estimaciones puntuales, sino aquel cuyos intervalos de confianza al 95% sean menores incluso para valores pronósticados relativamente lejanos del último valor real. 
+
+
+
+Se observa claramente como el método de HoltWinters otorga mejores intervalos de confianza para pronósticos incluso para aquellos 'más alejados' del último valor real vs aquellos generados con el "método de suavizamiento estático" 
+
+
+
+
+
+
+
+
+
+
+
+
+# Serie de tiempo 2 CON tendencia y SIN estacionalidad: Historico trimestral de Población Económicamente Activa (PEA) en México
+
+Tenemos data trimestral de Enero de 2005 a Agosto de 2022 sobre la Población Económicamente activa en México, son 72 datos en total. 
+La idea es usar 66 de esos 72 como una especie de "data de entrenamiento" para aplicar los modelos A) De suavizamiento "estático" y B) De "suavizamiento dinámico" o Holt-Winters y posteriormente predecir con cada modelo los valores de los 6 trimestres restantes y poder comparar contra los reales e identificar el mejor modelo entre los dos mencionados para modelar la Población Económicamente Activa en México 
+
+
+
+Primero importamos la data de PEA en MEX
+Data obtenida de la página oficial del INEGI:  https://www.inegi.org.mx/temas/empleo/
+
+```{r}
+
+library("readxl")
+
+PEA_mex <-read_excel("PEA_MEX_pp.xlsx")
+```
+
+
+Revisamos que la data de nacimientos MEX sehay importado correctamente 
+```{r}
+head(PEA_mex)
+summary(PEA_mex)
+typeof(PEA_mex)
+dim(PEA_mex)
+```
+
+
+Graficamos la "data original" de PEA en México de los últimos años (Enero 2005 a Oct 2021)  
+
+```{r}
+
+plot(PEA_mex$Date, PEA_mex$PEA,type="l", main="Data 'original' de Población Económicamente Activa (PEA) en México")
+```
+
+
+## A. Método de "suavizamiento estático"
+
+Comenzaremos tratando la serie con el método estático aplicando el siguiente flujo lógico de trabajo y considerando que estamos ene el caso de serie CON TENDECIA y SIN ESTACIONALIDAD: 
+
+1. Se removerá el factor de tendencia a la serie original obteniendo una serie sin tendencia
+2. Será sobre dicha serie sin tendecia que se llevará a cabo el "pronóstico puntual" de los siguientes 6 trimestre como la media historica de dicho componente estocástico 
+3. Se calcularán los intervalos de pronóstico al 95% de confianza 
+4. Se "devolverán" los efectos de tendencia de la serie con el fin de llevar los pronósticos a las dimensiones correctas
+5. Se calculará el error tipo MAPE entre los valores pronósticados con el "método estático" y los valores reales de la serie de los últimos 6 trimestres
+
+
+### A.1 Remoción de tendencia de serie original  
+
+Primero se calculará la linea "general" de tendencia de nuestra serie de (que representa la tendencia de la "serie de datos originales") y se removerá dicha tendencia de la 'data original' de PEA_mex
+
+
+Calculemos la linea de tendencia 
+```{r}
+
+linea_PEA<-lm(PEA~Date, data=PEA_mex)
+linea_PEA
+```
+
+Se puede observar una "ecuación general de linea de tendencia" en este caso es: 
+y = 17,890,000 + 0.02397 * (Date) 
+Es muy razonable que "la ordenada al origen" sea de alrededor de 20 millones, pues todos los datos de Población Económicamente Activa son del orden de 40 a 55 millones. También resulta lógica que el valor de la pendiente sea positivo pero no muy cercano a 1, pues en general para cada aumento en el valor del tiempo, no existe un incremento o decremento realmente signifiativo en el valor del PEA (excepto en el año 2020)
+
+
+
+Ahora para graficar la "serie original" de PEA_MEX vs el filtro1 (Linea de tendencia) primero debemos "crear/simular" datos de Enero 2005 a Oct 2021 a partir de nuestra linea de previamente computada de nombre: linea_PEA
+
+
+```{r}
+linea_PEA_aplicada <- predict(linea_PEA, newdata = data.frame(Date = PEA_mex$Date))
+
+head(linea_PEA_aplicada)
+tail(linea_PEA_aplicada)
+
+```
+
+
+Graficamos entonces a la "data original de PAE_MX" y a la data calculada a partir de la linea tendencia
+
+
+```{r}
+plot(PEA_mex$Date, PEA_mex$PEA, type="l", main=" 'data original de PAE_MX' y linea de tendencia calculada")
+lines(x = PEA_mex$Date, y = linea_PEA_aplicada, col = "red")
+
+legend("bottomright", legend = c("data original de PAE_MX", "Linea de tendencia de PEA en MEX"), 
+       col = c("black", "red"), lty = 1)
+
+```
+
+
+Ahora vamos a "quitar el efecto de la tendencia" de nuestra "serie original de datos"
+En este caso se asumirá un "efecto multiplicativo" y por lo tanto se removerá dividiendo cada elemento de la serie original / valor de la linea de tendnecia en ese valor de x
+
+Se grafica la serie sin tendencia:
+
+```{r}
+PEA_Sin_Tendencia<-PEA_mex$PEA/linea_PEA_aplicada
+
+plot(PEA_mex$Date, PEA_Sin_Tendencia, type="l", main=" Data sin tendencia de PAE_MX ", col="brown")
+```
+
+### A.2 Tratamiendo del ruido blanco en la serie y pronostico puntual  
+
+Considerese el siguiente razonamiento acerca de las series del tiempo: 
+Serie total = Componente de tendencia + Componente de estacionalidad + Componente estocástico 
+
+En este caso el Componente de estacionalidad = 0, por lo tanto tendríamos 
+
+Serie total PAEA MEX = Componente de tendencia + Componente estocástico, por lo tanto al haber previamente removido el componente estocástico de la serie lo que hemos hecho en realidad es obtener el componente estocástico o ruido blanco para este caso 
+
+Por simplicidad para cálculos posteriores, nombremos de esa manera a la variable 
+```{r}
+PEA_MX_ruido_blanco <- PEA_Sin_Tendencia
+head(PEA_MX_ruido_blanco)
+tail(PEA_MX_ruido_blanco)
+```
+
+
+Una vez teniendo únicamente el componente estocástico de nuestra serie, es posible "extraer los errores" de la serie y conocer así el error estimado (varianza)  y la desviación estandar. 
+La idea es que extrayendo de la serie del ruido blanco su media histórica estaríamos determinando la varianza, de la siguiente manera:
+
+Varianza (errores al cuadrado) = Serie original - tendecia - media de componete estocástico. En nuestro caso, dichos errores será nuestra serie sin tendencia - mean(PEA_MX_ruido_blanco).  Nosotros hemos ya calculado el resultado de Serie original - tendecia y lo hemos llamada justamente ruido blanco y lo lo tanto el calculo del error podría resumirse a  
+
+Errores= Componente estocástico o ruido blanco - Media del componente estocástico o ruido blanco
+
+
+
+Se determinan la varianza (errores al cuadrado) de la serie de PEA_MEX y se calcula también la desviación estandar de esos errores 
+
+```{r}
+Error_est_PEA<-PEA_Sin_Tendencia-mean(PEA_MX_ruido_blanco)
+head(Error_est_PEA)
+tail(Error_est_PEA)
+
+##Claculando la desviaicón estandar del error
+
+sd_est_PEA<-sd(Error_est_PEA)
+sd_est_PEA
+
+plot(PEA_mex$Date, Error_est_PEA, type="l", main="Errores al cuadrado (varianza) de la aplicaicón del modelo de 'suavizamiento estático' a la serie de PAE MX ", cex.main=0.6)
+
+```
+
+
+Se calcula la media de los errores 
+```{r}
+
+
+mean(Error_est_PEA)
+```
+
+Se calcula la varianza  y desviación estandar de los errores 
+```{r}
+## Se calcula la varianza
+var(Error_est_PEA)
+
+## Se calcula la desviación estandar 
+sd_est_PEA
+```
+
+Se tiene una desviación estandar de 0.025 y una  media muy cercana a cero para los errores lo cual es totalmente concordante con le hecho de que tras haber removido el componente de tendencia, "el ruido blanco" o componente estocástico resultante tiende a tener una distribuión normal. Y que si a ese ruido blanco se le extrae su media tambien tiende a tener una distribución normal con media cero y en este caso una desviación estandar de 0.025
+
+
+
+Procedamos a observar como se comporta la Distribución de dichos errores:
+```{r}
+hist(Error_est_PEA, breaks = 20, col = "lightblue", main = "Frequency Distribution of PEA MEX errors", xlab = "Values", ylab = "Frequency")
+
+```
+Se observa como los errores de la serie siguen prácticamente todos una distribución normal con media cero y desviación estandar de 0.025, a excepción de los valores atípicos del año 2020 derivados de la pandemia de Covid-19.
+
+
+#### Pronóstico puntual
+Una vez teniendo nuestra seríe SIN TENDENCIA lo que como ya se mencionó, implica que, "unicamente tenemos el componente estocástico o de ruido blanco en la serie" podemos proceder a llevar a cabo el pronóstico de 6 trimestres.
+
+Como ha sido estudiado en la clase, nuestro mejor pronóstico puntual dadas estas condiciones en la serie es la media de los datos históricos del ruido blanco
+
+
+```{r}
+estimacion_puntual_PEA_ST<-mean(PEA_Sin_Tendencia)
+estimacion_puntual_PEA_ST
+
+```
+
+
+
+Ahora vamos a hacer el pronóstico de la serie de PEA MEX para los próximos 6 trimestres
+
+
+```{r}
+##Creamos un eje x que incluya a los 66 datos + 6 que se pronosticarán
+Date_PAE2<-c(1:72)
+
+
+## Creamos el vector de datos que incluirá los  datos históricos  sin tendencia + 6 valores NA a pronosticar
+PAE_Sin_Tendencia_para_pron<-c(PEA_Sin_Tendencia, rep(NA, times=6))
+head(PAE_Sin_Tendencia_para_pron)
+tail(PAE_Sin_Tendencia_para_pron)
+
+
+## Entonces el mejor pronóstico que tenemos para esta técnica es la media de la serie sin tendencia 
+
+
+PEA_pronostico_puntual <- rep(estimacion_puntual_PEA_ST, times=72)
+head(PEA_pronostico_puntual)
+tail(PEA_pronostico_puntual)
+
+plot(Date_PAE2,PEA_pronostico_puntual, type="l", main = "Estimación 'puntual' de PEA en MEX", cex.main=0.8, ylim=c(0.9, 1.1))
+```
+
+
+
+Comentario sobre el pronóstico puntual sin tendencia ni estacionalidad, que para el caso de la serie de esta serie tiene un valor de:
+```{r}
+mean(PEA_MX_ruido_blanco)
+```
+Este valor es bastante concordante con el hecho que. Al haber "quitado los componentes de tendencia de la serie original", es decir obtenido el ruido blanco de la serie los valores de nuestra variable y: PEA en Mex están en este momento del algoritmo en escala de la unidad: 1. Y por lo tanto la media de dichos valores será muy cercana a 1. 
+
+En general se podría decir dados los resultados del presente trabajo, así como los resultados de los ejercicios vistos en clase, que el valor de la media estimada o pronóstico puntual para la serie sin componente de tendencia tiende al valor de 1. 
+
+
+
+### A.3 Calculo de intervalos de confianza para el pronóstico
+
+Calculamos los límites de intervalos de confianza al 95% pata el pronostico 
+Se considera 95% como +- 2 desviaciones estandar de la media
+
+```{r}
+tao<-c(1:6)
+Lim_PEA<-2*sd_est_PEA*tao^.5
+Lim_PEA
+```
+
+
+Calculamos los limites inferior y superior
+
+```{r}
+
+LI_PEA<-c(rep(NA, times=66), estimacion_puntual_PEA_ST-Lim_PEA)
+head(LI_PEA)
+tail(LI_PEA)
+
+LS_PEA<-c(rep(NA, times=66), estimacion_puntual_PEA_ST+Lim_PEA)
+head(LS_PEA)
+tail(LS_PEA)
+
+plot(Date_PAE2, PAE_Sin_Tendencia_para_pron, type="l", ylim = c(0.7,1.3) ,main="Estimación puntual e intervalos de confianza sin tendencia para PAE MEX con el método de 'suavizamiento estático'",col="Blue", cex.main=0.7)
+
+lines(PEA_pronostico_puntual, col="Red")
+lines(LI_PEA, col="Purple")
+lines(LS_PEA, col="Purple")
+```
+
+
+
+### A.4 "Devolución de efectos de tendencia y estacionalidad a los pronósticos e intervalos calculados"
+
+
+Ahora vamos a "llevar nuestro pornóstico a las dimensiones reales"
+Para ello primero vamos a "devolver la tendencia a la serie" de nombre PEA_Sin_Tendencia   
+
+Para eso primero necesitamos "crear un data frame que contenga la información histórica + 6 de pronóstico con un valor NA 
+
+
+```{r}
+# create a new data set with 72 rows
+extended_dates <- seq(as.Date("2005-01-01"), as.Date("2022-10-01"), by = "quarter")
+extended_trimester_PEA <- data.frame(Date = extended_dates, 
+                                       PEA = rep(NA, length(extended_dates)))
+
+head(extended_trimester_PEA)
+tail(extended_trimester_PEA)
+
+```
+
+
+
+```{r}
+
+
+# copy the original data to the new data set for the first 66 rows
+for(i in 1:66){
+  extended_trimester_PEA$PEA[i] <- PEA_mex$PEA[i]
+}
+
+extended_trimester_PEA
+
+
+# fit the model with the extended data set
+linea_PEA_extended <- lm(PEA ~ Date, data = extended_trimester_PEA)
+linea_PEA_extended
+
+```
+
+
+
+Posteriormente calculamos los valores historicos + 6  pronosticados a partir de la linea de tendencia que previamente se habia calculado de nombre linea_PEA_extended
+
+```{r}
+# predict values for the extended date range
+linea_PEA_extended_aplicada <- predict(linea_PEA_extended, 
+                                                newdata = data.frame(Date = extended_dates))
+linea_PEA_extended_aplicada
+
+# plot the predicted values
+plot(extended_dates, linea_PEA_extended_aplicada, type = "l", main="Linea de tendencia aplicada a los datos históricos de PEA MEX")
+```
+
+Entonces para finalmente "devolver el efecto de la tendnecia a los datos de media_nacimientos_ST" se multiplica cada valor de la serie por el valor calculado a partir de la linea de tencia que se llama: linea_PEA_extended_aplicada
+
+```{r}
+
+##Creando el vector original + los valores a predecir como NAs
+PEA_original_para_pron<-c(PEA_mex$PEA, rep(NA, times=6))
+head(PEA_original_para_pron)
+
+
+
+Est_punt_PEA_ajustada<-c(rep(NA, times=66), mean(PEA_pronostico_puntual)*linea_PEA_extended_aplicada[67:72])
+head(Est_punt_PEA_ajustada)
+tail(Est_punt_PEA_ajustada)
+
+# plot the original data and the predicted values together
+plot(extended_dates, PEA_original_para_pron, main="PEA estimación puntual ajustada con componente de estacionalidad (con método estático)",type="l", xlab="Year", ylab="PEA", cex.main=0.8)
+lines(extended_dates, Est_punt_PEA_ajustada, col="blue")
+
+
+legend("bottomright", legend = c("PEA historico", "Pronóstico puntual calculado con método estático"), 
+       col = c("black", "blue"), lty = 1)
+
+
+```
+
+
+Calculamos ahora los límites de estimación devolviendo el efecto de tendencia 
+
+
+Para ello importamos el Data Frame con la data historica completa, es decir, la que contiene los 66 trimestres propuestos aquí como "train data" + los 6 trimestres que se pronósticaran
+
+```{r}
+
+library("readxl")
+
+PEA_MEX_completa <-read_excel("PEA_MEX_full.xlsx")
+head(PEA_MEX_completa)
+tail(PEA_MEX_completa)
+```
+
+
+
+```{r}
+
+LI_PEA_ajustado<-c(rep(NA, times=66), LI_PEA[67:72]*linea_PEA_extended_aplicada[67:72])
+LI_PEA_ajustado
+
+LS_PEA_ajustado<-c(rep(NA, times=66), LS_PEA[67:72]*linea_PEA_extended_aplicada[67:72])
+LS_PEA_ajustado
+
+
+# Plot only non-NA values
+# plot the original data and the predicted values together
+
+
+PEA_original_para_pron<-c(PEA_mex$PEA, rep(NA, times=6))
+PEA_original_para_pron
+dim(PEA_original_para_pron)
+
+
+# plot the original data and the predicted values together
+plot(extended_dates,PEA_MEX_completa$PEA, main="PEA estimación puntual e intervalos de confianza ajustada con componente de trend (con método estático) vs PEA real", type="l", xlab="Year", ylab="PEA", ylim=c(40000000, 65000000), cex.main=0.6)
+
+lines(extended_dates, Est_punt_PEA_ajustada, col="blue")
+x_vals <- c(rep(NA, times = 66), extended_dates[67:72])
+
+lines(x_vals, LI_PEA_ajustado, col = "purple")
+lines(x_vals, LS_PEA_ajustado, col = "purple")
+
+
+legend("bottomright", legend = c("PEA original", "Pronóstico puntual calculado con método estático"), 
+       col = c("black", "blue"), lty = 1)
+
+
+```
+
+
+Visualizamos el Data.Frame con los valores históricos la "data original" + los resultados del pronóstico puntual y los intervalos de confianza al 95% 
+
+```{r}
+df_demanda_PEA_MX_pronostico<-data.frame(PEA_MEX_completa$PEA,
+                                                Est_punt_PEA_ajustada, LI_PEA_ajustado, LS_PEA_ajustado)
+View(df_demanda_PEA_MX_pronostico)
+
+tail(df_demanda_PEA_MX_pronostico)
+```
+
+
+Se observa que los pronósticos puntuales vs los reales parecen no estar muy alejados unos de otros, sin embargo los intervalos de confianza si "sufren a medida que nos alejamos del último valor real" pues son cada vez más grandes hasta llegar a abarcar un rango de [50,000000 a 65,000000] para el 95% de intervalo de confianza en el 6t0 valor pronósticado. Lo que representa alrededor del 25% del rango de nuestra variable y.
+
+
+### A.5 Calculo del error tipo MAPE para los pronósticos hechos con los modelos estáticos de suavizamiento
+
+Calculemos el error tipo MAPE entre los valores pronosticados con el "método de suavizamiento estático" y los valores reales de la serie 
+
+
+```{r}
+
+##Primero formemos un vector con los valores reales 
+PEA_MEX_completa_reales6 <- PEA_MEX_completa$PEA[67:72]
+PEA_MEX_completa_reales6
+
+## Despues formemos un vector con únicamente los valores pronósticados 
+PEA_MEX_forecast6 <- Est_punt_PEA_ajustada[67:72]
+PEA_MEX_forecast6
+
+##Calculemos el MAPE entre estos dos vectores 
+
+# First, calculate the absolute percentage error (APE) for each element in the vectors
+APE_PEA_estatico <- abs((PEA_MEX_completa_reales6 - PEA_MEX_forecast6) / PEA_MEX_completa_reales6)
+
+# Calculate the mean APE across all elements in the vectors
+MAPE_PEA_estatico <- mean(APE_PEA_estatico) * 100
+
+# Print the MAPE value
+cat("El error tipo MAPE  para el forecast calculado con el método de 'suavizamiento estático'de la serie de PEA en MEX es:", MAPE_PEA_estatico, "%")
+
+
+```
+
+
+
+## B. Método de Holt como "modelo de suaviazamiento y pronóstico NO ESTÁTICO" que si considera los cambios de nivel a tráves del tiempo. 
+
+Vamos a usar ahora el método de HoltWinters como "modelo de suaviazamiento y pronóstico NO ESTÁTICO" que si considera los cambios de nivel a tráves del tiempo. 
+
+
+Para ello debemos tener nuestra data a suavizar en el tipo de dato serie de tiempo ts en R 
+
+```{r}
+PEA_MEX_ts <-ts(PEA_mex$PEA, frequency =4, start =c(2005,1))
+head(PEA_MEX_ts)
+tail(PEA_MEX_ts)
+```
+
+Graficamos la "data original de la PEA_MEX" que se usará como "train para el modelo" y que fue convertida a tipo de dato serie de tiempo 
+
+```{r}
+plot(PEA_MEX_ts, main="PAE MEX train data en tipo time series (Valores de Enero de 2005 a Agosto de 2021)", cex.main=0.8)
+```
+
+
+### Aplicación del método de Holt Winters" a la serie CON TENDENCIA y SIN ESTACIONALIDAD de PEA MEX
+
+Como se observará este primer cálculo dejará como grados de libertad los valores de alpha, gamma y betha, así como los valores de arranque, de manera que el "el algoritmo de HoltWinters de R" determine la "mejor combinaión posible".
+Como en este caso no tenemos componente de seasonalidad se indica que el parámetro gamma tendrá un valor "false"
+
+```{r}
+PEA_MEX_ts_h1 <-HoltWinters(PEA_MEX_ts, gamma=FALSE)
+PEA_MEX_ts_h1
+```
+
+
+
+#### Interpretación de los valores de los coeficientes del método de Holt Winters para el caso de la serie de PEA en México
+
+Interpretación de los valores de coficientes $\alpha$ y $\beta$ para el caso del pronóstico usando modelo de HoltWinters SIN ESPECIFICAR DATOS DE ARRANQUE    
+
+
+$$0<\alpha<1$$
+
+Recordemos que: 
+Valores de $\alpha$ cercano a 1 reflejan caminata aleatoria
+Valores de $\alpha$ cercano a 0 reflejan una "gran influencia" de los valores pasado, es decir, que "el ruido no es un componente de gran relevancia"
+
+En nuestro caso el valor de $\alpha$ es:
+```{r}
+PEA_MEX_ts_h1$alpha
+```
+Lo que indica que "La data historica SI tiene UNA RELEVANCIA SIGNIFICATIVA vs el componente meramente estocástico"
+
+
+$$0<\beta<1$$
+Recordemos que: 
+Valores de $\beta$ cercano a 1 reflejan cambios CONSTANTES de nivel a lo largo de la serie 
+Valores de $\beta$ cercano a 0 reflejan POCOS cambios de nivel a lo largo de la serie  
+
+
+En nuestro caso el valor de $\beta$ es:
+```{r}
+PEA_MEX_ts_h1$beta
+
+```
+Lo que indica muy pocos cambios de nivel a lo largo de la serie o una especie de "pendiente constante"
+
+
+Y entonces para el caso de valores de $\alpha$ cercanos a 0 y de $\beta$ cercanos a cero (como es nuestra serie de demanda_electrico) indica una serie que otorga mucha relevancia a los valores históricos  y con CAMBIOS DE NIVEL MUY BAJOS
+
+Afortunadamente no obtuvimos simultaneamente valores de$\alpha$ cercanos a 1 y de $\beta$ cercanos a 1 pues eso reflejaría una CAMINATA ALEATORIA con tendencia estocástica que sería prácticamente imposible de pronósticar. 
+
+
+
+
+### Pronóstico de la serie de PEA en MEX con el método de Holt Winters 
+
+Ahora pasemos a realizar los pronósticos de la serie pero con el método de HoltWinters que considera cambios dinámicos de nivel 
+
+Graficamos los valores originales vs suavizados con el método de Holt-Winters
+
+
+```{r}
+plot(PEA_MEX_ts_h1, main="Aplicaicón del método de Holt Winters a PEA MEX train data")
+```
+
+
+```{r}
+# Load the forecast package
+library(forecast)
+```
+
+
+
+Ahora se llevará a cabo el pronóstico con la librería de forecast y basados en el método de Holt Winters. De igual manera se usará un intervalo de confianza del 95%
+
+```{r}
+PEA_MEX_ts_h1_fc <- forecast(PEA_MEX_ts_h1, h=6, level=0.95)
+PEA_MEX_ts_h1_fc
+```
+
+Se observa como el pronóstico puntual es "relativamente bueno" y es muy parecido en valor al obtenido previamente con el método estático, sin embargo los Intervalos de confianza obtenidos con este método son BASTANTE MEJORES en comparación con los del anterior 
+
+
+
+```{r}
+plot(PEA_MEX_ts_h1_fc, main="Forecast de PAE MX usando el Método de Holt Winters con parámetro gamma ='False'", cex.main=0.8)
+```
+
+
+
+
+Veamos el valor la Suma de Errores al Cuadrado del pronóstico de PEA en MEX  usando el Método de suaviazamiento dinámico de HoltWinters
+```{r}
+PEA_MEX_ts_h1$SSE
+```
+
+Calculemos el error tipo MAPE entre los valores pronosticados con el "método de Holt Winters" y los valores reales de la serie 
+
+```{r}
+
+## Formemos un vector con únicamente los valores reales de los ultimos 6 trimestres 
+PEA_completo_realest6 <- PEA_MEX_completa$PEA[67:72]
+PEA_completo_realest6
+
+
+## Formemos un vector con únicamente los valores pronósticados 
+PEA_HW_forecast6 <- PEA_MEX_ts_h1_fc$mean
+PEA_HW_forecast6
+
+
+
+```
+
+
+```{r}
+
+##Calculemos el MAPE entre estos dos vectores 
+
+# First, calculate the absolute percentage error (APE) for each element in the vectors
+APE_PEA_HW <- abs((PEA_completo_realest6 - PEA_HW_forecast6) / PEA_completo_realest6)
+
+# Calculate the mean APE across all elements in the vectors
+MAPE_PEA_HW <- mean(APE_PEA_HW) * 100
+
+# Print the MAPE value
+cat("MAPE error para el forecast calculado con el método de 'HoltWinters'es:", MAPE_PEA_HW, "%")
+```
+
+
+
+### Error cuadrado calculado con el Método de HoltWinters vs el calculado con el método de suafizamiento estático 
+
+
+```{r}
+PEA_MEX_ts_h1$SSE
+```
+
+Entonces el error asociado al pronóstico del cálculo de pronóstico PUNTUAL para el caso Demanda_eléctirco es:  
+```{r}
+sse_PEA_hw <- ((PEA_MEX_ts_h1$SSE)/(length(PEA_MEX_ts)))^0.5
+sse_PEA_hw
+```
+
+
+Recordar que la SSE de la demanda_electrico para el caso del método de suavizamiento estático era:
+```{r}
+SSE_PEA_E <- sum(PEA_MX_ruido_blanco^2)
+SSE_PEA_E
+```
+
+Lo que indica que el método de suavizamiento estático resultó bastante mejor en nuestro caso para el PRONOSTICO PUNTUAL de la demanda de gas natural en el sector eléctrico en México vs el método de HoltWinters
+
+
+
+### Comparación del MAPE del pronostico hecho con métodos estáticos vs el pronóstico hecho con el método " de suavizamiento dinámico" de HoltWinters para el pronostico puntual
+
+
+En este caso y dado un cálculo con el métodO de HolttWinters sin valores de arranque especificados los errores de ambos métodos (estático vs HoltWinters) fueron los sigientes: 
+
+
+```{r}
+cat("MAPE error para el forecast calculado con el método de 'suavizamiento estático'es:", MAPE_PEA_estatico, "%")
+
+  
+cat("MAPE error para el forecast calculado con el método de 'HoltWinters'es:", MAPE_PEA_HW, "%")
+```
+
+Lo que confirma que el método de suavizamiento estático resultó mejor en nuestro caso para el PRONOSTICO PUNTUAL de la PEA en México. 
+
+
+### Comparación de los intervalos del pronostico hecho con métodos estáticos vs el pronóstico hecho con el método " de suavizamiento dinámico" de HoltWinters 
+
+Como se sabe, la parte "más sustancial" o esencial de los pronósticos es el intervalo y no el pronóstico puntual, por lo que en nuestro caso se considerará en general como "un mejor mpetodo de pronóstico" no aquel que otorge el menor error tipo MAPE en las estimaciones puntuales, sino aquel cuyos intervalos de confianza al 95% sean menores incluso para valores pronósticados relativamente lejanos del último valor real. 
+
+
+
+Intervalos calculados con el método de suavizamiento estático
+```{r}
+LI_PEA_ajustado[67:72]
+LS_PEA_ajustado[67:72]
+
+
+intervalos_metodo_E<- data.frame(LI_PEA_ajustado_E =LI_PEA_ajustado[67:72], LS_PEA_ajustado_E= LS_PEA_ajustado[67:72])
+
+intervalos_metodo_E
+
+```
+
+
+
+Intervalos calculados con el método de suavizamiento dinámico Holt-Witers
+```{r}
+PEA_MEX_ts_h1_fc
+```
+
+Se observa claramente como el método de HoltWinters otorga mejores intervalos de confianza para pronósticos incluso para aquellos 'más alejados' del último valor real vs aquellos generados con el "método de suavizamiento estático" 
+
+
+
+
+
+
+# Serie de tiempo 3 CON tendencia y CON estacionalidad (Historico mensual de Demanda de Gas Natural para el sector eléctrico en México)
+
+Tenemos data mensual de Enero de 2005 a Agosto de 2022 sobre la demanda de gas natural para el sector eléctrico en México, son 213 datos en total. 
+La idea es usar 201 de esos 2013 como una especie de "data de entreaniemto" para aplicar los modelos A) De suavizamiento "estático" y B) De "suavizamiento dinámico" o Holt-Winters para posteriormente predecir con cada modelo los valores de los 12 meses restantes y poder comparar contra los reales e identificar el mejor modelo entre los dos mencionados para modelar la demanda de gas natural en sector eléctrico. 
+
+
+
+
+Primero vamos a importar la data con los elementos del 1 al 201 
+
+
+```{r}
+library("readxl")
+Demanda_electrico <-read_excel("Demanda_electrico_2022_full1_pp.xlsx")
+```
+
+
+
+Revisamos que la data se haya importado correctamente 
+```{r}
+head(Demanda_electrico)
+summary(Demanda_electrico)
+typeof(Demanda_electrico)
+dim(Demanda_electrico)
+```
+
+Graficamos la "data original" de demanda de gas natural en el sector eléctrico del año 2005 a Agoato de 2021  
+
+```{r}
+plot(Demanda_electrico$Date, Demanda_electrico$Demanded_Gas, type = "l", main="Data 'original' de demanda de gas natrual en sector eléctrico en México")
+```
+
+## A. Método de "suavizamiento estático"
+
+Comenzaremos tratando la serie con el método estático aplicando el siguiente flujo lógico de trabajo y considerando que estamos ene el caso de serie CON TENDECIA y CON ESTACIONALIDAD: 
+
+1. Se removerá el factor de tendencia a la serie original obteniendo una serie sin tendencia
+2. A la serie sin tendencia se le removerán los Factores de Estacionalidad obtendiendo únicamente el componente de ruido blanco o componente estocástico de la serie
+3. Será sobre el "ruido blanco" que se llevará a cabo el "pronóstico puntual" de los siguientes 12 meses como la media historica de dicho componente estocástico 
+4. Se calcularán los intervalos de pronóstico al 95% de confianza 
+5. Se "devolverán" los efectos estacionales y de tendencia de la serie con el fin de llevar los pronósticos a las dimensiones correctas
+6. Se calculará el error tipo MAPE entre los valores pronósticados con el "método estático" y los valores reales de la serie de los últimos 12 meses  
+
+
+### A.1 Remoción de tendencia de serie original  
+
+Primero se calculará la linea "general" de tendencia de nuestra serie de Electrico_Demanded_gas_line (que representa la tendencia de la "serie de datos originales") y se removerá dicha tendencia de la 'data original' de demanda_electrico
+
+
+Calculemos la linea de tendencia 
+```{r}
+
+Electrico_Demanded_gas_line<-lm(Demanded_Gas~Date, data=Demanda_electrico)
+
+Electrico_Demanded_gas_line
+
+
+```
+Se puede observar una "ecuación general de linea de tendencia" en este caso es: 
+y = 2,287 + 0.0000003865 * (Date) 
+Es muy razonable que "la ordenada al origen" sea de alrededor de 2 mil, pues todos los datos de Demanda de gas en sector eléctrico son del orden de 2 a 5 mil. También resulta lógica que el valor de la pendiente sea positivo y muy cercano a cero, pues en general para cada aumento en el valor del tiempo, es decir, para cada més de datos no existe un incremento o definición realmente signifiativo en el valor del PEA (excepto en el año 2020)
+
+
+
+
+Ahora para graficar la "serie original" de demanda_electrico vs el filtro1 (Linea de tendencia) primero debemos "crear/simular" datos de Enero 2005 a Agosto 2021 a partir de nuestra linea de previamente computada de nombre: Electrico_Demanded_gas_line
+
+```{r}
+Electrico_Demanded_gas_line_aplicada <- predict(Electrico_Demanded_gas_line, newdata = data.frame(Date = Demanda_electrico$Date))
+
+head(Electrico_Demanded_gas_line_aplicada)
+
+```
+
+
+Graficamos entonces a la "data original de demanda electrico" y a la data calculada a partir de la linea tendencia
+
+```{r}
+
+plot(Demanda_electrico$Demanded_Gas, type = "l", main = "'Demanda original' comparada con la linea de tendencia o filtro 1")
+
+lines(Electrico_Demanded_gas_line_aplicada, col = "red")
+
+
+legend("bottomright", legend = c("Demanda electrico original", "Linea de tendencia de demanda electrico original"), 
+       col = c("black", "red"), lty = 1)
+
+
+```
+
+
+Ahora vamos a "quitar el efecto de la tendencia" de nuestra "serie original de datos"
+En este caso se asumirá un "efecto multiplicativo" y por lo tanto se removerá dividiendo cada elemento de la serie original / valor de la linea de tendencia en ese valor de xi
+
+Se grafica la serie sin tendencia:
+
+```{r}
+Demanda_electrico_Sin_Tendencia<-Demanda_electrico$Demanded_Gas/Electrico_Demanded_gas_line_aplicada
+
+plot(Demanda_electrico_Sin_Tendencia, type="l", main="Demanda electrico SIN TENDENCIA", col='brown')
+head(Demanda_electrico_Sin_Tendencia)
+```
+
+### A.2 Remoción de los factores estacionales a la serie sin tendencia   
+
+
+Se procederá al cálculo de los Factores Estacionales de la serie. 
+
+La idea de la asignación de estaciones en la presente serie de demanda de gas natrual en el sector eléctrico es la siguiente: De manera historica el consumo de electricidad aumenta en los meses más calurosos (abril, mayo, junio) y también en los meses de extremos frio (dic, enero), contrario a los meses más 'templados' (Agosto, Sept) donde el consumo suele ser menor. Por lo tanto se propuso que el consumo de gas natural en el sector eléctrico en México puede seguir un comportamiento estacional trimestral. 
+
+De esta manera se procede a "crear las listas de los valores i-esimos de la serie" que corresponderán a los meses 1,2,3 para el triemestre 1 (T1), 4,5,6 para el triemestre 2 (T2), 7,8,9 para el triemestre 3 (T3), 10,11,12 para el triemestre 4 (T4) y de nuevo 13,14,15 para el triemestre 1 (T1), así sucesivamente hasta tener los 212 meses de datos distribuidos en los 4 trimetres. 
+
+```{r}
+# Generate indices for T1, T2, T3, and T4
+# Define the indices for each subset
+T1_indices <- c(seq(1, 3), seq(13, 15), seq(25, 27), seq(37, 39), seq(49, 51), seq(61, 63), seq(73, 75), seq(85, 87), seq(97, 99), seq(109, 111), seq(121, 123), seq(133, 135), seq(145, 147), seq(157, 159), seq(169, 171), seq(181, 183), seq(193, 195))
+
+
+T2_indices <- c(seq(4, 6), seq(16, 18), seq(28, 30), seq(40, 42), seq(52, 54), seq(64, 66), seq(76, 78), seq(88, 90), seq(100, 102), seq(112, 114), seq(124, 126), seq(136, 138), seq(148, 150), seq(160, 162), seq(172, 174), seq(184, 186), seq(196, 198))
+
+T3_indices <- c(seq(7, 9), seq(19, 21), seq(31, 33), seq(43, 45), seq(55, 57), seq(67, 69), seq(79, 81), seq(91, 93), seq(103, 105), seq(115, 117), seq(127, 129), seq(139, 141), seq(151, 153), seq(163, 165), seq(175, 177), seq(187, 189), seq(199, 201))
+
+T4_indices <- c(seq(10, 12), seq(22, 24), seq(34, 36), seq(46, 48), seq(58, 60), seq(70, 72), seq(82, 84), seq(94, 96), seq(106, 108), seq(118, 120), seq(130, 132), seq(142, 144), seq(154, 156), seq(166, 168), seq(178, 180), seq(190, 192), seq(202, 204))
+
+
+# Create the subsets
+T1 <- Demanda_electrico_Sin_Tendencia[T1_indices]
+head(T1)
+T2 <- Demanda_electrico_Sin_Tendencia[T2_indices]
+head(T2)
+T3 <- Demanda_electrico_Sin_Tendencia[T3_indices]
+head(T3)
+T4 <- Demanda_electrico_Sin_Tendencia[T4_indices]
+head(T4)
+
+
+
+```
+
+
+Se calculan ahora los Factores Estacionarios de la Serie dividiendo la media de aquellos valores asignados a cada trimestre (T1, T2, T3 y T4) /  la media de nuestra seria sin tendencia. Siendo ambos un valor escalar, serán entonces los FEi valores escalares  
+
+```{r}
+
+FE1_electrico<-mean(T1)/mean(Demanda_electrico_Sin_Tendencia)
+FE1_electrico
+
+FE2_electrico<-mean(T2)/mean(Demanda_electrico_Sin_Tendencia)
+FE2_electrico
+
+FE3_electrico<-mean(T3)/mean(Demanda_electrico_Sin_Tendencia)
+FE3_electrico
+
+FE4_electrico<-mean(T4, na.rm = TRUE)/mean(Demanda_electrico_Sin_Tendencia)
+FE4_electrico
+```
+
+
+#### Interpretación de los Factores estacionales FE de la serie de demanda de gas natural en sector eléctrico en México
+
+Recordar que en general los factores estacionales nos dan una idea del PORCENTAJE DE AUMENTO o DISMINUCIÓN PROMEDIO, de la variable estudiada a lo largo de los periodos/ seasonalidades establecidas.
+En este caso un factor estacional 1 (que representa los primeros 3 meses del años) con un valor de 
+```{r}
+FE1_electrico
+```
+
+y un factor estacional 4 (que representa los ultimos 3 meses del años) con un valor de
+
+```{r}
+FE4_electrico
+```
+
+Indica que en promedio se tiene prácticamente la misma cantidad de demanda de gas natural en el sector eléctrico en estos periodos (durante los últimos 3 meses de cada año y los primeros 3 del siguiente) 
+
+Sin embargo un valor de factor estacional 2 (que representa los  meses Abril, Mayo, Junio) indica que hay un aumento aproximado del 9% en la cantidad de gas natural demanda en el sector eléctrico durante los meses de Abril, Mayo, Junio, respecto a lo observado en los de Enero, Febrero y Marzo 
+
+```{r}
+FE2_electrico
+```
+
+
+Y un factor estacional 3 (que representa los  meses Julio, Agosto, Sept) con respecto al factor 4 indica que en promedio se demanda un 10% menos de gas natural en el sector eléctrico los últomos 3 meses del año respecto a los 3 meses anteriores. 
+
+```{r}
+FE3_electrico
+FE4_electrico
+```
+
+### A.3 Tratamiendo del ruido blanco en la serie y pronostico puntual  
+
+Una vez calculados los factores estacionales de la serie se puede obtener el unicamente el 'componente estocástico o ruido blanco de la serie'  que se calcularía "quitando" el efecto de los factores estacionales previamente calculados a nuestra serie YA SIN tendencia 
+
+Esto bajo el siguiente razonamiento: 
+
+Serie total = Componente de tendencia + Componente de estacionalidad + Componente estocástico 
+
+por lo tanto al haber "extraido" los componentes de tendencia y estacionalidad tenemos únicamente el componente estocástico de la serie 
+
+```{r}
+
+Demanda_electrico_ruido_blanco<-Demanda_electrico_Sin_Tendencia/c(FE1_electrico, FE2_electrico, FE3_electrico, FE4_electrico)
+
+head(Demanda_electrico_ruido_blanco)
+
+
+plot(Demanda_electrico$Date, Demanda_electrico_ruido_blanco, type="l", 
+     main="Componente de ruido blanco o estocástico de la demanda de gas en sector eléctrico",
+     cex.main=0.9)
+
+```
+
+
+Una vez teniendo únicamente el componente estocástico de nuestra serie, es posible "extraer los errores" de la serie y conocer así el error estimado (varianza)  y la desviación estandar. 
+La idea es que extrayendo de la serie del ruido blanco su media histórica, estaríamos determinando la varianza, de la siguiente manera:
+
+Varianza (errores al cuadrado) = Serie original - estacionalidad - tendecia - media de componete estocástico. En nuestro caso, dichos errores será nuestra serie sin tendencia ni estacionalidad - mean(Demanda_electrico_ruido_blanco).  Nosotros hemos ya calculado el resultado de Serie original - estacionalidad - tendecia y lo hemos llamada justamente ruido blanco y lo lo tanto el calculo del error podría resumirse a  
+
+Errores= Componente estocástico o ruido blanco - Media del componente estocástico o ruido blanco
+
+
+Determinemos entonces la varianza (errores al cuadrado) para nuestra serie de demanda_electrico 
+```{r}
+
+## Se calculan los errores como Errores= Componente estocástico o ruido blanco - Media del componente estocástico o ruido blanco
+demanda_electrico_errores <-Demanda_electrico_ruido_blanco-mean(Demanda_electrico_ruido_blanco)
+
+plot(Demanda_electrico$Date, demanda_electrico_errores, type="l", main="Errores al cuadrado (varianza) de la aplicaicón del modelo de 'suavizamiento estático' a la serie de demanda de gas natural en sector eléctrico ", cex.main=0.6)
+
+```
+
+Se calcula la media de los errores 
+```{r}
+
+
+mean(demanda_electrico_errores)
+```
+
+Se calcula la varianza  y desviación estandar de los errores 
+```{r}
+## Se calcula la varianza
+var(demanda_electrico_errores)
+
+## Se calcula la desviación estandar 
+sd_est_demanda_electrico <-sd(demanda_electrico_errores)
+```
+
+
+Se tiene una desviación estandar de 0.01 y una  media muy cercana a cero para los errores lo cual es totalmente concordante con le hecho de que tras haber removido los componentes de tendencia y estacionalidad, "el ruido blanco" o componente estocástico resultante tiende a tener una distribuión normal. Y que si a ese ruido blanco se le extrae su media tambien tiende a tener una distribución normal con media cero y en este caso una desviación estandar de 0.01 
+
+
+Procedamos a observar como se comporta la Distribución de dichos errores:
+```{r}
+hist(demanda_electrico_errores, breaks = 20, col = "lightblue", main = "Frequency Distribution of demanda_electrico_errores", xlab = "Values", ylab = "Frequency")
+
+```
+Se comprueba como los errores de la serie siguen una distribución normal con media cero y desviación estandar de 0.1
+
+
+#### Pronóstico puntual
+
+Una vez teniendo nuestra seríe SIN TENDENCIA y SIN ESTACIONALIDAD lo que como ya se mencionó, implica que, "unicamente tenemos el componente estocástico o de ruido blanco en la serie" podemos proceder a llevar a cabo el pronóstico de 12 meses equivalente 1 año de datos.
+
+Como ha sido estudiado en la clase, nuestro mejor pronóstico puntual dadas estas condiciones en la serie es la media de los datos históricos del ruido blanco
+
+
+Para ello importamos el Data Frame con la data historica completa, es decir, la que contiene los 201 meses propuestos aquí como "train data" + los 12 meses que se pronósticaran
+
+```{r}
+
+Demanda_electrico_completa <-read_excel("Demanda_electrico_2022_full1.xlsx")
+head(Demanda_electrico_completa)
+tail(Demanda_electrico_completa)
+```
+
+
+
+```{r}
+
+Demanda_electrico_pronostico<-c(Demanda_electrico_ruido_blanco, rep(mean(Demanda_electrico_ruido_blanco), 12))
+
+plot(Demanda_electrico_completa$Date,Demanda_electrico_pronostico, type="l", main = "Estimación puntual de demanda de gas natrual para los siguientes 12 meses (sin componentes de estacionalidad ni tendencia) con el método de 'suavizamiento estático' ", cex.main=0.55)
+
+```
+
+
+
+Comentario sobre el pronóstico puntual sin tendencia ni estacionalidad, que para el caso de la serie de demanda de gas natural en el sector eléctrico tiene un valor de:
+```{r}
+mean(Demanda_electrico_ruido_blanco)
+```
+Este valor es bastante concordante con el hecho que. Al haber "quitado los componentes de tendencia y estacionaldad de la serie original", es decir obtenido el ruido blanco los valores de nuestra variable y: gas demandado están en este momento del algoritmo en escala de la unidad: 1. Y por lo tanto la media de dichos valores será muy cercana a 1. 
+
+En general se podría decir dados los resultados del presente trabajo, así como los resultados de los ejercicios vistos en clase, que el valor de la media estimada o pronóstico puntual para la serie sin componente de tendencia tiende al valor de 1. 
+
+
+### A.4 Calculo de intervalos de confianza para el pronóstico
+
+
+Calculamos ahora los límites de intervalos de confianza al 95% para el pronostico de los siguientes 12 meses 
+Se considera 95% como +- 2 desviaciones estandar de la media de la serie del ruido
+
+```{r}
+LI_demanda_electrico<-Demanda_electrico_pronostico[202:213]-2*sd_est_demanda_electrico*c(1:12)^.5
+LS_demanda_electrico<-Demanda_electrico_pronostico[202:213]+2*sd_est_demanda_electrico*c(1:12)^.5
+
+## Tambien se debe "crear la linea para nuestros limites" teniendo NA en los valores de datos historicos, así como los 12 valores de limites previamente calculados
+
+LI_demanda_electrico_lineaA<-c(rep(NA, times=201), LI_demanda_electrico)
+head(LI_demanda_electrico_lineaA)
+tail(LI_demanda_electrico_lineaA)
+
+LS_demanda_electrico_lineaA<-c(rep(NA, times=201), LS_demanda_electrico)
+head(LS_demanda_electrico_lineaA)
+tail(LS_demanda_electrico_lineaA)
+
+```
+
+```{r}
+
+
+plot(Demanda_electrico_completa$Date,Demanda_electrico_pronostico, type="l", main = "Estimación puntual e intervalos de confianza sin tendencia para Demanda gas natural en sector eléctrico MEX con el método de 'suavizamiento estático' ", cex.main=0.55, ylim=c(0.2,1.7))
+
+
+#lines(Demanda_electrico_pronostico, col="Red")
+lines(Demanda_electrico_completa$Date, LI_demanda_electrico_lineaA, col="Purple")
+lines(Demanda_electrico_completa$Date, LS_demanda_electrico_lineaA, col="Purple")
+```
+
+
+### A.5 "Devolución de efectos de tendencia y estacionalidad a los pronósticos e intervalos calculados"
+
+Ahora vamos a "llevar nuestro prOnóstico a las dimensiones reales"
+Para ello primero vamos a "devolver la esacionalidad y la tendencia a la serie" de nombre  demanda_electrico_filtro_sinTendencia_NiEstacionalidad 
+
+Empezemos como "devolver estacionalidad" y para ello recordamos que los valores de FE de la seria se calcularon asumiendo efecto multiplicativo y por lo tanto para "devolver ese efecto" se debe multiplicar los valores de Demanda_electrico_pronostico (que contiene los valores historicos de la seria con unicamente el componente ruido  + 12 meses pronósticados)* los valores de los Factores Estacionales de la serie 
+
+```{r}
+
+# Devolver estacionalidada
+
+Demanda_electrico_pronostico_cest<-Demanda_electrico_pronostico*c(FE1_electrico, FE2_electrico,FE3_electrico, FE4_electrico)
+head(Demanda_electrico_pronostico_cest)
+tail(Demanda_electrico_pronostico_cest)
+
+
+LI_demanda_electrico_cest<-LI_demanda_electrico_lineaA*c(FE1_electrico, FE2_electrico,FE3_electrico, FE4_electrico)
+head(LI_demanda_electrico_cest)
+tail(LI_demanda_electrico_cest)
+
+
+
+
+LS_demanda_electrico_cest<-LS_demanda_electrico_lineaA*c(FE1_electrico, FE2_electrico,FE3_electrico, FE4_electrico)
+head(LS_demanda_electrico_cest)
+tail(LS_demanda_electrico_cest)
+
+
+plot(Demanda_electrico_completa$Date, Demanda_electrico_pronostico_cest, type="l", main="Demanda electrico estimaciones puntuales ajustada con componente de estacionalidad (con método estático) ", cex.main= 0.75)
+lines(LI_demanda_electrico_cest, col="violet")
+lines(LS_demanda_electrico_cest, col="violet")
+```
+```{r}
+# Repeat seasonal factors
+n <- length(Demanda_electrico_pronostico)
+repeated_FE <- rep(c(FE1_electrico, FE2_electrico, FE3_electrico, FE4_electrico), length.out = n)
+
+# Compute components with seasonal factor
+Demanda_electrico_pronostico_cest <- Demanda_electrico_pronostico * repeated_FE
+LI_demanda_electrico_cest <- LI_demanda_electrico_lineaA * repeated_FE
+tail(LI_demanda_electrico_cest)
+
+LS_demanda_electrico_cest <- LS_demanda_electrico_lineaA * repeated_FE
+tail(LS_demanda_electrico_cest)
+
+
+
+# Plot with confidence intervals
+plot(Demanda_electrico_pronostico_cest, 
+     type="l", main="Demanda electrico estimación puntual e intervalos de confianza ajustada con componente de estacionalidad (con método estático)", 
+     cex.main=0.65, ylim=c(0.4,1.8))
+lines(LI_demanda_electrico_cest, col="violet")
+lines(LS_demanda_electrico_cest, col="violet")
+
+```
+
+
+Y ahora "Devolvemos el efecto de la tendencia" a la serie LS_demanda_electrico_cest
+
+
+
+Para eso primero necesitamos "crear un data frame que contenga la información histórica de demanded_gas" + 12 meses de pronóstico con un valor NA 
+```{r}
+# create a new data set with 12 additional months
+extended_dates_electrico <- seq(as.Date("2005-01-01"), as.Date("2022-09-01"), by = "month")
+
+# create a data frame with 225 rows
+extended_demanda_electrico <- data.frame(Date = extended_dates_electrico, 
+                                         Demanded_Gas = rep(NA, length(extended_dates_electrico)))
+
+# assign values to a subset of Demanded_Gas that corresponds to the length of Demanda_electrico$Demanded_Gas
+extended_demanda_electrico$Demanded_Gas[1:length(Demanda_electrico$Demanded_Gas)] <- Demanda_electrico$Demanded_Gas
+
+
+extended_demanda_electrico$Date <- as.POSIXct(as.character(extended_demanda_electrico$Date), format = "%Y-%m-%d")
+
+head(extended_demanda_electrico)
+tail(extended_demanda_electrico)
+
+
+```
+
+Posteriormente calculamos los valores historicos + 12 meses pronosticados a partir de la linea de tendencia que previamente se habia calculado de nombre Electrico_Demanded_gas_line
+
+```{r}
+Electrico_Demanded_gas_line_aplicada2 <- predict(Electrico_Demanded_gas_line, newdata = data.frame(Date = extended_demanda_electrico$Date))
+
+head(Electrico_Demanded_gas_line_aplicada2)
+tail(Electrico_Demanded_gas_line_aplicada2)
+```
+
+Entonces para finalmente "devolver el efecto de la tendnecia a los datos de LS_demanda_electrico_cest" se multiplica cada valor de la serie por el valor calculado a partir de la linea de tencia que se llama: Electrico_Demanded_gas_line_aplicada2
+```{r}
+
+
+
+Demanda_electrico_pronostico_ajustado<-Demanda_electrico_pronostico_cest*Electrico_Demanded_gas_line_aplicada2
+
+LI_demanda_electrico_ajustado<-LI_demanda_electrico_cest*Electrico_Demanded_gas_line_aplicada2
+LS_demanda_electrico_ajustado<-LS_demanda_electrico_cest*Electrico_Demanded_gas_line_aplicada2
+
+
+plot(Demanda_electrico_completa$Date, Demanda_electrico_pronostico_ajustado, type="l", ylim=c(0, max(LS_demanda_electrico_ajustado, na.rm = TRUE)),  main="Demanda electrico estimación puntual e intervalos de condianza  ajustada con componentes de estacionalidad y de trend (con método estático) vs Demanda real", 
+     cex.main=0.5, col="blue")
+lines(Demanda_electrico_completa$Date,LI_demanda_electrico_ajustado, col="violet")
+lines(Demanda_electrico_completa$Date, LS_demanda_electrico_ajustado, col="violet")
+lines(Demanda_electrico_completa$Date, Demanda_electrico_completa$Demanded_Gas, col="black")
+
+
+legend("bottomright", legend = c("Demanda electrico original", "Pronóstico calculado con método estático"), 
+       col = c("black", "blue"), lty = 1)
+
+```
+
+
+
+Visualizamos el Data.Frame con los valores históricos la "data original" + los resultados del pronóstico puntual y los intervalos de confianza al 95% 
+
+
+```{r}
+# Create a data frame with the predicted values and intervals
+df_demanda_electrico_pronostico <- data.frame(Demanded_Gas_original = c(Demanda_electrico_completa$Demanded_Gas), 
+                                              Demanda_electrico_pronostico_ajustado = Demanda_electrico_pronostico_ajustado, 
+                                              LI_demanda_electrico_ajustado = LI_demanda_electrico_ajustado, 
+                                              LS_demanda_electrico_ajustado = LS_demanda_electrico_ajustado)
+
+# View the resulting data frame
+View(df_demanda_electrico_pronostico)
+
+tail(df_demanda_electrico_pronostico)
+
+```
+
+
+Se observa que los pronósticos puntuales vs los reales parecen no estar muy alejados unos de otros, sin embargo los intervalos de confianza si "sufren bastante a medida que nos alejamos del último valor real" pues son cada vez más grandes hasta llegar a abarcar un rango de [1000,6800] para el 95% de intervalo de confianza en el 12vo mes pronósticado. Lo que representaría que: nuestro intervalo de confianza al 95% para nuestros valores más alejados es del orden de casi el rango total de nuestra variable y.
+En general, con lo observado en este ejemplo y lo visto en clase se puede mencionar que: "Los métodos de suavizamiento estático son relativamente buenos para generar pronóstcos puntuales, pero los intervalos de confianza del pronóstico se ven severamente castigados mientras más datos n 'en el tiempo t+n' quieran ser pronósticados"
+
+
+
+### A.6 Calculo del error tipo MAPE para los pronósticos hechos con los modelos estáticos de suavizamiento
+
+Calculemos el error tipo MAPE entre los valores pronosticados con el "método de suavizamiento estático" y los valores reales de la serie 
+
+```{r}
+
+##Primero formemos un vector con los valores reales 
+Demanda_electrico_completa_reales12 <- Demanda_electrico_completa$Demanded_Gas[202:213]
+Demanda_electrico_completa_reales12
+
+## Despues formemos un vector con únicamente los valores pronósticados 
+Demanda_electrico_E_forecast12 <- Demanda_electrico_pronostico_ajustado[202:213]
+Demanda_electrico_E_forecast12
+
+##Calculemos el MAPE entre estos dos vectores 
+
+# First, calculate the absolute percentage error (APE) for each element in the vectors
+APE_electrico_estatico <- abs((Demanda_electrico_completa_reales12 - Demanda_electrico_E_forecast12) / Demanda_electrico_completa_reales12)
+
+# Calculate the mean APE across all elements in the vectors
+MAPE_electrico_estatico <- mean(APE_electrico_estatico) * 100
+
+# Print the MAPE value
+cat("El error tipo MAPE  para el forecast calculado con el método de 'suavizamiento estático'de la serie de demanda de gas natural en el sector eléctrico es:", MAPE_electrico_estatico, "%")
+
+
+```
+
+
+
+## B. Método de suavizamiento dinámico ó Holt-winters
+
+Vamos a usar ahora el método de HoltWinters como "modelo de suaviazamiento y pronóstico NO ESTÁTICO" que si considera los cambios de nivel a tráves del tiempo. 
+
+Para ello debemos tener nuestra data a suavizar en el tipo de dato serie de tiempo ts en R 
+
+
+```{r}
+Demanda_electrico_ts <-ts(Demanda_electrico$Demanded_Gas, frequency =12, start =c(2005,1))
+head(Demanda_electrico_ts)
+tail(Demanda_electrico_ts)
+```
+
+Graficamos la "data original de la demanda_electrico" que se usará como "train para el modelo" y que fue convertida a tipo de dato serie de tiempo 
+
+```{r}
+plot(Demanda_electrico_ts, main="Demanda electrico train data en tipo time series (Valores de Enero de 2005 a Agosto de 2021)", cex.main=0.8)
+```
+
+
+### Aplicación del método de Holt Winters" a la serie CON TENDENCIA y CON ESTACIONALIDAD de demanda de gas en el sector eléctrico 
+
+Como se observará para este primer cálculo se dejará como 'grados de libertad' los valores de alpha, gamma y betha, así como los valores de arranque, de manera que el "el algoritmo de HltWinters de R" determine la "mejor combinaión posible"
+Recordar también que para la presente serie se está asumiendo un efecto multiplicativo de los factores estacionales 
+
+
+```{r}
+Demanda_electrico_ts_hw1 <-HoltWinters(Demanda_electrico_ts, seasonal = 'multiplicative')
+Demanda_electrico_ts_hw1
+```
+
+
+
+#### Interpretación de los valores de los coeficientes del método de Holt Winters para el caso de la serie de demanda de gas natural en el sector eléctrico en México
+
+Interpretación de los valores de coficientes $\alpha$, $\beta$ y $\gamma$ para el caso del pronóstico usando modelo de HoltWinters SIN ESPECIFICAR DATOS DE ARRANQUE    
+
+
+$$0<\alpha<1$$
+
+Recordemos que: 
+Valores de $\alpha$ cercano a 1 reflejan caminata aleatoria
+Valores de $\alpha$ cercano a 0 reflejan una "gran influencia" de los valores pasado, es decir, que "el ruido no es un componente de gran relevancia"
+
+En nuestro caso el valor de $\alpha$ es:
+```{r}
+Demanda_electrico_ts_hw1$alpha
+```
+Lo que indica que "La data historica NO tiene mayor relevancia vs el componente estocástico"
+
+
+$$0<\beta<1$$
+Recordemos que: 
+Valores de $\beta$ cercano a 1 reflejan cambios CONSTANTES de nivel a lo largo de la serie 
+Valores de $\beta$ cercano a 0 reflejan POCOS cambios de nivel a lo largo de la serie  
+
+
+En nuestro caso el valor de $\beta$ es:
+```{r}
+Demanda_electrico_ts_hw1$beta
+```
+Lo que indica muy pocos cambios de nivel a lo largo de la serie o una especie de "pendiente constante"
+
+
+Y entonces para el caso de valores de $\alpha$ cercanos a 1 y de $\beta$ cercanos a cero (como es nuestra serie de demanda_electrico) indica una serie con TENDENCIA ESTABLE y con CAMBIOS DE NIVEL MUY BAJOS
+
+Afortunadamente no obtuvimos simultaneamente valores de$\alpha$ cercanos a 1 y de $\beta$ cercanos a 1 pues eso reflejaría una CAMINATA ALEATORIA con tendencia estocástica que sería prácticamente imposible de pronósticar. 
+
+
+
+
+$$0<\gamma<1$$
+Recordemos que: 
+Valores de $\gamma$ cercano a 1 reflejan cambios CONSTANTES de los factores de estacionalidad a lo largo de la serie 
+Valores de $\gamma$ cercano a 0 reflejan POCOS cambios en los factores de estacionalidad a lo largo de la serie  
+
+
+En nuestro caso el valor de $\gamma$ es:
+```{r}
+Demanda_electrico_ts_hw1$gamma
+```
+Lo que indica que cada dato nuevo en la serie cambia el valor del factor de estacionalidad 
+
+
+
+### Pronóstico de la serie de demanda de gas en el sector eléctrico con el método de Holt Winters 
+
+Ahora pasemos a realizar los pronósticos de la serie pero con el método de HoltWinters que considera cambios dinámicos de nivel 
+
+Graficamos los valores originales vs suavizados con el método de Holt-Winters
+
+```{r}
+plot(Demanda_electrico_ts_hw1, main="Aplicaicón del método de Holt Winters a Demanda electrico train data")
+```
+
+
+```{r}
+
+# Load the forecast package
+library(forecast)
+```
+
+
+
+Ahora se llevará a cabo el pronóstico con la librería de forecast y basados en el método de Holt Winters. De igual manera se usará un intervalo de confianza del 95%
+
+```{r}
+Demanda_electrico_ts_hw1_fc <- forecast(Demanda_electrico_ts_hw1, h=12, level=0.95)
+Demanda_electrico_ts_hw1_fc
+```
+
+
+```{r}
+plot(Demanda_electrico_ts_hw1_fc, main="Forecast de Demanda_electrico usando el Método de Holt Winters")
+```
+
+
+Veamos el valor la Suma de Errores al Cuadrado del pronóstico de la demanda de gas natural en el sector eléctrico usando el Método de suaviazamiento dinámico de HoltWinters
+```{r}
+Demanda_electrico_ts_hw1$SSE
+```
+
+Calculemos el error tipo MAPE entre los valores pronosticados con el "método de Holt Winters" y los valores reales de la serie 
+
+```{r}
+
+
+## Formemos un vector con únicamente los valores pronósticados 
+Demanda_electrico_HW_forecast12 <- Demanda_electrico_ts_hw1_fc$mean
+Demanda_electrico_HW_forecast12
+
+
+
+```
+
+
+```{r}
+
+##Calculemos el MAPE entre estos dos vectores 
+
+# First, calculate the absolute percentage error (APE) for each element in the vectors
+APE_electrico_HW <- abs((Demanda_electrico_completa_reales12 - Demanda_electrico_HW_forecast12) / Demanda_electrico_completa_reales12)
+
+# Calculate the mean APE across all elements in the vectors
+MAPE_electrico_HW <- mean(APE_electrico_HW) * 100
+
+# Print the MAPE value
+cat("MAPE error para el forecast calculado con el método de 'HoltWinters'es:", MAPE_electrico_HW, "%")
+```
+
+
+
+
+### Error cuadrado calculado con el Método de HoltWinters vs el calculado con el método de suafizamiento estático 
+
+
+
+```{r}
+Demanda_electrico_ts_hw1$SSE
+```
+
+Entonces el error asociado al pronóstico del cálculo de pronóstico PUNTUAL para el caso Demanda_eléctirco es:  
+```{r}
+sse_Demanda_electrico_hw <- ((Demanda_electrico_ts_hw1$SSE)/(length(Demanda_electrico_ts)))^0.5
+sse_Demanda_electrico_hw
+```
+
+
+Recordar que la SSE de la demanda_electrico para el caso del método de suavizamiento estático era:
+```{r}
+SSE_demanda_electrico_E <- sum(demanda_electrico_errores^2)
+SSE_demanda_electrico_E
+```
+
+Lo que indica que el método de suavizamiento estático resultó bastante mejor en nuestro caso para el PRONOSTICO PUNTUAL de la demanda de gas natural en el sector eléctrico en México vs el método de HoltWinters
+
+
+### Comparación del MAPE del pronostico hecho con métodos estáticos vs el pronóstico hecho con el método " de suavizamiento dinámico" de HoltWinters para el pronostico puntual
+
+
+En este caso y dado un cálculo con el métodO de HoltWinters sin valores de arranque especificados los errores de ambos métodos (estático vs HoltWinters) fueron los sigientes: 
+
+
+```{r}
+cat("MAPE error para el forecast calculado con el método de 'suavizamiento estático'es:", MAPE_electrico_estatico, "%")
+
+  
+cat("MAPE error para el forecast calculado con el método de 'HoltWinters'es:", MAPE_electrico_HW, "%")
+```
+
+Lo que de nuevo indica que el método de suavizamiento estático resultó mejor en nuestro caso para el PRONOSTICO PUNTUAL de la demanda de gas natural en el sector eléctrico en México. 
+
+
+### Comparación de los intervalos del pronostico hecho con métodos estáticos vs el pronóstico hecho con el método " de suavizamiento dinámico" de HoltWinters 
+
+Como se sabe, la parte "más sustancial" o esencial de los pronósticos es el intervalo y no el pronóstico puntual, por lo que en nuestro caso se considerará en general como "un mejor mpetodo de pronóstico" no aquel que otorge el menor error tipo MAPE en las estimaciones puntuales, sino aquel cuyos intervalos de confianza al 95% sean menores incluso para valores pronósticados relativamente lejanos del último valor real. 
+
+
+
+Intervalos calculados con el método de suavizamiento estático
+```{r}
+LI_demanda_electrico_ajustado[202:213]
+
+LS_demanda_electrico_ajustado[202:213]
+
+intervalos_metodo_E<- data.frame(LI_demanda_electrico_ajustado =LI_demanda_electrico_ajustado[202:213], LS_demanda_electrico_ajustado= LS_demanda_electrico_ajustado[202:213])
+
+intervalos_metodo_E
+
+```
+
+
+
+Intervalos calculados con el método de suavizamiento dinámico Holt-Witers
+```{r}
+Demanda_electrico_ts_hw1_fc
+```
+
+Se observa de nuevo claramente como el método de HoltWinters otorga mejores intervalos de confianza incluso para aquellos valores'más alejados' del último valor real vs aquellos generados con el "método de suavizamiento estático"  
+
+
+
+
+## C. Conclusiones generales sobre las técnicas de suavizamiento estáticas y dinámicas (HoltWinters)
+
+### Comparación entre ambas técnicas de suavizamiento y pronóstico de series de tiempo 
+
+En general se podrían mencionar las siguientes carácterísticas sobre las "técnicas de suavizamiento estáticas":
+
+- Al no considerar los "cambios históricos en el nivel" pueden ser relativamente buenos para generar estimaciones puntuales para valores en tiempo t+n con n pequeña, apenas más grande que 1, pero si el valor de n va creciendo, es decir, si nos alejamos del ultimo valor conocido, el pronóstico suele ir tendiendo cada vez más error. 
+- Suele ser "un método extremadamente sensible a valores atípicos", pues de nuevo, al tener en cuenta una especie de "nivel constante" es incapaz de caputrar datos muy lejanos a esa constante. 
+- Tiende producir valores de límites de pronóstico muy grandes y crecientes "de manera casi exponencial" a medida que nos alejamos del ultimo valor conocido en la serie 
+- Se sugiere intentar estimar solo 1 a 5 datos del tiempo t + n=5 después del último valor conocido, ya que en los siguientes datos el error de pronóstico y los intervalos son muy grandes 
+- Es una "ténica estática de suavizamiento" que pricipalmente se basa en la "forma histórica" de los datos e intenta reproducir esa forma en los pronósticos 
+
+
+En general se podrían mencionar las siguientes carácterísticas sobre las "técnicas de suavizamiento dinámicas o de HoltWinters":
+
+- Al SI considerar los "cambios históricos en el nivel" suelen ser "menos adecuados" para calcular estimaciones puntuales en comparación con los "métodos estáticos" 
+- Es capaz de modelar estacionalidad y cambios en "la forma histórica de los datos" de mejor manera respecto a los métodos estáticos
+- Tiende producir valores de límites de pronóstico mucho mas "constantes" incluso para valores de tiempo muy alejados del ultimo valor conocido 
+- Se sugiere intentar estimar de 1 a 12 datos del tiempo t + n=12 después del último valor conocido, ya que incluso para valores relativamente alejados al ultimo valor conocido produce resultados de estimación puntual e intervalos de confianza buenos.  
+- Es una "ténica recursiva de suavizamiento" que pricipalmente se basa en la "importancia histórica" de los datos e intenta reproducir esa importancia para estimar los siguientes valores de la serie  
+
+
+Ambas técnicas presentan dificicultades para modelar datos cuya carianza en el tiempo cambie significativamente y también para manekar datos atípicos "outliers"
+
+
+### Referencias
+
+Bowerman, B. L., O'Connell, R. T., & Koehler, A. B. (2005). Forecasting, time series, and regression: An applied approach. Thomson/Brooks/Cole.
+
+
+Box, G. E. P., Jenkins, G. M., & Reinsel, G. C. (2015). Time series analysis: forecasting and control (5th ed.). John Wiley & Sons.
+
+
+
+
+

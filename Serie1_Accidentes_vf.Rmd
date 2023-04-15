@@ -21,8 +21,6 @@ Primero importamos la data de Accidentes terrestres en MEX
 Data obtenida de la página oficial del INEGI:  https://www.inegi.org.mx/temas/accidentes/
 
 ```{r}
-#install.packages("readxl")
-
 library("readxl")
 
 
@@ -212,7 +210,6 @@ lines(LS_accidentes, col="Purple")
 ```
 
 ```{r}
-#install.packages("readxl")
 
 library("readxl")
 
@@ -333,9 +330,6 @@ plot(accidentes_MEX_ts_h1, main="Aplicaicón del método de Holt Winters a accid
 
 
 ```{r}
-# Install the forecast package
-#install.packages("forecast")
-
 # Load the forecast package
 library(forecast)
 ```

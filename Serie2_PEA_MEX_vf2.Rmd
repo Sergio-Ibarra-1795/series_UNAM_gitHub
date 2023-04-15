@@ -21,10 +21,8 @@ Primero importamos la data de PEA en MEX
 Data obtenida de la página oficial del INEGI:  https://www.inegi.org.mx/temas/empleo/
 
 ```{r}
-#install.packages("readxl")
 
 library("readxl")
-
 
 PEA_mex <-read_excel("PEA_MEX_pp.xlsx")
 ```
@@ -351,7 +349,6 @@ Calculamos ahora los límites de estimación devolviendo el efecto de tendencia
 Para ello importamos el Data Frame con la data historica completa, es decir, la que contiene los 66 trimestres propuestos aquí como "train data" + los 6 trimestres que se pronósticaran
 
 ```{r}
-#install.packages("readxl")
 
 library("readxl")
 
@@ -526,9 +523,6 @@ plot(PEA_MEX_ts_h1, main="Aplicaicón del método de Holt Winters a PEA MEX trai
 
 
 ```{r}
-# Install the forecast package
-#install.packages("forecast")
-
 # Load the forecast package
 library(forecast)
 ```
