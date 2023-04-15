@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # Serie de tiempo 2 CON tendencia y SIN estacionalidad: Historico trimestral de Población Económicamente Activa (PEA) en México
 
 Tenemos data trimestral de Enero de 2005 a Agosto de 2022 sobre la Población Económicamente activa en México, son 72 datos en total. 
-La idea es usar 66 de esos 72 para "aplicar los modelos" A) De suavizamiento "estático" y B) De "suavizamiento dinámico" o Holt-Winters para posteriormente predecir con cada modelo los valores de los 6 trimestres restantes y poder comparar contra los reales para detectar el mejor modelo entre los dos mencionados para modelar la Población Económicamente Activa en México 
+La idea es usar 66 de esos 72 como una especie de "data de entreaniemto" para aplicar los modelos A) De suavizamiento "estático" y B) De "suavizamiento dinámico" o Holt-Winters y posteriormente predecir con cada modelo los valores de los 6 trimestres restantes y poder comparar contra los reales e identificar el mejor modelo entre los dos mencionados para modelar la Población Económicamente Activa en México 
 
 
 
@@ -51,8 +51,8 @@ plot(PEA_mex$Date, PEA_mex$PEA,type="l", main="Data 'original' de Población Eco
 
 Comenzaremos tratando la serie con el método estático aplicando el siguiente flujo lógico de trabajo y considerando que estamos ene el caso de serie CON TENDECIA y SIN ESTACIONALIDAD: 
 
-1. Se removerá el factor de tendencia a la serie original obteniendo una serie sin tendencia, que en este caso será lo mismo que el "ruido blanco"
-2. Será sobre el "ruido blanco" que se llevará a cabo el "pronóstico puntual" de los siguientes 6 trimestre como la media historica de dicho componente estocástico 
+1. Se removerá el factor de tendencia a la serie original obteniendo una serie sin tendencia
+2. Será sobre dicha serie sin tendecia que se llevará a cabo el "pronóstico puntual" de los siguientes 6 trimestre como la media historica de dicho componente estocástico 
 3. Se calcularán los intervalos de pronóstico al 95% de confianza 
 4. Se "devolverán" los efectos de tendencia de la serie con el fin de llevar los pronósticos a las dimensiones correctas
 5. Se calculará el error tipo MAPE entre los valores pronósticados con el "método estático" y los valores reales de la serie de los últimos 6 trimestres
@@ -70,9 +70,13 @@ linea_PEA<-lm(PEA~Date, data=PEA_mex)
 linea_PEA
 ```
 
+Se puede observar una "ecuación general de linea de tendencia" en este caso es: 
+y = 17,890,000 + 0.02397 * (Date) 
+Es muy razonable que "la ordenada al origen" sea de alrededor de 20 millones, pues todos los datos de Población Económicamente Activa son del orden de 40 a 55 millones. También resulta lógica que el valor de la pendiente sea positivo pero no muy cercano a 1, pues en general para cada aumento en el valor del tiempo, no existe un incremento o decremento realmente signifiativo en el valor del PEA (excepto en el año 2020)
 
 
-Para graficar la "serie original" de PEA_MEX vs el filtro1 (Linea de tendencia) primero debemos "crear/simular" datos de Enero 2005 a Oct 2021 a partir de nuestra linea de previamente computada de nombre: linea_PEA
+
+Ahora para graficar la "serie original" de PEA_MEX vs el filtro1 (Linea de tendencia) primero debemos "crear/simular" datos de Enero 2005 a Oct 2021 a partir de nuestra linea de previamente computada de nombre: linea_PEA
 
 
 ```{r}
@@ -90,6 +94,10 @@ Graficamos entonces a la "data original de PAE_MX" y a la data calculada a parti
 ```{r}
 plot(PEA_mex$Date, PEA_mex$PEA, type="l", main=" 'data original de PAE_MX' y linea de tendencia calculada")
 lines(x = PEA_mex$Date, y = linea_PEA_aplicada, col = "red")
+
+legend("bottomright", legend = c("data original de PAE_MX", "Linea de tendencia de PEA en MEX"), 
+       col = c("black", "red"), lty = 1)
+
 ```
 
 
@@ -111,7 +119,7 @@ Serie total = Componente de tendencia + Componente de estacionalidad + Component
 
 En este caso el Componente de estacionalidad = 0, por lo tanto tendríamos 
 
-Serie total PAEA MEX = Componente de tendencia + Componente estocástico, por lo tanto al haber previamente removido el componente estocástico de la serie lo que hemos hehco en realidad es obtener el componente estocástico o ruido blanco para este caso 
+Serie total PAEA MEX = Componente de tendencia + Componente estocástico, por lo tanto al haber previamente removido el componente estocástico de la serie lo que hemos hecho en realidad es obtener el componente estocástico o ruido blanco para este caso 
 
 Por simplicidad para cálculos posteriores, nombremos de esa manera a la variable 
 ```{r}
@@ -133,7 +141,7 @@ Errores= Componente estocástico o ruido blanco - Media del componente estocást
 Se determinan la varianza (errores al cuadrado) de la serie de PEA_MEX y se calcula también la desviación estandar de esos errores 
 
 ```{r}
-Error_est_PEA<-PEA_MX_ruido_blanco-mean(PEA_MX_ruido_blanco)
+Error_est_PEA<-PEA_Sin_Tendencia-mean(PEA_MX_ruido_blanco)
 head(Error_est_PEA)
 tail(Error_est_PEA)
 
@@ -163,7 +171,7 @@ var(Error_est_PEA)
 sd_est_PEA
 ```
 
-Se tiene una desviación estandar de 0.025 y una  media muy cercana a cero para los errores lo cual es totalmente concordante con le hecho de que tras haber removido el componente de tendencia  "el ruido blanco" o componente estocástico resultante tiende a tener una distribuión normal y que si a ese ruido blanco se le extrae su media tambien tiende a tener una distribución normal con media cero y en este caso una desviación estandar de 0.025
+Se tiene una desviación estandar de 0.025 y una  media muy cercana a cero para los errores lo cual es totalmente concordante con le hecho de que tras haber removido el componente de tendencia, "el ruido blanco" o componente estocástico resultante tiende a tener una distribuión normal. Y que si a ese ruido blanco se le extrae su media tambien tiende a tener una distribución normal con media cero y en este caso una desviación estandar de 0.025
 
 
 
@@ -175,10 +183,11 @@ hist(Error_est_PEA, breaks = 20, col = "lightblue", main = "Frequency Distributi
 Se observa como los errores de la serie siguen prácticamente todos una distribución normal con media cero y desviación estandar de 0.025, a excepción de los valores atípicos del año 2020 derivados de la pandemia de Covid-19.
 
 
+#### Pronóstico puntual
+Una vez teniendo nuestra seríe SIN TENDENCIA lo que como ya se mencionó, implica que, "unicamente tenemos el componente estocástico o de ruido blanco en la serie" podemos proceder a llevar a cabo el pronóstico de 6 trimestres.
 
-Una vez teniendo la serie sin tendencia, podemos aplicar como nuestro "mejor filtro" o estimado de la serie que es la media historica de los datos que se considerarán como "de entrenamiento"
+Como ha sido estudiado en la clase, nuestro mejor pronóstico puntual dadas estas condiciones en la serie es la media de los datos históricos del ruido blanco
 
-Calculamos la media de nuestra serie sin tendecia que será nuestra estimación puntual 
 
 ```{r}
 estimacion_puntual_PEA_ST<-mean(PEA_Sin_Tendencia)
@@ -188,13 +197,7 @@ estimacion_puntual_PEA_ST
 
 
 
-#### Pronóstico puntual
-
-Una vez teniendo nuestra seríe SIN TENDENCIA lo que implicária que "unicamente tenemos el componente estocástico o de ruido blanco en la serie" podemos proceder a llevar a cabo el pronóstico de 6 trimestres en el futuro.
-Como ha sido estudiado en la clase, nuestro mejor pronóstico dadas estas condiciones en la serie es la media del ruido blanco
-
-
-Vamos a hacer el pronóstico de la serie de PEA MEX para los próximos 6 trimestres
+Ahora vamos a hacer el pronóstico de la serie de PEA MEX para los próximos 6 trimestres
 
 
 ```{r}
@@ -208,23 +211,23 @@ head(PAE_Sin_Tendencia_para_pron)
 tail(PAE_Sin_Tendencia_para_pron)
 
 
-## Entonces el mejor pronóstico que tenemos para eata técnica es la media de la serie sin tendencia 
+## Entonces el mejor pronóstico que tenemos para esta técnica es la media de la serie sin tendencia 
 
 
 PEA_pronostico_puntual <- rep(estimacion_puntual_PEA_ST, times=72)
 head(PEA_pronostico_puntual)
 tail(PEA_pronostico_puntual)
 
-plot(Date_PAE2,PEA_pronostico_puntual, type="l", main = "Pronóstico de demanda de PEA en MEX para los siguientes 6 trimestres", cex.main=0.8, ylim=c(0.9, 1.1))
+plot(Date_PAE2,PEA_pronostico_puntual, type="l", main = "Pronóstico 'puntual' de PEA en MEX", cex.main=0.8, ylim=c(0.9, 1.1))
 ```
 
 
 
-Sobre el pronóstico puntual sin tendencia ni estacionalidad, que para el caso de la serie de demanda de gas natural en el sector eléctrico tiene un valor de:
+Comentario sobre el pronóstico puntual sin tendencia ni estacionalidad, que para el caso de la serie de demanda de gas natural en el sector eléctrico tiene un valor de:
 ```{r}
 mean(PEA_MX_ruido_blanco)
 ```
-Lo cual es bastante concordante con el hecho que. Al haber "quitado los componentes de tendencia de la serie original", es decir obtenido el ruido blanco de la serie los valores de nuestra variable y: PEA en Mex están en este momento del algoritmo en escala de la unidad: 1. Y por lo tanto la media de dichos valores será muy cercana a 1. 
+Este valor es bastante concordante con el hecho que. Al haber "quitado los componentes de tendencia de la serie original", es decir obtenido el ruido blanco de la serie los valores de nuestra variable y: PEA en Mex están en este momento del algoritmo en escala de la unidad: 1. Y por lo tanto la media de dichos valores será muy cercana a 1. 
 
 En general se podría decir dados los resultados del presente trabajo, así como los resultados de los ejercicios vistos en clase, que el valor de la media estimada o pronóstico puntual para la serie sin componente de tendencia tiende al valor de 1. 
 
@@ -242,9 +245,7 @@ Lim_PEA
 ```
 
 
-Calculamos los limites inferior y superiro como NA para los valores historicos y media +- 2 veces desciación estandar para los valores pronósticados 
-
-Graficamos los valores pronósticadoos t los limites de confianza 
+Calculamos los limites inferior y superior
 
 ```{r}
 

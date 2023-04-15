@@ -242,10 +242,6 @@ Errores= Componente estocástico o ruido blanco - Media del componente estocást
 Determinemos entonces la varianza (errores al cuadrado) para nuestra serie de demanda_electrico 
 ```{r}
 
-## Se calcula la media del ruido blanco o componente estocástico de la serie 
-mean(Demanda_electrico_ruido)
-
-
 ## Se calculan los errores como Errores= Componente estocástico o ruido blanco - Media del componente estocástico o ruido blanco
 demanda_electrico_errores <-Demanda_electrico_ruido_blanco-mean(Demanda_electrico_ruido_blanco)
 
@@ -269,14 +265,8 @@ var(demanda_electrico_errores)
 sd_est_demanda_electrico
 ```
 
-Se calcula la SSE de la demanda_electrico para el caso del método de suavizamiento estático 
-```{r}
-SSE_demanda_electrico_E <- sum(demanda_electrico_errores^2)
-SSE_demanda_electrico_E
-```
 
-
-Se tiene una desviación estandar de 0.1 y una  media muy cercana a cero para los errores lo cual es totalmente concordante con le hecho de que tras haber removido los componentes de tendencia y estacionalidad "el ruido blanco" o componente estocástico resultante tiende a tener una distribuión normal y que si a ese ruido blanco se le extrae su media tambien tiende a tener una distribución normal con media cero y en este caso una desviación estandar de 0.1 
+Se tiene una desviación estandar de 0.1 y una  media muy cercana a cero para los errores lo cual es totalmente concordante con le hecho de que tras haber removido los componentes de tendencia y estacionalidad, "el ruido blanco" o componente estocástico resultante tiende a tener una distribuión normal. Y que si a ese ruido blanco se le extrae su media tambien tiende a tener una distribución normal con media cero y en este caso una desviación estandar de 0.1 
 
 
 Procedamos a observar como se comporta la Distribución de dichos errores:
@@ -315,11 +305,11 @@ plot(Demanda_electrico_completa$Date,Demanda_electrico_pronostico, type="l", mai
 
 
 
-Sobre el pronóstico puntual sin tendencia ni estacionalidad, que para el caso de la serie de demanda de gas natural en el sector eléctrico tiene un valor de:
+Comentario sobre el pronóstico puntual sin tendencia ni estacionalidad, que para el caso de la serie de demanda de gas natural en el sector eléctrico tiene un valor de:
 ```{r}
 mean(Demanda_electrico_ruido_blanco)
 ```
-Lo cual es bastante concordante con el hecho que. Al haber "quitado los componentes de tendencia y estacionaldad de la serie original", es decir obtenido el ruido blanco de la serie los valores de nuestra variable y: gas demandado están en este momento del algoritmo en escala de la unidad: 1. Y por lo tanto la media de dichos valores será muy cercana a 1. 
+Este valor es bastante concordante con el hecho que. Al haber "quitado los componentes de tendencia y estacionaldad de la serie original", es decir obtenido el ruido blanco los valores de nuestra variable y: gas demandado están en este momento del algoritmo en escala de la unidad: 1. Y por lo tanto la media de dichos valores será muy cercana a 1. 
 
 En general se podría decir dados los resultados del presente trabajo, así como los resultados de los ejercicios vistos en clase, que el valor de la media estimada o pronóstico puntual para la serie sin componente de tendencia tiende al valor de 1. 
 
@@ -349,7 +339,7 @@ tail(LS_demanda_electrico_lineaA)
 ```{r}
 
 
-plot(Demanda_electrico_completa$Date,Demanda_electrico_pronostico, type="l", main = "Pronostico puntual e intervalos de confianza sin tendencia para Demanda gas natural en sector eléctrico MEX con el método de 'suavizamiento estático' ", cex.main=0.6, ylim=c(0.2,1.7))
+plot(Demanda_electrico_completa$Date,Demanda_electrico_pronostico, type="l", main = "Estimación puntual e intervalos de confianza sin tendencia para Demanda gas natural en sector eléctrico MEX con el método de 'suavizamiento estático' ", cex.main=0.6, ylim=c(0.2,1.7))
 
 
 #lines(Demanda_electrico_pronostico, col="Red")
@@ -386,7 +376,7 @@ head(LS_demanda_electrico_cest)
 tail(LS_demanda_electrico_cest)
 
 
-plot(Demanda_electrico_completa$Date, Demanda_electrico_pronostico_cest, type="l", main="Demanda electrico pronostico con componente de estacionalidad + intervalos", cex.main= 0.85)
+plot(Demanda_electrico_completa$Date, Demanda_electrico_pronostico_cest, type="l", main="Demanda electrico estimación puntual e intervalos con componente de estacionalidad ", cex.main= 0.85)
 lines(LI_demanda_electrico_cest, col="violet")
 lines(LS_demanda_electrico_cest, col="violet")
 ```

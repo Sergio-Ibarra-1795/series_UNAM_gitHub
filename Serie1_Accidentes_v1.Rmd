@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # Serie de tiempo 1 SIN tendencia y SIN estacionalidad: Historico anual Accidentes terrestres en México
 
 Tenemos data anual desde 2005 a 2021 sobre el número de accidentes terrestres que ha habido en México, son 22 datos en total. 
-La idea es usar 19 de esos 22 para "aplicar los modelos" A) De suavizamiento "estático" y B) De "suavizamiento dinámico" o Holt-Winters para posteriormente predecir con cada modelo los valores de los 3 años restantes y poder comparar contra los reales para detectar el mejor modelo entre los dos mencionados para modelar la los accidentes terrestres en México 
+La idea es usar 19 de esos 22 como una especie de "data de entreaniemto" para aplicar los modelos A) De suavizamiento "estático" y B) De "suavizamiento dinámico" o Holt-Winters para posteriormente predecir con cada modelo los valores de los 3 años restantes y poder comparar contra los reales e identificar el mejor modelo entre los dos mencionados para modelar los accidentes terrestres en México 
 
 
 
@@ -26,7 +26,7 @@ install.packages("readxl")
 library("readxl")
 
 
-Accidentes_transito_MEX <-read_excel("Accidentes_transito_pp.xlsx")
+Accidentes_transito_MEX <-read_excel("Accidentes_transito_pp_.xlsx")
 ```
 
 
@@ -49,7 +49,7 @@ plot(Accidentes_transito_MEX$Date, Accidentes_transito_MEX$Num, type="l", main="
 
 ## A. Método de "suavizamiento estático"
 
-Comenzaremos tratando la serie con el método estático aplicando el siguiente flujo lógico de trabajo y considerando que estamos ene el caso de serie CON TENDECIA y SIN ESTACIONALIDAD: 
+Comenzaremos tratando la serie con el método estático aplicando el siguiente flujo lógico de trabajo y considerando que estamos en el caso de serie CON TENDECIA y SIN ESTACIONALIDAD: 
 
 1. Se llevará a cabo el "pronóstico puntual" de los siguientes 3 años como la media historica 
 2. Se calcularán los intervalos de pronóstico al 95% de confianza 
@@ -66,7 +66,7 @@ En este caso el Componente de estacionalidad = 0 y el  Componente de tendencia =
 Serie total Accidentes MEX = Componente estocástico
 
 
- 
+Calculamos el "ruido blanco de la serie" como la media de los datos hisóricos
 ```{r}
 Accidentes_transito_ruido_blanco <- mean(Accidentes_transito_MEX$Num)
 Accidentes_transito_ruido_blanco
@@ -260,7 +260,7 @@ cat("El error tipo MAPE  para el forecast calculado con el método de 'suavizami
 
 
 
-## B. Método de Holt como "modelo de suaviazamiento y pronóstico NO ESTÁTICO" que si considera los cambios de nivel a tráves del tiempo. 
+1## B. Método de Holt como "modelo de suaviazamiento y pronóstico NO ESTÁTICO" que si considera los cambios de nivel a tráves del tiempo. 
 
 Vamos a usar ahora el método de HoltWinters como "modelo de suaviazamiento y pronóstico NO ESTÁTICO" que si considera los cambios de nivel a tráves del tiempo. 
 
