@@ -2,9 +2,15 @@
 title: "Series_de_Tiempo_Primer_Parcial_Ibarra_Sergio"
 author: "Sergibar"
 date: "2023-04-15"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
+# Universidad Nacional Autónoma de México 
+# Posgrado en Ingeniería de Sistemas 
+# Series de tiempo Dr. Wulfrano Gomez Gallardo 
+# Primer Parcial: Aplicaicón de métodos de suavizamiento esáticos y de HoltWinters para el tratamiento y pronóstico de series de tiempo (3 casos aplicativos)
 
 
 # Serie de tiempo 1 SIN tendencia y SIN estacionalidad: Historico anual Accidentes terrestres en México
@@ -119,7 +125,7 @@ Procedamos a observar como se comporta la Distribución de dichos errores:
 hist(Error_est_accidentes, breaks = 20, col = "lightblue", main = "Frequency Distribution of Accidentes terrestres en Méxcio errors", xlab = "Values", ylab = "Frequency")
 
 ```
-Se observa como los errores de la serie se acercan a una distribución normal con media cero y desviación estandar de 50,000, a excepción de los valores atípicos del año 2020 derivados de la pandemia de Covid-19.
+Se observa como los errores de la serie se acercan a una distribución normal con media cero y desviación estandar de ~35 mil, a excepción de los valores atípicos del año 2020 derivados de la pandemia de Covid-19.
 
 
 #### Pronóstico puntual
@@ -400,11 +406,10 @@ Lo que indica que para este caso el Método de HoltWinters fue ligeramente mejor
 
 ### Comparación de los intervalos del pronostico hecho con métodos estáticos vs el pronóstico hecho con el método " de suavizamiento dinámico" de HoltWinters 
 
-Como se sabe, la parte "más sustancial" o esencial de los pronósticos es el intervalo y no el pronóstico puntual, por lo que en nuestro caso se considerará en general como "un mejor mpetodo de pronóstico" no aquel que otorge el menor error tipo MAPE en las estimaciones puntuales, sino aquel cuyos intervalos de confianza al 95% sean menores incluso para valores pronósticados relativamente lejanos del último valor real. 
+Como se sabe, la parte "más sustancial" o esencial de los pronósticos es el intervalo y no el pronóstico puntual, por lo que en nuestro caso se considerará en general como "un mejor método de pronóstico" no aquel que otorge el menor error tipo MAPE en las estimaciones puntuales, sino aquel cuyos intervalos de confianza al 95% sean menores incluso para valores pronósticados relativamente lejanos del último valor real. 
 
 
-
-Se observa claramente como el método de HoltWinters otorga mejores intervalos de confianza para pronósticos incluso para aquellos 'más alejados' del último valor real vs aquellos generados con el "método de suavizamiento estático" 
+En este caso se observa claramente como el método de HoltWinters otorga mejores intervalos de confianza para pronósticos incluso para aquellos 'más alejados' del último valor real vs aquellos generados con el "método de suavizamiento estático" 
 
 
 
@@ -1035,9 +1040,6 @@ Lo que confirma que el método de suavizamiento estático resultó mejor en nues
 
 ### Comparación de los intervalos del pronostico hecho con métodos estáticos vs el pronóstico hecho con el método " de suavizamiento dinámico" de HoltWinters 
 
-Como se sabe, la parte "más sustancial" o esencial de los pronósticos es el intervalo y no el pronóstico puntual, por lo que en nuestro caso se considerará en general como "un mejor mpetodo de pronóstico" no aquel que otorge el menor error tipo MAPE en las estimaciones puntuales, sino aquel cuyos intervalos de confianza al 95% sean menores incluso para valores pronósticados relativamente lejanos del último valor real. 
-
-
 
 Intervalos calculados con el método de suavizamiento estático
 ```{r}
@@ -1058,8 +1060,7 @@ Intervalos calculados con el método de suavizamiento dinámico Holt-Witers
 PEA_MEX_ts_h1_fc
 ```
 
-Se observa claramente como el método de HoltWinters otorga mejores intervalos de confianza para pronósticos incluso para aquellos 'más alejados' del último valor real vs aquellos generados con el "método de suavizamiento estático" 
-
+En este caso podemos de nuevo notar como el método de HoltWinters otorga mejores intervalos de confianza para pronósticos incluso para aquellos 'más alejados' del último valor real vs aquellos generados con el "método de suavizamiento estático" 
 
 
 
