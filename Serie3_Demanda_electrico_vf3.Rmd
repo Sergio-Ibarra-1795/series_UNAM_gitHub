@@ -730,6 +730,17 @@ Demanda_electrico_ts_hw1_fc
 Se observa de nuevo claramente como el método de HoltWinters otorga mejores intervalos de confianza incluso para aquellos valores'más alejados' del último valor real vs aquellos generados con el "método de suavizamiento estático"  
 
 
+### Anexo: Inclusión de valores en parámetros de modelo HoltWinters
+
+Vale la pena explorar ¿qué tanto podría mejorar el pronóstico? si "ayudo" al algoritmo de HoltWinters de R dándo valores iniciales a algunos parámetros 
+
+```{r}
+Demanda_electrico_ts_hw1 <-HoltWinters(Demanda_electrico_ts, seasonal = 'multiplicative')
+Demanda_electrico_ts_hw1
+```
+
+
+
 
 
 ## C. Conclusiones generales sobre las técnicas de suavizamiento estáticas y dinámicas (HoltWinters)

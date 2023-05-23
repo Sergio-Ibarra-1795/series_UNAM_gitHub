@@ -1,0 +1,1355 @@
+TY  - JOUR
+TI  - A hybrid deep learning framework for predicting daily natural gas consumption
+T2  - Energy
+J2  - Energy
+VL  - 257
+PY  - 2022
+DO  - 10.1016/j.energy.2022.124689
+SN  - 03605442 (ISSN) 
+AU  - Du, J.
+AU  - Zheng, J.
+AU  - Liang, Y.
+AU  - Lu, X.
+AU  - Klemeš, J.J.
+AU  - Varbanov, P.S.
+AU  - Shahzad, K.
+AU  - Rashid, M.I.
+AU  - Ali, A.M.
+AU  - Liao, Q.
+AU  - Wang, B.
+AD  - National Engineering Laboratory for Pipeline Safety/ MOE Key Laboratory of Petroleum Engineering/ Beijing Key Laboratory of Urban Oil and Gas Distribution Technology, China University of Petroleum-Beijing, Fuxue Road No. 18, Changping District, Beijing, 102249, China
+AD  - Sustainable Process Integration Laboratory – SPIL, NETME Centre, Faculty of Mechanical Engineering, Brno University of Technology - VUT BRNO, Technická 2896/2, Brno, 616 69, Czech Republic
+AD  - Center of Excellence in Environmental Studies, King Abdulaziz University, Jeddah, 21589, Saudi Arabia
+AD  - Department of Chemical and Materials Engineering, Faculty of Engineering, King Abdulaziz University, Jeddah, Saudi Arabia
+AD  - National-Local Joint Engineering Laboratory of Harbour Oil & Gas Storage and Transportation Technology/Zhejiang Key Laboratory of Petrochemical Environmental Pollution Control, School of Petrochemical Engineering and Environment, Zhejiang Ocean University, No. 1 Haida South Road, Zhoushan, 316022, China
+AB  - Conventional time-series prediction methods for natural gas consumption mainly focus on capturing the temporal feature, neglecting static and dynamic information extraction. The accurate prediction of natural gas consumption possesses of paramount significance in the normal operation of the national economy. This paper proposes a novel method that resolves the deficiency of conventional time series prediction to address this demand via designing a hybrid deep learning framework to extract comprehensive information from gas consumption. The proposed model captures static and dynamic information via encoding gas consumption as matrices and extracts long-term dependency patterns from time series consumption. Subsequently, a customised network is proposed for information fusion. Cases from several different regions in China are studied as examples, and the proposed model is compared with other advanced approaches (such as long short-term memory (LSTM), convolution neural network long short-term memory (CNN-LSTM)). The mean absolute percentage error is reduced by a range of 0.235%–10.303% compared with other models. According to the comparison results, the proposed model provides an efficient time series prediction functionality. It is also proved that, after effectively extracting comprehensive information and integrating long-term information with static and dynamic information, the accuracy and efficiency of natural gas consumption prediction are greatly promoted. A sensitivity analysis of different modules combination is conducted to emphasise the significance of each module in the hybrid framework. The results indicate that the method coupling all these modules leads to significant improvement in prediction accuracy and robustness. © 2022 Elsevier Ltd
+KW  - Daily consumption prediction
+KW  - Deep learning
+KW  - Encoding time series
+KW  - Hybrid framework
+KW  - Natural gas
+KW  - Encoding (symbols)
+KW  - Gases
+KW  - Learning systems
+KW  - Long short-term memory
+KW  - Natural gas
+KW  - Sensitivity analysis
+KW  - Signal encoding
+KW  - Time series
+KW  - Daily consumption prediction
+KW  - Deep learning
+KW  - Encoding time
+KW  - Encoding time series
+KW  - Hybrid framework
+KW  - Natural gas consumption
+KW  - Static information
+KW  - Statics and dynamics
+KW  - Time series prediction
+KW  - Times series
+KW  - Forecasting
+KW  - algorithm
+KW  - natural gas
+KW  - sensitivity analysis
+KW  - time series analysis
+KW  - China
+PB  - Elsevier Ltd
+N1  - Cited By :4
+N1  - Export Date: 20 April 2023
+M3  - Article
+DB  - Scopus
+C7  - 124689
+N1  - CODEN: ENEYD
+LA  - English
+N1  - Correspondence Address: Zheng, J.; National Engineering Laboratory for Pipeline Safety/ MOE Key Laboratory of Petroleum Engineering/ Beijing Key Laboratory of Urban Oil and Gas Distribution Technology, Fuxue Road No. 18, Changping District, China; email: 2018214074@student.cup.edu.cn
+N1  - Correspondence Address: Wang, B.; National-Local Joint Engineering Laboratory of Harbour Oil & Gas Storage and Transportation Technology/Zhejiang Key Laboratory of Petrochemical Environmental Pollution Control, No. 1 Haida South Road, China; email: wangbh@zjou.edu.cn
+N1  - Funding details: Ministry of Education of the People's Republic of China, MOE
+N1  - Funding details: King Abdulaziz University, KAU, IFPHI- 1548-188-1442
+N1  - Funding text 1: This research was funded by the Ministry of Education and King Abdulaziz University, Jeddah, Saudi Arabia , grant number ( IFPHI- 1548-188-1442 ).
+N1  - References: Qiao, W., Huang, K., Azimi, M., Han, S., A novel hybrid prediction model for hourly gas consumption in supply side based on improved whale optimization algorithm and relevance vector machine (2019) IEEE Access, 7, pp. 88218-88230; 
+Zhang, J., Qin, Y., Duo, H., The development trend of China's natural gas consumption: a forecasting viewpoint based on grey forecasting model (2021) Energy Rep, 7, pp. 4308-4324; 
+Dudley, B., BP statistical review of world energy (2018), BP Statistical Review London, UK (Accessed 6 August 2018); China statistical yearbook (2021), China Statistics Press Beijing; Wang, B., Liang, Y., Zheng, J., Qiu, R., Yuan, M., Zhang, H., An MILP model for the reformation of natural gas pipeline networks with hydrogen injection (2018) Int J Hydrogen Energy, 43 (33), pp. 16141-16153; 
+Peng, S., Chen, R., Yu, B., Xiang, M., Lin, X., Liu, E., Daily natural gas load forecasting based on the combination of long short term memory, local mean decomposition, and wavelet threshold denoising algorithm (2021) J Nat Gas Sci Eng, 95; 
+McNeil, M.A., Karali, N., Letschert, V., Forecasting Indonesia's electricity load through 2030 and peak demand reductions from appliance and lighting efficiency (2019) Energy Sustain. Dev., 49, pp. 65-77; 
+Liu, J., Wang, S., Wei, N., Chen, X., Xie, H., Wang, J., Natural gas consumption forecasting: a discussion on forecasting history and future challenges (2021) J Nat Gas Sci Eng, 90; 
+Wang, Q., Jiang, F., Integrating linear and nonlinear forecasting techniques based on grey theory and artificial intelligence to forecast shale gas monthly production in Pennsylvania and Texas of the United States (2019) Energy, 178, pp. 781-803; 
+Akpinar, M., Yumusak, N., Year ahead demand forecast of city natural gas using seasonal time series methods (2016) Energies, 9 (9); 
+Aras, H., Aras, N.I.L., Forecasting residential natural gas demand (2004) Energy Sources, 26 (5), pp. 463-472; 
+Gorucu, F.B., Evaluation and forecasting of gas consumption by statistical analysis (2004) Energy Sources, 26 (3), pp. 267-276; 
+Akpinar, M., Yumusak, N., , pp. 188-191. , Estimating household natural gas consumption with multiple regression: effect of Cycle. Conference Estimating household natural gas consumption with multiple regression: effect of Cycle; Akpinar, M., Yumusak, N., , pp. 1-6. , Forecasting household natural gas consumption with ARIMA model: a case study of removing cycle. Conference Forecasting household natural gas consumption with ARIMA model: a case study of removing cycle; Özmen, A., Yılmaz, Y., Weber, G.-W., Natural gas consumption forecast with MARS and CMARS models for residential users (2018) Energy Econ, 70, pp. 357-381; 
+Friedman, J.H., Multivariate adaptive regression splines (1991) Ann Stat, 19 (1), pp. 1-67; 
+Yerlikaya-Özkurt, F., Batmaz, İ., Weber, G.-W., A review and new contribution on conic multivariate adaptive regression splines (CMARS): a powerful tool for predictive data mining (2014) Modeling, Dynamics, Optimization and Model. Dynam. Optim. Bioecon I, pp. 695-722; 
+Wei, N., Yin, L., Li, C., Li, C., Chan, C., Zeng, F., Forecasting the daily natural gas consumption with an accurate white-box model (2021) Energy, 232; 
+Seyedzadeh, S., Pour Rahimian, F., Oliver, S., Rodriguez, S., Glesk, I., Machine learning modelling for predicting non-domestic buildings energy performance: a model to support deep energy retrofit decision-making (2020) Appl Energy, 279; 
+Meiying, Q., Xiaoping, M., Jianyi, L., Ying, W., Time-series gas prediction model using LS-SVR within a Bayesian framework (2011) Min Sci Technol, 21 (1), pp. 153-157; 
+Rodger, J.A., A fuzzy nearest neighbor neural network statistical model for predicting demand for natural gas and energy cost savings in public buildings (2014) Expert Syst Appl, 41 (4, Part 2), pp. 1813-1829; 
+Zhao, X.-H., Wang, G., Zhao, K.-K., Tan, D.-J., Online least squares support vector machine algorithm in gas prediction (2009) Min Sci Technol, 19 (2), pp. 194-198; 
+Szoplik, J., Forecasting of natural gas consumption with artificial neural networks (2015) Energy, 85, pp. 208-220; 
+Bai, Y., Li, C., Daily natural gas consumption forecasting based on a structure-calibrated support vector regression approach (2016) Energy Build, 127, pp. 571-579; 
+Adamowski, J., Chan, H.F., A wavelet neural network conjunction model for groundwater level forecasting (2011) J Hydrol, 407 (1-4), pp. 28-40; 
+AL-Musaylh, M.S., Al-Daffaie, K., Prasad, R., Gas consumption demand forecasting with empirical wavelet transform based machine learning model: a case study (2021) Int J Energy Res, 40 (10), pp. 15124-15138; 
+Yang, W., Wang, J., Niu, T., Du, P., A hybrid forecasting system based on a dual decomposition strategy and multi-objective optimization for electricity price forecasting (2019) Appl Energy, 235, pp. 1205-1225; 
+Yu, F., Xu, X., A short-term load forecasting model of natural gas based on optimized genetic algorithm and improved BP neural network (2014) Appl Energy, 134, pp. 102-113; 
+Hecht-Nielsen, R., Theory of the backpropagation neural network. Neural networks for perception (1992), pp. 65-93. , Elsevier; Zhu, L., Li, M.S., Wu, Q.H., Jiang, L., Short-term natural gas demand prediction based on support vector regression with false neighbours filtered (2015) Energy, 80, pp. 428-436; 
+Wei, N., Li, C., Peng, X., Li, Y., Zeng, F., Daily natural gas consumption forecasting via the application of a novel hybrid model (2019) Appl Energy, 250, pp. 358-368; 
+Vidal, A., Kristjanpoller, W., Gold volatility prediction using a CNN-LSTM approach (2020) Expert Syst Appl, 157; 
+Huang, Y., Mao, X., Deng, Y., Natural visibility encoding for time series and its application in stock trend prediction (2021) Knowl Base Syst, 232; 
+Wang, Z., Oates, T., Imaging time-series to improve classification and imputation. Conference Imaging time-series to improve classification and imputation; Chen, M., Shi, X., Zhang, Y., Wu, D., Guizani, M., Deep feature learning for medical image analysis with convolutional autoencoder neural network (2017) IEEE Transactions on Big Data, 7 (4), pp. 750-758; 
+Zheng, J., Zhang, H., Dai, Y., Wang, B., Zheng, T., Liao, Q., Time series prediction for output of multi-region solar power plants (2020) Appl Energy, 257; 
+Zheng, J., Du, J., Liang, Y., Liao, Q., Li, Z., Zhang, H., Deeppipe: a semi-supervised learning for operating condition recognition of multi-product pipelines (2021) Process Saf Environ Protect, 150, pp. 510-521; 
+Yu, H., Tao, J., Qin, C., Liu, M., Xiao, D., Sun, H., A novel constrained dense convolutional autoencoder and DNN-based semi-supervised method for shield machine tunnel geological formation recognition (2022) Mech Syst Signal Process, 165; 
+Hochreiter, S., Schmidhuber, J., Long short-term memory (1997) Neural Comput, 9 (8), pp. 1735-1780; 
+Mirzaei, S., Ghasemi, P., EEG motor imagery classification using dynamic connectivity patterns and convolutional autoencoder (2021) Biomed Signal Process Control, 68; 
+Zheng, J., Du, J., Liang, Y., Wang, C., Liao, Q., Zhang, H., Deeppipe: theory-guided LSTM method for monitoring pressure after multi-product pipeline shutdown (2021) Process Saf Environ Protect, 155, pp. 518-531; 
+Wang, C., Wang, Y., Tong, X., Ulgiati, S., Liang, S., Xu, M., Mapping potentials and bridging regional gaps of renewable resources in China (2020) Renew Sustain Energy Rev, 134; 
+Song, J., Zhang, L., Xue, G., Ma, Y., Gao, S., Jiang, Q., Predicting hourly heating load in a district heating system based on a hybrid CNN-LSTM model (2021) Energy Build, 243; 
+Beyca, O.F., Ervural, B.C., Tatoglu, E., Ozuyar, P.G., Zaim, S., Using machine learning tools for forecasting natural gas consumption in the province of Istanbul (2019) Energy Econ, 80, pp. 937-949
+UR  - https://www.scopus.com/inward/record.uri?eid=2-s2.0-85133929463&doi=10.1016%2fj.energy.2022.124689&partnerID=40&md5=53b18be8a95cd9c6a2bcbacc17109e17
+ER  - 
+
+TY  - JOUR
+TI  - International Natural Gas Price Trends Prediction with Historical Prices and Related News
+T2  - Energies
+J2  - Energies
+VL  - 15
+IS  - 10
+PY  - 2022
+DO  - 10.3390/en15103573
+SN  - 19961073 (ISSN) 
+AU  - Guan, R.
+AU  - Wang, A.
+AU  - Liang, Y.
+AU  - Fu, J.
+AU  - Han, X.
+AD  - Key Laboratory of Symbolic Computation and Knowledge Engineering of Ministry of National Education, College of Computer Science and Technology, Jilin University, Changchun, 130012, China
+AD  - Zhuhai Laboratory of Key Laboratory of Symbolic Computation and Knowledge Engineering of Ministry of Education, Zhuhai College of Science and Technology, Zhuhai, 519041, China
+AD  - CNPC Engineering Technology R&D Company Limited, Beijing, 102206, China
+AB  - Under the idea of low carbon economy, natural gas has drawn widely attention all over the world and becomes one of the fastest growing energies because of its clean, high calorific value, and environmental protection properties. However, policy and political factors, supply-demand relationship and hurricanes can cause the jump in natural gas prices volatility. To address this issue, a deep learning model based on oil and gas news is proposed to predict natural gas price trends in this paper. In this model, news text embedding is conducted by BERT-Base, Uncased on natural gas-related news. Attention model is adopted to balance the weight of the news vector. Meanwhile, corresponding natural gas price embedding is conducted by a BiLSTM module. The Attention-weighted news vectors and price embedding are the inputs of the fused network with transformer is built. BiLSTM is used to extract used price information related with news features. Transformer is employed to capture time series trend of mixed features. Finally, the network achieves an accuracy as 79%, and the performance is better than most traditional machine learning algorithms. © 2022 by the authors. Licensee MDPI, Basel, Switzerland.
+KW  - machine learning
+KW  - natural gas
+KW  - price trend prediction
+KW  - Costs
+KW  - Deep learning
+KW  - Embeddings
+KW  - Forecasting
+KW  - Gases
+KW  - Renewable energy resources
+KW  - Embeddings
+KW  - Energy
+KW  - High-calorific-value
+KW  - Low carbon economy
+KW  - Natural gas price
+KW  - Policy factors
+KW  - Price trend prediction
+KW  - Price trends
+KW  - Property
+KW  - Trend prediction
+KW  - Natural gas
+PB  - MDPI
+N1  - Cited By :4
+N1  - Export Date: 20 April 2023
+M3  - Article
+DB  - Scopus
+C7  - 3573
+LA  - English
+N1  - Correspondence Address: Han, X.; Key Laboratory of Symbolic Computation and Knowledge Engineering of Ministry of National Education, China; email: hanxiaosong@jlu.edu.cn
+N1  - Funding details: 2021ZDJS138
+N1  - Funding details: 2021KCXTD015
+N1  - Funding details: National Natural Science Foundation of China, NSFC, 61972174, 62172187
+N1  - Funding details: National Key Research and Development Program of China, NKRDPC, 2021YFF1201203, 2021YFF1201205
+N1  - Funding details: Science and Technology Planning Project of Guangdong Province, 2020A0505100018
+N1  - Funding text 1: Funding: The authors are grateful for the support of the National Key Research and Development Program of China (2021YFF1201203, 2021YFF1201205), the National Natural Science Foundation of China (61972174 and 62172187), the Science and Technology Planning Project of Guangdong Province (2020A0505100018), Guangdong Universities’ Innovation Team Project (2021KCXTD015) and Guangdong Key Disciplines Project (2021ZDJS138).
+N1  - References: Total Energy Monthly Data, , https://www.eia.gov/totalenergy/data/monthly/index.php, (accessed on 4 April 2022); 
+Natural Gas and the Environment, , https://www.eia.gov/energyexplained/natural-gas/natural-gas-and-the-environment.php, (accessed on 4 April 2022); 
+Zhang, D., Paltsev, S., The future of natural gas in China: Effects of pricing reform and climate policy (2016) Clim. Chang. Econ, 7, p. 1650012. , [CrossRef]; 
+Herberg, M.E., (2013) Asia’s Uncertain LNG Future, , The National Bureau of Asian Research: Seattle, WA, USA; Washington, DC, USA; 
+Li, Z., Huang, Z., Failler, P., Dynamic Correlation between Crude Oil Price and Investor Sentiment in China: Heterogeneous and Asymmetric Effect (2022) Energies, 15, p. 687. , [CrossRef]; 
+Gupta, R., Pierdzioch, C., Wong, W.K., A Note on Forecasting the Historical Realized Variance of Oil-Price Movements: The Role of Gold-to-Silver and Gold-to-Platinum Price Ratios (2021) Energies, 14, p. 6775. , [CrossRef]; 
+Kirikkaleli, D., Darbaz, I., The Causal Linkage between Energy Price and Food Price (2021) Energies, 14, p. 4182. , [CrossRef]; 
+Tarczyński, W., Mentel, U., Mentel, G., Shahzad, U., The Influence of Investors’ Mood on the Stock Prices: Evidence from Energy Firms in Warsaw Stock Exchange, Poland (2021) Energies, 14, p. 7396. , [CrossRef]; 
+Nuryyev, G., Korol, T., Tetin, I., Hold-Up Problems in International Gas Trade: A Case Study (2021) Energies, 14, p. 4984. , [CrossRef]; 
+Orzeszko, W., Nonlinear Causality between Crude Oil Prices and Exchange Rates: Evidence and Forecasting (2021) Energies, 14, p. 6043. , [CrossRef]; 
+Szturo, M., Włodarczyk, B., Miciuła, I., Szturo, K., The Essence of Relationships between the Crude Oil Market and Foreign Currencies Market Based on a Study of Key Currencies (2021) Energies, 14, p. 7978. , [CrossRef]; 
+Candila, V., Maximov, D., Mikhaylov, A., Moiseev, N., Senjyu, T., Tryndina, N., On the Relationship between Oil and Exchange Rates of Oil-Exporting and Oil-Importing Countries: From the Great Recession Period to the COVID-19 Era (2021) Energies, 14, p. 8046. , [CrossRef]; 
+Peng, J., Li, Z., Drakeford, B.M., Dynamic Characteristics of Crude Oil Price Fluctuation—From the Perspective of Crude Oil Price Influence Mechanism (2020) Energies, 13, p. 4465. , [CrossRef]; 
+Chatfield, C., The Holt-winters forecasting procedure (1978) J. R. Stat. Soc. Ser. C (Appl. Stat.), 27, pp. 264-279. , [CrossRef]; 
+Heschel, A.J., (1962) The Prophets, 2. , Harper Torchbooks: New York, NY, USA; 
+Graves, A., Long Short-Term Memory (2012) Supervised Sequence Labelling with Recurrent Neural Networks, pp. 37-45. , Springer: Berlin/Heidelberg, Germany, [CrossRef]; 
+Chung, J., Gulcehre, C., Cho, K., Bengio, Y., Empirical evaluation of gated recurrent neural networks on sequence modeling (2014) Proceedings of the NIPS 2014 Workshop on Deep Learning, , Montreal, QC, Canada, 12–13 December; 
+Graves, A., Mohamed, A., Hinton, G.E., Speech recognition with deep recurrent neural networks (2013) Proceedings of the IEEE International Conference on Acoustics, Speech and Signal Processing, ICASSP 2013, pp. 6645-6649. , Vancouver, BC, Canada, 26–31 May IEEE: Hoboken, NJ, USA, 2013; [CrossRef]; 
+Bai, S., Kolter, J.Z., Koltun, V., (2018) An Empirical Evaluation of Generic Convolutional and Recurrent Networks for Sequence Modeling, , arXiv arXiv:1803.01271; 
+Burges, C.J.C., A Tutorial on Support Vector Machines for Pattern Recognition (1998) Data Min. Knowl. Discov, 2, pp. 121-167. , [CrossRef]; 
+Smola, A.J., Schölkopf, B., On a Kernel-Based Method for Pattern Recognition, Regression, Approximation, and Operator Inversion (1998) Algorithmica, 22, pp. 211-231. , [CrossRef]; 
+Chen, Z., Cao, S., Mao, Z., Remaining useful life estimation of aircraft engines using a modified similarity and supporting vector machine (SVM) approach (2018) Energies, 11, p. 28. , [CrossRef]; 
+Zhou, Y., Wu, J., Yu, Z., Ji, L., Hao, L., A hierarchical method for transient stability prediction of power systems using the confidence of a SVM-based ensemble classifier (2016) Energies, 9, p. 778. , [CrossRef]; 
+Mendonça de Paiva, G., Pires Pimentel, S., Pinheiro Alvarenga, B., Gonçalves Marra, E., Mussetta, M., Leva, S., Multiple site intraday solar irradiance forecasting by machine learning algorithms: MGGP and MLP neural networks (2020) Energies, 13, p. 3005. , [CrossRef]; 
+Wang, F., Yu, Y., Wang, X., Ren, H., Shafie-Khah, M., Catal ao, J.P., Residential electricity consumption level impact factor analysis based on wrapper feature selection and multinomial logistic regression (2018) Energies, 11, p. 1180. , [CrossRef]; 
+Manoharan, H., Teekaraman, Y., Kirpichnikova, I., Kuppusamy, R., Nikolovski, S., Baghaee, H.R., Smart Grid Monitoring by Wireless Sensors Using Binary Logistic Regression (2020) Energies, 13, p. 3974. , [CrossRef]; 
+Joulin, A., Grave, E., Bojanowski, P., Mikolov, T., Bag of Tricks for Efficient Text Classification (2017) Proceedings of the 15th Conference of the European Chapter of the Association for Computational Linguistics, EACL 2017, 2, pp. 427-431. , Valencia, Spain, 3–7 April Short Papers; Lapata, M., Blunsom, P., Koller, A., Eds.; Association for Computational Linguistics: Stroudsburg, PA, USA, 2017; [CrossRef]; 
+Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A.N., Kaiser, L., Polosukhin, I., Attention is All you Need (2017) Advances in Neural Information Processing Systems 30: Annual Conference on Neural Information Processing Systems 2017, pp. 5998-6008. , Long Beach, CA, USA, 4–9 December Guyon, I., von Luxburg, U., Bengio, S., Wallach, H.M., Fergus, R., Vishwanathan, S.V.N., Garnett, R., Eds.; Curran Associates Inc.: Red Hook, NY, USA, 2017; 
+Salazar, J., Liang, D., Nguyen, T.Q., Kirchhoff, K., Masked Language Model Scoring Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics, ACL 2020, Online, 5–10 July 2020, pp. 2699-2712. , Jurafsky, D., Chai, J., Schluter, N., Tetreault, J.R., Eds.; Association for Computational Linguistics: Stroudsburg, PA, USA, 2020; [CrossRef]; 
+Puka, R., Łamasz, B., Michalski, M., Effectiveness of Artificial Neural Networks in Hedging against WTI Crude Oil Price Risk (2021) Energies, 14, p. 3308. , [CrossRef]; 
+Mouchtaris, D., Sofianos, E., Gogas, P., Papadimitriou, T., Forecasting Natural Gas Spot Prices with Machine Learning (2021) Energies, 14, p. 5782. , [CrossRef]; 
+Manowska, A., Rybak, A., Dylong, A., Pielot, J., Forecasting of Natural Gas Consumption in Poland Based on ARIMA-LSTM Hybrid Model (2021) Energies, 14, p. 8597. , [CrossRef]; 
+Hu, Z., Crude oil price prediction using CEEMDAN and LSTM-attention with news sentiment index (2021) Oil Gas Sci. Technol.-D’IFP Energies Nouv, 76, p. 28. , [CrossRef]; 
+Witten, I.H., Paynter, G.W., Frank, E., Gutwin, C., Nevill-Manning, C.G., Kea: Practical automated keyphrase extraction (2005) Design and Usability of Digital Libraries: Case Studies in the Asia Pacific, pp. 129-152. , IGI Global: Hershey, PA, USA; 
+Pinto, M.V., Asnani, K., Stock price prediction using quotes and financial news (2011) Int. J. Soft Comput. Eng, 1, pp. 266-269; 
+Wu, B., Wang, L., Lv, S.X., Zeng, Y.R., Effective crude oil price forecasting using new text-based and big-data-driven model (2021) Measurement, 168, p. 108468. , [CrossRef]; 
+Wang, D., Fang, T., Forecasting Crude Oil Prices with a WT-FNN Model (2022) Energies, 15, p. 1955. , [CrossRef]; 
+Li, T., Han, X., Wang, A., Li, H., Liu, G., Pei, Y., News-Based Research on Forecast of International Natural Gas Price Trend Fuzzy Systems and Data Mining VI—Proceedings of FSDM 2020, Virtual Event, 13–16 November 2020, 331, pp. 194-200. , Tallón-Ballesteros, A.J., Ed.; Frontiers in Artificial Intelligence and Applications/IOS Press: Amsterdam, The Netherlands, 2020; [CrossRef]; 
+Wang, G., Cao, L., Zhao, H., Liu, Q., Chen, E., Coupling Macro-Sector-Micro Financial Indicators for Learning Stock Representations with Less Uncertainty Proceedings of the Thirty-Fifth AAAI Conference on Artificial Intelligence, AAAI 2021, Thirty-Third Conference on Innovative Applications of Artificial Intelligence, IAAI 2021, The Eleventh Symposium on Educational Advances in Artificial Intelligence, EAAI 2021, Virtual Event, 2–9 February 2021, pp. 4418-4426. , AAAI Press: Palo Alto, CA, USA, 2021; 
+Sun, C., Qiu, X., Xu, Y., Huang, X., How to fine-tune bert for text classification? (2019) Proceedings of the China National Conference on Chinese Computational Linguistics, pp. 194-206. , Kunming, China, 18–20 October Springer: Berlin/Heidelberg, Germany, 2019; 
+Khattab, O., Zaharia, M., Colbert: Efficient and effective passage search via contextualized late interaction over bert (2020) Proceedings of the 43rd International ACM SIGIR Conference on Research and Development in Information Retrieval, pp. 39-48. , Virtual Event, 25–30 July; 
+Abadi, M., Agarwal, A., Barham, P., Brevdo, E., Chen, Z., Citro, C., Corrado, G.S., Devin, M., TensorFlow: Large-Scale Machine Learning on Heterogeneous Distributed Systems (2016) CoRR, , arXiv:1603.04467; 
+Kingma, D.P., Ba, J., Adam: A Method for Stochastic Optimization (2015) Proceedings of the 3rd International Conference on Learning Representations, ICLR 2015, , San Diego, CA, USA, 7–9 May Conference Track Proceedings; Bengio, Y., LeCun, Y., Eds.; OpenReview.net; 2015; 
+Glorot, X., Bordes, A., Bengio, Y., Deep Sparse Rectifier Neural Networks (2011) Proceedings of the Fourteenth International Conference on Artificial Intelligence and Statistics, AISTATS 2011, 15, pp. 315-323. , Fort Lauderdale, FL, USA, 11–13 April Gordon, G.J., Dunson, D.B., Dudík, M., Eds.; JMLR.org: Cambridge, MA, USA, 2011; 
+He, K., Zhang, X., Ren, S., Sun, J., Delving Deep into Rectifiers: Surpassing Human-Level Performance on ImageNet Classification (2015) Proceedings of the 2015 IEEE International Conference on Computer Vision, ICCV 2015, pp. 1026-1034. , Santiago, Chile, 7–13 December IEEE Computer Society: Washington, DC, USA, 2015; [CrossRef]
+UR  - https://www.scopus.com/inward/record.uri?eid=2-s2.0-85130626070&doi=10.3390%2fen15103573&partnerID=40&md5=205c73c289589788bc290fada0f2903f
+ER  - 
+
+TY  - CONF
+TI  - Hidden Markov Model as the Predictive Time Series Movement of Natural Gas Price
+C3  - Proceeding - 2022 International Symposium on Information Technology and Digital Innovation: Technology Innovation During Pandemic, ISITDI 2022
+J2  - Proceeding - Int. Symp. Inf. Technol. Digit. Innov.: Technol. Innov. Dur. Pandemic, ISITDI
+SP  - 140
+EP  - 145
+PY  - 2022
+DO  - 10.1109/ISITDI55734.2022.9944536
+SN  - 9781665461160 (ISBN)
+AU  - Devianto, D.
+AU  - Sari, A.R.
+AU  - Maiyastri
+AU  - Ahmad, A.W.
+AU  - Sulistiowati, D.
+AD  - Andalas University, Department Of Mathematics, Padang, 25163, Indonesia
+AD  - Padang State Polytechnic, Department Of Accounting, Padang, 25163, Indonesia
+AD  - Dharma Andalas University, Department Of Mathematics, Padang, 25163, Indonesia
+AB  - Natural gas is a vital component of energy supply in the world. The price of natural gas as energy commodities has a huge impact on economic growth. Analysis of natural gas price movements and their volatility is very important for world economic actors. Therefore, the price movement of natural gas cannot be observed directly (hidden), so this study focuses on predicting the probability for an increase at natural gas prices within a certain time series data using the Hidden Markov Model (HMM). There are three fundamental steps in order to solve the HMM model, the first is calculating the probability of observation using the Forward-Backward algorithm, the second is determining the hidden state sequence using the Viterbi algorithm, and the third is predicting HMM parameters using the Baum-Welch algorithm. This study uses monthly natural gas prices data for the period of February 2011 until 2021. The results showed that the most optimal observation sequence prediction for natural gas prices is around March 2020, then natural gas prices are predicted to fluctuate around April and May 2021. In general, based on HMM analysis in the long term, there will be an upward trend in the prices of natural gas in the future. This is presumably due to limited resources and increasing demand. These results can be considered in the analysis of sustainability energy for natural gas demand in the future in the aspect of time series price movement. © 2022 IEEE.
+KW  - Baum-Welch Algorithm
+KW  - Forward-Backward Algorithm
+KW  - Hidden Markov Model
+KW  - Price Movement
+KW  - Viterbi Algorithm
+KW  - Costs
+KW  - Economic analysis
+KW  - Economic and social effects
+KW  - Forecasting
+KW  - Gases
+KW  - Hidden Markov models
+KW  - Natural gas
+KW  - Time series
+KW  - Time series analysis
+KW  - Baum-Welch algorithms
+KW  - Economic growths
+KW  - Energy commodity
+KW  - Energy supplies
+KW  - Forward / backward algorithms
+KW  - Hidden-Markov models
+KW  - Natural gas price
+KW  - Price movement
+KW  - Time-series data
+KW  - Times series
+KW  - Viterbi algorithm
+PB  - Institute of Electrical and Electronics Engineers Inc.
+T2  - 2022 International Symposium on Information Technology and Digital Innovation, ISITDI 2022
+Y2  - 27 July 2022 through 28 July 2022
+N1  - Conference code: 184490
+N1  - Export Date: 20 April 2023
+M3  - Conference Paper
+DB  - Scopus
+LA  - English
+N1  - Funding details: 011/E5/PG.02.00, PT.2022
+N1  - Funding details: Universitas Andalas
+N1  - Funding text 1: The authors would like to thank anonymous referees and the proceeding editor for their useful comments and correction which led to improve this article. The authors also acknowledge Andalas University under Ministry of Education, Cultural, Research and Technology for funding this research under the scheme of university basic research excellency with contract number 011/E5/PG.02.00.PT.2022.
+N1  - References: Valera-Medina, A., Xiao, H., Owen-Jones, M., David, W.I.F., Bowen, P.J., Ammonia for power (2018) Progress in Energy and Combustion Science, 69, pp. 63-102; 
+Speight, J.G., (2020) Handbook of Industrial Hydrocarbon Processes (Second Edition), pp. 511-552. , Gulf Professional Publishing; 
+Borglum, S.D., (2019) The Fossil Fuel Revolution, p. 354. , (1st Edition) Elsevier; 
+Fesharaki, F., Wu, K., Banaszak, S., (2000) Natural Gas: The Fuel of the Future in Asia: Analysis from the East-West Center, pp. 1-8. , East West Center; 
+Khalilpour, K.R., (2019) Polygeneration with Polystorage for Chemical and Energy Hubs, p. 583. , Academic Press; 
+(2019) Secretariat General National Energy Council 2019 Indonesia Energy Outlook, , National Energy of Indonesia; 
+Pidan, D., El-Yaniv, R., Selective Prediction of Financial Trends with Hidden Markov (2011) Advances in Neural IPS Proceedings, pp. 1-9; 
+Angelis, L.D., Pass, L.J., A dynamic analysis of stock markets using a hidden Markov model (2013) Journal of Applied Statistics, 40 (8), pp. 1682-1700; 
+Yollanda, M., Devianto, D., Yozza, H., Nonlinear Modeling of IHSG with Artificial Intelligence (2018) IEEE Explor, ICAITI 2018, pp. 85-90; 
+Devianto, D., Permathasari, P., Yollanda, M., Ahmad, A.W., The Model of Artificial Neural Network and Nonparametric MARS Regression for Indonesian Composite Index (2010) IOP Conf. Series: Materials Science and Engineering, 846, pp. 1-8; 
+Devianto, D., Maiyastri, M., Randy, R., Hamidi, M., Ahmad, A.W., Efficiency Analysis of Optimal Portfolio Selection for Stocks in LQ45 Index (2018) IEEE Explor, ICAITI 2018, pp. 78-83; 
+Nasar, M.F., Maiyastri, M., Devianto, D., Yozza, H., On the Clustering of Islamic Rural Banks Based on Financial Performance (2018) IEEE Explor, ICAITI 2018, pp. 108-113; 
+Martino, A., Guatteri, G., Paganoni, A.M., Hidden Markov Models for multivariate functional data (2020) Statistics and Probability Letter, 167, pp. 1-6; 
+Buckby, J., Wang, T., Zhuang, J., Obara, K., Model checking for hidden Markov models (2020) Journal of Computational and Graphical Statistics, 29 (4), pp. 847-859; 
+Yildirim, S., Singh, S.S., Dean, T., Jasra, A., Parameter Estimation in Hidden Markov Models with Intractable Likelihoods Using Sequential Monte Carlo (2015) Journal of Computational and Graphical Statistics, 24 (3), pp. 846-865; 
+Elkimakh, K., Nasroallah, A., (2020) Hidden Markov model steady-state estimation Communications in Statistics-Simulation and Computation, pp. 1-16; 
+Lember, J., On approximation of smoothing probabilities for hidden Markov models (2011) Statistics and Probability Letter, 81 (2), pp. 310-316; 
+Devianto, D., On the Class of Infinitely Divisible Exponential Distribution (2018) Journal of Physics: Conference Series, 1097 (1), pp. 1-8; 
+Devianto, D., Maiyastri, M., Azmi, K., On the Levy Measure Property of Gamma Distribution (2020) AIP Conference Proceedings, 2242, pp. 1-8. , 030003; 
+Cf Yip, C.F., Ng, W.L., Yau, C.Y., A hidden Markov model for earthquake prediction (2017) Stochastic Environmental Research and Risk Assessment, 32 (5), pp. 1415-1434; 
+(2021) Henry Hub Natural Gas Spot Price, Time 00: 32: 47 GMT+0700, , (Western Indonesia Time) Data Source: Thomson Reuters
+UR  - https://www.scopus.com/inward/record.uri?eid=2-s2.0-85143198433&doi=10.1109%2fISITDI55734.2022.9944536&partnerID=40&md5=326afe9fe05bb5ce60699979ed93d462
+ER  - 
+
+TY  - JOUR
+TI  - A multiple model framework based on time series clustering for shale gas well pressure prediction
+T2  - Journal of Natural Gas Science and Engineering
+J2  - J. Nat. Gas Sci. Eng.
+VL  - 95
+PY  - 2021
+DO  - 10.1016/j.jngse.2021.104135
+SN  - 18755100 (ISSN) 
+AU  - Yi, J.
+AU  - Chen, X.
+AU  - Zhou, W.
+AU  - Tang, Y.
+AU  - Mu, C.
+AD  - College of Intelligent Technology and Engineering, Chongqing University of Science and Technology, Chongqing, 401331, China
+AD  - Department of Computer and Electrical Engineering and Computer Science (CEECS), Florida Atlantic UniversityFL  33431, United States
+AD  - School of Electrical and Information Engineering, Tianjin University, Tianjin, 300072, China
+AB  - Production performance analysis of shale gas based on dynamic parameters is now playing a more important role as a scientific basis for gas well development plan, and describes the structural features, evolution and predict the future production trends. Owing to multi-gradient of gas demand and high fluctuation of the yield adjustment period, it is difficult to identify whether the change of production parameters of gas well, especially the pressure is caused by natural resource consumption or manual production adjustment. Therefore, time-series prediction for adjustable yield wells is an extraordinarily important and challenging task. In this paper, a prediction framework with a multiple model is proposed. Specifically, the weighted warped K-means clustering (WWKM) algorithm is first presented to partition the dataset into a series of clusters considering the significantly different influence of each variable. Thereafter, a multiple prediction model based on sequence information (MMP-SI) is designed to improve the prediction precision by integrating the overall decreasing trends and local fluctuation features of the dataset. Subsequently, the proposed framework is applied to pressure prediction of real time-series data of three shale gas adjustable yield wells for the Fuling region in China. The experimental results show that the proposed framework provides good prediction precision over other state-of-the-art models in terms of different evaluation criteria. The main benefits of this research study are to better simulate shale gas wells in the future for engineers and academic researchers. © 2021 Elsevier B.V.
+KW  - Clustering
+KW  - Multiple model
+KW  - Prediction
+KW  - Shale gas production
+KW  - Time series
+KW  - Gases
+KW  - K-means clustering
+KW  - Natural gas
+KW  - Natural gas well production
+KW  - Natural gas wells
+KW  - Petroleum reservoir evaluation
+KW  - Shale gas
+KW  - Time series
+KW  - Clusterings
+KW  - Gas well
+KW  - Modelling framework
+KW  - Multiple-modeling
+KW  - Prediction precision
+KW  - Pressure predictions
+KW  - Production performance
+KW  - Shale gas production
+KW  - Time series clustering
+KW  - Times series
+KW  - Forecasting
+PB  - Elsevier B.V.
+N1  - Export Date: 20 April 2023
+M3  - Article
+DB  - Scopus
+C7  - 104135
+LA  - English
+N1  - Correspondence Address: Zhou, W.; College of Intelligent Technology and Engineering, China; email: zhouw1985@163.com
+N1  - Funding details: National Natural Science Foundation of China, NSFC, 51805059
+N1  - Funding details: Natural Science Foundation of Chongqing, cstc2019jcyj-msxmX0080
+N1  - Funding details: Chongqing Municipal Education Commission, CQMEC, KJCX2020051, KJQN201801506, KJZD-K202001501
+N1  - Funding text 1: This document is the results of the research project funded by the National Natural Science Foundation of China under grant 51805059 , Natural Science Foundation of Chongqing Grant cstc2019jcyj-msxmX0080 , and in part by the Science and Technology Research Program of Chongqing Municipal Education Commission under Grant KJQN201801506 , KJZD-K202001501 and KJCX2020051 .
+N1  - References: Box, G.E.P., Jenkins, G.M., Reinsel, G.C., Time Series Analysis: Forecasting and Control (1994), Prentice-Hall NJ, USA; Choong, M.K., Charbit, M., Yan, H., Autoregressive-model-based missing value estimation for dna microarray time series data (2009) IEEE Trans. Inf. Technol. Biomed., 13 (1), pp. 131-137; 
+Dodge, Y., Spearman rank correlation coefficient (2014); Duan, F., Dai, L., Recognizing the gradual changes in semg characteristics based on incremental learning of wavelet neural network ensemble (2017) IEEE Trans. Ind. Electron., 64 (5), pp. 4276-4286; 
+Ebadollahi, S., Saki, S., Wind turbine torque oscillation reduction using soft switching multiple model predictive control based on the gap metric and kalman filter estimator (2018) IEEE Trans. Ind. Electron., 65 (5), pp. 3890-3898; 
+Gao, S., Dong, D., Tao, K., Guo, W., Li, X., Zhang, S., Experiences and lessons learned from china's shale gas development: 2005-2019 (2020) J. Natl. Gas Sci. Eng., 4 103648; 
+Geng, L., Li, G., Wang, M., Li, Y., Tian, S., Pang, W., Lyu, Z., A fractal production prediction model for shale gas reservoirs (2018) J. Natl. Gas Sci. Eng., 55, pp. 354-367; 
+Gershenfeld, N.A., Weigend, A.S., The Future of Time Series: Learning and Understanding (1993), Addison-Wesley MA, USA; Han, M., Zhang, S., Xu, M., Qiu, T., Wang, N., Multivariate chaotic time series online prediction based on improved kernel recursive least squares algorithm (2019) IEEE Trans. Cybern., 49 (4), pp. 1160-1172; 
+Han, M., Zhong, K., Qiu, T., Han, B., Interval type-2 fuzzy neural networks for chaotic time series prediction: A concise overview (2019) IEEE Trans. Cybern., 49 (75), pp. 2720-2731; 
+Huang, W., Oh, S.-K., Pedrycz, W., Fuzzy wavelet polynomial neural networks: Analysis and design (2017) IEEE Trans. Fuzzy Syst., 25 (5), pp. 1329-1341; 
+Huang, C., Wang, L., Lai, L.L., Data-driven short-term solar irradiance forecasting based on information of neighboring sites (2019) IEEE Trans. Ind. Electron., 66 (12), pp. 9918-9927; 
+Jain, A., Data clustering: 50 years beyond k-means (2010) Pattern Recognit. Lett., 31 (8), pp. 651-666; 
+Khani, H., Farag, H.E.Z., An online-calibrated time series based model for day-ahead natural gas demand forecasting (2019) IEEE Trans. Ind. Inf., 15 (4), pp. 2112-2123; 
+Lei, T., Yin, X., Zong, Z., Pore pressure prediction in orthotropic medium based on rock physics modeling of shale gas (2020) J. Natl. Gas Sci. Eng., 74 103091; 
+Leiva, L.A., Vidal, E., An algorithm to cluster sequentially-distributed data (2013) Inform. Sci., 237 (13), pp. 196-210; 
+Lin, K., A novel evolutionary kernel intuitionistic fuzzy k-means clustering algorithm (2014) IEEE Trans. Fuzzy Syst., 22 (5), pp. 1074-1087; 
+Mehana, M., Guiltinan, E., Vesselinov, V., Middleton, R., Hyman, J.D., Kang, Q., Viswanathan, H., Machine-learning predictions of the shale wells performance (2021) J. Natl. Gas Sci. Eng., 88; 
+Min, H., Ren, W., Xu, M., Tie, Q., Nonuniform state space reconstruction for multivariate chaotic time series (2018) IEEE Trans. Cybern., pp. 1-11; 
+MolinRibeiro, M.H.D., Coelhoac, L.S., Ensemble approach based on bagging, boosting and stacking for short-term prediction in agribusiness time series (2020) Appl. Soft Comput., 86 105837; 
+Nguyen-Le, V., Kim, M., Shin, H., Little, E., Multivariate approach to the gas production forecast using early production data for barnett shale reservoir (2021) J. Natl. Gas Sci. Eng., 87; 
+Salvador, G., Julián, L., Francisco, H., Data Preprocessing in Data Mining (2016), Springer Publishing Company, Incorporated; Sriram, L.M.K., Gilanifar, M., Zhou, Y., Ozguven, E.E., Arghandeh, R., Causal markov elman network for load forecasting in multinetwork systems (2019) IEEE Trans. Ind. Electron., 66 (2), pp. 1434-1442; 
+Tang, H., Zhang, B., Liu, S., Li, H., Huo, D., Wu, Y.-S., A novel decline curve regression procedure for analyzing shale gas production (2021) J. Natl. Gas Sci. Eng., 88; 
+Tran, D.T., Iosifidis, A., Kanniainen, J., Gabbouj, M., Temporal attention-augmented bilinear network for financial time-series data analysis (2019) IEEE Trans. Neural Netw. Learn. Syst., 30 (5), pp. 1407-1418; 
+Vanhoenshoven, F., Nápoles, G., Froelich, W., Salmeron, J.L., Vanhoof, K., Pseudoinverse learning of fuzzy cognitive maps for multivariate time series forecasting (2020) Appl. Soft Comput., 95 106461; 
+Wu, L., Gao, X., Xiao, Y., Chen, X., Using a novel multi-variable grey model to forecast the electricity consumption of shandong province in china (2018) Energy, 157 (15), pp. 327-335; 
+Xie, H., Zhang, L., Lim, C., Yu, Y., Liu, C., Liu, H., Walters, J., Improving k-means clustering with enhanced firefly algorithms (2019) Appl. Soft Comput., 84 105763; 
+Xing, Y., Lv, C., Dynamic state estimation for the advanced brake system of electric vehicles by using deep recurrent neural networks (2019) IEEE Trans. Ind. Electron., p. 1; 
+Xiong, H., Wu, J., Chen, J., K-means clustering versus validation measures: A data-distribution perspective (2009) IEEE Trans. Syst. Man Cybern. B Cybern., 39 (2), pp. 318-331; 
+Xu, M., Han, M., Qiu, T., Lin, H., Hybrid regularized echo state network for multivariate chaotic time series prediction (2019) IEEE Trans. Cybern., 49 (6), pp. 2305-2315; 
+Zhang, Q., Wu, J., Zhang, P., Long, G., Zhang, C., Salient subsequence learning for time series clustering (2019) IEEE Trans. Pattern Anal. Mach. Intell., 41 (9), pp. 2193-2207; 
+Zhang, R., Zhang, L., Tang, H., Chen, S., Zhao, Y., Wu, J., Wang, K., A simulator for production prediction of multistage fractured horizontal well in shale gas reservoir considering complex fracture geometry (2019) J. Natl. Gas Sci. Eng., 67, pp. 14-29; 
+Zhou, Y., Arghandeh, R., Zou, H., Spanos, C.J., Nonparametric event detection in multiple time series for power distribution networks (2019) IEEE Trans. Ind. Electron., 66 (2), pp. 1619-1628
+UR  - https://www.scopus.com/inward/record.uri?eid=2-s2.0-85111493871&doi=10.1016%2fj.jngse.2021.104135&partnerID=40&md5=4be16002c9009f113e596b0d5d206f66
+ER  - 
+
+TY  - JOUR
+TI  - Short-term natural gas consumption forecasting from long-term data collection
+T2  - Energy
+J2  - Energy
+VL  - 218
+PY  - 2021
+DO  - 10.1016/j.energy.2020.119430
+SN  - 03605442 (ISSN) 
+AU  - Svoboda, R.
+AU  - Kotik, V.
+AU  - Platos, J.
+AD  - Department of Computer Science, Faculty of Electrical Engineering and Computer Science, VSB-Technical University of Ostrava, Ostrava, Czech Republic
+AB  - The development of natural gas consumption forecasting tools is an important application of forecasting models. Plenty of research efforts have already been made in this area. However, the datasets used in these works could often not be published and used by other researchers. This complicates further research and the comparison of forecasting methods. In this work, we address this issue by the creation of a new dataset. We have taken into account state-of-the-art research works and included many data features that were previously proven to have a significant impact on the precision of the model. A forecasting methodology suitable for the evaluation of statistical and machine learning algorithms used in the time series forecasting domain is proposed to validate the high usability of the new dataset. The results of the application of the methodology and their discussion are included. Moreover, we made this dataset available for everyone to use for their research purposes. © 2020 Elsevier Ltd
+KW  - Big data
+KW  - Consumption
+KW  - Demand
+KW  - Forecasting
+KW  - Machine learning
+KW  - Natural gas
+KW  - Learning algorithms
+KW  - Machine learning
+KW  - Natural gas
+KW  - Forecasting methods
+KW  - Forecasting models
+KW  - Forecasting tools
+KW  - Natural gas consumption
+KW  - Research efforts
+KW  - Research purpose
+KW  - State of the art
+KW  - Time series forecasting
+KW  - Forecasting
+KW  - algorithm
+KW  - data set
+KW  - detection method
+KW  - forecasting method
+KW  - machine learning
+KW  - methodology
+KW  - natural gas
+PB  - Elsevier Ltd
+N1  - Cited By :10
+N1  - Export Date: 20 April 2023
+M3  - Article
+DB  - Scopus
+C7  - 119430
+N1  - CODEN: ENEYD
+LA  - English
+N1  - Correspondence Address: Kotik, V.; Department of Computer Science, Czech Republic; email: vojtech.kotik@vsb.cz
+N1  - Funding details: European Regional Development Fund, ERDF, CZ.02.1.01/0.0/0.0/17_049/0008425
+N1  - Funding text 1: This work was supported by the European Regional Development Fund in ”A Research Platform focused on Industry 4.0 and Robotics in Ostrava Agglomeration” project, reg. nr. CZ.02.1.01/0.0/0.0/17_049/0008425 within the Operational Programme Research, Development and Education.
+N1  - Funding text 2: This work was supported by the European Regional Development Fund in ?A Research Platform focused on Industry 4.0 and Robotics in Ostrava Agglomeration? project, reg. nr. CZ.02.1.01/0.0/0.0/17_049/0008425 within the Operational Programme Research, Development and Education.
+N1  - References: Liu, G., Dong, X., Jiang, Q., Dong, C., Li, J., Natural gas consumption of urban households in China and corresponding influencing factors (2018) Energy Pol, 122, pp. 17-26. , http://www.sciencedirect.com/science/article/pii/S0301421518304622; 
+Soldo, B., Forecasting natural gas consumption (2012) Appl Energy, 92, pp. 26-37. , http://www.sciencedirect.com/science/article/pii/S0306261911006982; 
+Tamba, J.G., Essiane, S.N., Sapnken, E.F., Koffi, F.D., NsouandÃ©lÃ©, J.L., Soldo, B., Njomo, D., Forecasting natural gas: a literature survey (2018) Int J Energy Econ Pol, 8, pp. 216-249. , https://ideas.repec.org/a/eco/journ2/2018-03-28.html; 
+Soldo, B., PotoÄnik, P., Å imunoviÄ, G., Å ariÄ, T., Govekar, E., Improving the residential natural gas consumption forecasting models by using solar radiation (2014) Energy Build, 69, pp. 498-506. , http://www.sciencedirect.com/science/article/pii/S0378778813007299; 
+Su, H., Zio, E., Zhang, J., Xu, M., Li, X., Zhang, Z., A hybrid hourly natural gas demand forecasting method based on the integration of wavelet transform and enhanced deep-rnn model (2019) Energy, 178, pp. 585-597. , http://www.sciencedirect.com/science/article/pii/S036054421930800X; 
+TaÅpnar, F., elebi, N., Tutkun, N., Forecasting of daily natural gas consumption on regional basis in Turkey using various computational methods (2013) Energy Build, 56, pp. 23-31. , http://www.sciencedirect.com/science/article/pii/S0378778812005324; 
+(2014) Czech energetic regulatory office, Ten year ahead plan of distribution network development in Czech republic, , https://www.eru.cz/documents/10540/1177406/Desetilety_plan_rozvoje_prepravni_soustavy_2015-2024.pdf/, (in czech) (Accessed 25 April 2020); 
+Brown, R.H., Matin, I., Development of artificial neural network models to predict daily gas consumption (1995) Proceedings of IECON ’95 - 21st annual conference on IEEE industrial electronics, 2, pp. 1389-1394. , vol. 2; 
+Oliver, R., Duffy, A., Enright, B., O'Connor, R., Forecasting peak-day consumption for year-ahead management of natural gas networks (2017) Util Pol, 44, pp. 1-11. , http://www.sciencedirect.com/science/article/pii/S0957178716303058; 
+Rahman, A., Smith, A.D., Predicting fuel consumption for commercial buildings with machine learning algorithms (2017) Energy Build, 152, pp. 341-358. , http://www.sciencedirect.com/science/article/pii/S0378778817322922; 
+Alfadda, A., Rahman, S., Pipattanasomporn, M., Solar irradiance forecast using aerosols measurements: a data driven approach (2018) Sol Energy, 170, pp. 924-939. , http://www.sciencedirect.com/science/article/pii/S0038092X18305309; 
+Malzi, M.J., Ettahir, A., Hanchane, S., Responsiveness of residential natural gas demand to elderly, urban population and density: evidence from organization for economic co-operation and development countries (2019) Int J Energy Econ Pol, 9, pp. 388-395. , https://www.econjournals.com/index.php/ijeep/article/view/7531; 
+Tonković, Z., Zekić-Sušac, M., Somolanji, M., Predicting natural gas consumption by neural networks (2009) Teh Vjesn, 16, pp. 51-61; 
+Hubbert, M.K., (1956) Nuclear energy and the fossil fuel, Drilling and Production Practice, 1; 
+Hubbert, M.K., Energy from fossil fuels (1949) Science, 109, pp. 103-109. , https://science.sciencemag.org/content/109/2823/103, arXiv: https://science.sciencemag.org/content/109/2823/103.full.pdf; 
+Siemek, J., Nagy, S., Rychlicki, S., Estimation of natural-gas consumption in Poland based on the logistic-curve interpretation (2003) Appl Energy, 75, pp. 1-7. , http://www.sciencedirect.com/science/article/pii/S0306261903000138; 
+Imam, A., Startzman, R.A., Barrufet, M.A., Multicyclic hubbert model shows global conventional gas output peaking in 2019 (2004) Oil Gas J, 102; 
+Balestra, P., Nerlove, M., Pooling cross section and time series data in the estimation of a dynamic model: the demand for natural gas (1966) Econometrica, 34, pp. 585-612. , http://www.jstor.org/stable/1909771; 
+Vondrek, J., Pelikn, E., Konr, O., ermkov, J., Eben, K., Mal, M., Brabec, M., A statistical model for the estimation of natural gas consumption (2008) Appl Energy, 85, pp. 362-370. , http://www.sciencedirect.com/science/article/pii/S0306261907001183; 
+Suykens, J., Lemmerling, P., Favoreel, W., De Moor, B., Crepel, M., Briol, P., Modelling the belgian gas consumption using neural networks (1996) Neural Process Lett, 4, pp. 157-166. , http://gateway.newisiknowledge.com/gateway/Gateway.cgi?&GWVersion=2&SrcAuth=INSPEC&SrcApp=PRODUCT_NAME&CKEY=SUYK0157960004NJ&SrcURL=WOS_RETURN_URL&DestLinkType=FullRecord&DestApp=INSPEC&SrcDesc=RETURN_ALT_TEXT&SrcAppSID=APP_SID; 
+Khotanzad, A., Elragal, H., Lu, T., Combination of artificial neural-network forecasters for prediction of natural gas consumption (2000) IEEE Trans Neural Network, 11, pp. 464-473; 
+Viet, N.H., MaÅ„dziuk, J., Neural and fuzzy neural networks in prediction of natural gas consumption (2005) Neural, Parallel Sci Comput, 13, pp. 265-286; 
+Szoplik, J., Forecasting of natural gas consumption with artificial neural networks (2015) Energy, 85, pp. 208-220. , http://www.sciencedirect.com/science/article/pii/S036054421500393X; 
+Bai, Y., Li, C., Daily natural gas consumption forecasting based on a structure-calibrated support vector regression approach (2016) Energy Build, 127, pp. 571-579. , http://www.sciencedirect.com/science/article/pii/S0378778816305096; 
+Dalfard, V.M., Asli, M.N., Asadzadeh, S., Sajjadi, S., Nazari-Shirkouhi, A., A mathematical modeling for incorporating energy price hikes into total natural gas consumption forecasting (2013) Appl Math Model, 37, pp. 5664-5679. , http://www.sciencedirect.com/science/article/pii/S0307904X12007287; 
+Boran, F.E., Forecasting natural gas consumption in Turkey using grey prediction (2015) Energy Sources B Energy Econ Plann, 10, pp. 208-213; 
+Janda, K., Kourilek, J., Residual shape risk on natural gas market with mixed jump diffusion price dynamics (2020) Energy Econ, 85, p. 104465. , http://www.sciencedirect.com/science/article/pii/S0140988319302464; 
+Kaynar, O., Yilmaz, I., Demirkoparan, F., Forecasting of natural gas consumption with neural network and neuro fuzzy system (2010) EGU general assembly conference abstracts, EGU general assembly conference abstracts, p. 7781; 
+Beyca, O.F., Ervural, B.C., Tatoglu, E., Ozuyar, P.G., Zaim, S., Using machine learning tools for forecasting natural gas consumption in the province of istanbul (2019) Energy Econ, 80, pp. 937-949. , http://www.sciencedirect.com/science/article/pii/S0140988319300854; 
+Box, G., Jenkins, G.M., Time series analysis: forecasting and control (1976), Holden-Day; Livera, A.M.D., Hyndman, R.J., Snyder, R.D., Forecasting time series with complex seasonal patterns using exponential smoothing (2011) J Am Stat Assoc, 106, pp. 1513-1527; 
+Grmanova, G., Laurinec, P., Rozinajova, V., Ezzeddine, A., Lucka, M., Lacko, P., VrablecovÃ, P., Navrat, P., Incremental ensemble learning for electricity load forecasting (2016) Acta Polytechnica Hungarica, 13, pp. 97-117; 
+Gonzlez-Vidal, A., Jimnez, F., Gmez-Skarmeta, A.F., A methodology for energy multivariate time series forecasting in smart buildings based on feature selection (2019) Energy Build, 196, pp. 71-82. , http://www.sciencedirect.com/science/article/pii/S0378778818338775; 
+Deb, C., Zhang, F., Yang, J., Lee, S.E., Shah, K.W., A review on time series forecasting techniques for building energy consumption (2017) Renew Sustain Energy Rev, 74, pp. 902-924. , http://www.sciencedirect.com/science/article/pii/S1364032117303155; 
+Vitor Cerqueira, L.T., MozetiÄ, I., Evaluating time series forecasting models: an empirical study on performance estimation methods (2019) Mach Learn, 109. , http://www.sciencedirect.com/science/article/pii/S0378778818338775; 
+Pavlyshenko, B.M., Machine-learning models for sales time series forecasting (2019) Data, 4. , https://www.mdpi.com/2306-5729/4/1/15#cite; 
+Cerqueira, V., Torgo, L., Soares, C., Machine learning vs statistical methods for time series forecasting: size matters (2019), arXiv:1909.13316; Ke, G., Meng, Q., Finley, T., Wang, T., Chen, W., Ma, W., Ye, Q., Liu, T.-Y., Lightgbm: a highly efficient gradient boosting decision tree (2017) Advances in neural information processing systems 30, pp. 3146-3154. , http://papers.nips.cc/paper/6907-lightgbm-a-highly-efficient-gradient-boosting-decision-tree.pdf, I. Guyon U.V. Luxburg S. Bengio H. Wallach R. Fergus S. Vishwanathan R. Garnett Curran Associates, Inc; 
+Karasu, S., Altan, A., Recognition model for solar radiation time series based on random forest with feature selection approach (2019) 2019 11th international conference on electrical and electronics engineering (ELECO), pp. 8-11; 
+Cleveland, R.B., Cleveland, W.S., McRae, J.E., Terpenning, I.J., Stl: a seasonal-trend decomposition procedure based on loess (1990) J Off Stat, 6, pp. 3-33. , http://bit.ly/stl1990; 
+Adams, A., Vamplew, P., Encoding and decoding cyclic data (1998) Commonwealth Q, 16
+UR  - https://www.scopus.com/inward/record.uri?eid=2-s2.0-85097746036&doi=10.1016%2fj.energy.2020.119430&partnerID=40&md5=457386d647b0cdf2bd8054ac2eb32ae4
+ER  - 
+
+TY  - CONF
+TI  - Comparative analysis of two methods of natural gas demand forecasting
+C3  - IOP Conference Series: Earth and Environmental Science
+J2  - IOP Conf. Ser. Earth Environ. Sci.
+VL  - 632
+IS  - 3
+PY  - 2021
+DO  - 10.1088/1755-1315/632/3/032033
+SN  - 17551307 (ISSN) 
+AU  - Min, J.
+AU  - Dong, Y.
+AU  - Wu, F.
+AU  - Li, N.
+AU  - Wang, H.
+AD  - Beijing Meteorological Service Centre, Beijing, China
+AB  - Based on the monthly dataset of natural gas demand and meteorological factors in heating season (November to next March) of Beijing from 2002 to 2013, an analysis of meteorological condition of natural gas fluctuation is done, which used by Empirical Mode Decomposition (EMD) and statistical correlation methods. A novel intelligent prediction model (EMD_BP) of natural gas demand in heating season via EMD and Back Propagation (BP) neural network algorithm is proposed. In addition, we adopt a prediction model only using BP neural network algorithm compare to the above combine method. The results are as follows, (1) EMD method is a better approach to decompose the social demand and meteorological demand of natural gas. (2) There is a close affinity between natural gas demand and meteorological factors in heating season. The meteorological demand of natural gas is significantly negatively correlated with the mean temperature (also minimum temperature, maximum temperature and negative accumulated temperature), but significantly positively correlated with rainfall and low temperature (≤-8℃）days. (3) Comparing with BP model, EMD_BP model can accurately fit the changing tendency of natural gas time series. The results show that the EMD_BP prediction model has better applicability and extensive popular prospect. © Content from this work may be used under the terms of the Creative Commons Attribution 3.0 licence.
+KW  - Empirical mode decomposition (EMD)
+KW  - Heating season
+KW  - Meteorological condition
+KW  - Natural gas demand
+KW  - Prediction model
+KW  - Correlation methods
+KW  - Environmental technology
+KW  - Forecasting
+KW  - Gases
+KW  - Geology
+KW  - Natural gas
+KW  - Neural networks
+KW  - Predictive analytics
+KW  - Signal processing
+KW  - Temperature
+KW  - Accumulated temperatures
+KW  - Back propagation neural networks
+KW  - Empirical Mode Decomposition
+KW  - Intelligent prediction model
+KW  - Meteorological condition
+KW  - Meteorological factors
+KW  - Minimum temperatures
+KW  - Statistical correlation methods
+KW  - Backpropagation
+PB  - IOP Publishing Ltd
+T2  - 2020 Asia Conference on Geological Research and Environmental Technology, GRET 2020
+Y2  - 10 October 2020 through 11 October 2020
+N1  - Conference code: 167012
+N1  - Cited By :1
+N1  - Export Date: 20 April 2023
+M3  - Conference Paper
+DB  - Scopus
+C7  - 032033
+LA  - English
+N1  - Correspondence Address: Dong, Y.; Beijing Meteorological Service CentreChina; email: dongyan@bj.cma.gov.cn
+N1  - Funding details: National Key Research and Development Program of China, NKRDPC, 2018YFF0300105
+N1  - Funding text 1: This work was financially supported by The National Key Research and Development Program of China (2018YFF0300105) fund.
+N1  - References: Xiaodong, Wang, Kun, Huang, Bing, Wang, Appreciation of BP net-work to natural gas consumption estimation (2008) J. Natural gas and oil, 26 (1), pp. 25-28; 
+Bing, Wang, Shuwen, Liu, Shan, Luo, Appreciation of grey model to predict natural gas consumption (2008) J. Naural gas and oil, 26 (5), pp. 30-35; 
+Pengjun, Liu, Yuan, Zhao, The winter short-term prediction of natural gas load in Xi'an (2009) J. Gas & Heat, 29 (10), pp. 37-42; 
+Dafu, Huang, Jingzheng, Ren, Hanmei, Jiang, Prediction of natural gas demand based on extension classified model (2011) J. Computers and Applied Chemistry, 28 (5), pp. 617-619; 
+Yi, Liang, Combined model based prediction of natural gas demand in Xi'an (2014) J. Journal of Xi'an University of Arts & Science(Nat Sci Ed), 17 (2), pp. 103-106; 
+Xin, Su, Kang, Duan, City natural gas load characteristic and its forecast research (2007) J.OGST, 26 (1), pp. 5-9; 
+Feng, Ding, Yunliang, Liu, Liu, Jianbo, Influence of meteorological condition of daily load of city gas (2007) J. Gas & Heat, 27 (2), pp. 17-20; 
+Shugang, Wand, Jihong, Wang, Mulin, Rui, A short-term prediction model for urban gas load (2010) J. Natural Gas Industry, 30 (5), pp. 104-108; 
+Gao, Qingjiu, Zhang, Rong, Guan, Zhaoyong, Characteristics of the negative accumulated temperature change in North China in recent 50 years (2012) J. Transaction of Atmospheric Sciences, 35 (4), pp. 448-457; 
+Huang, N E, Zheng, S., The empirical mode decomposition and the Hilbert spectrum for nonlinear and non-stationary time series analysis (1998) J. Proceedings of the Royal Society London, 454, pp. 903-995; 
+Jingjing, Min, Jingrong, Sun, Huangzhu, Liu, An improved BP algorithm and its application to precipitation forecast (2010) J. Journal of Applied Meteorological Science, 21 (1), pp. 55-62; 
+Li, Qingchun, Shen, Conglan, Gao, Hua, Numerical simulation and analysis on a heavy snow of return-flow events in Beijing (2011) J. Meteorological Monthly, 37 (11), pp. 1380-1388; 
+Xiaohui, Yin, Zhang, Mingying, Analysis of vapor conditions for 5 heavy snowfall processes in Beijing in 2009 (2014) J. Journal of Arid Lang Resources and Environment, 25 (8), pp. 105-110
+UR  - https://www.scopus.com/inward/record.uri?eid=2-s2.0-85100839144&doi=10.1088%2f1755-1315%2f632%2f3%2f032033&partnerID=40&md5=42f67c4c201c5d4707ec613ca05cbf17
+ER  - 
+
+TY  - JOUR
+TI  - Forecasting residential gas demand: Machine learning approaches and seasonal role of temperature forecasts
+T2  - International Journal of Oil, Gas and Coal Technology
+J2  - Int. J. Oil Gas Coal Technol.
+VL  - 26
+IS  - 2
+SP  - 202
+EP  - 224
+PY  - 2021
+SN  - 17533309 (ISSN) 
+AU  - Fabbiani, E.
+AU  - Marziali, A.
+AU  - de Nicolao, G.
+AD  - Department of Electrical, Computer and Biomedical Engineering, University of Pavia, Italy
+AB  - The one-day-ahead forecasting of residential gas demand at country level is investigated by implementing and comparing five models: ridge regression, Gaussian process (GP), k-nearest neighbour, artificial neural network (ANN) and torus model. Italian demand data are used for testing the proposed algorithms. The most significant aspects of the pre-processing and feature engineering are discussed, lending particular attention to the role of one-day-ahead temperature forecasts. Our best model, in terms of root mean square error (RMSE), is the ANN; if the mean absolute error (MAE) is considered, the GP becomes the best model, although by a narrow margin. A novel contribution is the development of a model describing the propagation of temperature forecast errors to gas forecasting errors that is successfully validated on data. On the Italian data, it is shown that temperature errors account for 18% of the mean square error of gas demand forecasts. Copyright © 2021 Inderscience Enterprises Ltd.
+KW  - Gaussian process
+KW  - Natural gas
+KW  - Neural networks
+KW  - Statistical learning
+KW  - Time series forecasting
+KW  - Backpropagation
+KW  - Errors
+KW  - Housing
+KW  - Mean square error
+KW  - Nearest neighbor search
+KW  - Neural networks
+KW  - Regression analysis
+KW  - Feature engineerings
+KW  - Forecasting error
+KW  - K-nearest neighbours
+KW  - Machine learning approaches
+KW  - Mean absolute error
+KW  - Root mean square errors
+KW  - Temperature error
+KW  - Temperature forecasts
+KW  - Forecasting
+PB  - Inderscience Publishers
+N1  - Cited By :3
+N1  - Export Date: 20 April 2023
+M3  - Article
+DB  - Scopus
+LA  - English
+N1  - Correspondence Address: Fabbiani, E.; Department of Electrical, Italy; email: emanuele.fabbiani01@universitadipavia.it
+N1  - References: Abramowitz, M., Stegun, I.A., (1948) Handbook of Mathematical Functions with Formulas, Graphs, and Mathematical Tables, 55. , US Government printing Office; 
+Azadeh, A., Asadzadeh, S., Ghanbari, A., An adaptive network-based fuzzy inference system for short-term natural gas demand estimation: uncertain and complex environments (2010) Energy Policy, 38 (3), pp. 1529-1536; 
+Baldacci, L., Golfarelli, M., Lombardi, D., Sami, F., Natural gas consumption forecasting for anomaly detection (2016) Expert Systems with Applications, 62, pp. 190-201. , http://www.sciencedirect.com/science/article/pii/S0957417416302950, [online]; 
+Brabec, M., Konár, O., Pelikán, E., Malý, M., A nonlinear mixed effects model for the prediction of natural gas consumption by individual customers (2008) International Journal of Forecasting, 24 (4), pp. 659-678; 
+Demirel, Ö.F., Zaim, S., Çalişkan, A., Özuyar, P., Forecasting natural gas consumption in Istanbul using neural networks and multivariate time series methods (2012) Turkish Journal of Electrical Engineering & Computer Sciences, 20 (5), pp. 695-711; 
+Gil, S., Deferrari, J., Generalized model of prediction of natural gas consumption (2004) Journal of Energy Resources Technology, 126 (2), pp. 90-98; 
+Goodfellow, I., Bengio, Y., Courville, A., (2016) Deep Learning, , http://www.deeplearningbook.org, MIT Press [online]; 
+Guerini, A., De Nicolao, G., Long-term electric load forecasting: a torus-based approach (2015) 2015 European Control Conference (ECC), pp. 2768-2773. , IEEE; 
+Hastie, T., Tibshirani, R., Friedman, J., (2009) The Elements of Statistical Learning: Data Mining, Inference, and Prediction, Springer Series in Statistics, , https://books.google.it/books?id=tVIjmNS3Ob8C, 2nd ed., Springer, New York [online]; 
+http://pianodecennale.snamretegas.it/it/domanda-offerta-di-gas-in-italia/domanda-di-gas-naturale.html, Italian Natural Gas Demand Report (n.d) [online] (accessed 31 January 2019); Karadede, Y., Ozdemir, G., Aydemir, E., Breeder hybrid algorithm approach for natural gas demand forecasting model (2017) Energy, 141, pp. 1269-1284. , http://www.sciencedirect.com/science/article/pii/S0360544217316511, [online]; 
+Kingma, D.P., Ba, J., (2014) Adam: A Method for Stochastic Optimization, , arXiv preprint arXiv: 1412.6980; 
+Murphy, K., Bach, F., (2012) Machine Learning: A Probabilistic Perspective, Adaptive Computation and Machi, , https://books.google.it/books?id=NZP6AQAAQBAJ, MIT Press [online]; 
+Panapakidis, I.P., Dagoumas, A.S., Day-ahead natural gas demand forecasting based on the combination of wavelet transform and ANFIS/genetic algorithm/neural network model (2017) Energy, 118, pp. 231-245; 
+Potočnik, P., Thaler, M., Govekar, E., Grabec, I., Poredoš, A., Forecasting risks of natural gas consumption in Slovenia (2007) Energy Policy, 35 (8), pp. 4271-4282; 
+Rasmussen, C., Williams, C., (2006) Gaussian Processes for Machine Learning, Adaptative Computation and Machine Learning Series, , https://books.google.it/books?id=vWtwQgAACAAJ, University Press Group Limited [online]; 
+Šebalj, D., Mesarić, J., Dujak, D., Predicting natural gas consumption – a literature review (2017) 28th International Conference “Central European Conference on Information and Intelligent Systems; 
+Soldo, B., Forecasting natural gas consumption (2012) Applied Energy, 92, pp. 26-37; 
+Soldo, B., Potočnik, P., Šimunović, G., Šarić, T., Govekar, E., Improving the residential natural gas consumption forecasting models by using solar radiation (2014) Energy and Buildings, 69, pp. 498-506; 
+Szoplik, J., Forecasting of natural gas consumption with artificial neural networks (2015) Energy, 85, pp. 208-220; 
+Taşpınar, F., Celebi, N., Tutkun, N., Forecasting of daily natural gas consumption on regional basis in turkey using various computational methods (2013) Energy and Buildings, 56, pp. 23-31; 
+Tonković, Z., Zekić-Sušac, M., Somolanji, M., Predicting natural gas consumption by neural networks (2009) Tehnički vjesnik, 16 (3), pp. 51-61; 
+Wadud, Z., Dey, H.S., Kabir, M.A., Khan, S.I., Modeling and forecasting natural gas demand in Bangladesh (2011) Energy Policy, 39 (11), pp. 7372-7380. , http://www.sciencedirect.com/science/article/pii/S0301421511006872, Asian Energy Security [online]; 
+Wei, N., Li, C., Duan, J., Liu, J., Zeng, F., Daily natural gas load forecasting based on a hybrid deep learning model (2019) Energies, 12 (2), p. 218; 
+Zhu, L., Li, M., Wu, Q., Jiang, L., Short-term natural gas demand prediction based on support vector regression with false neighbours filtered (2015) Energy, 80, pp. 428-436
+UR  - https://www.scopus.com/inward/record.uri?eid=2-s2.0-85100852453&partnerID=40&md5=b44282191b60c93cd116e19206a0dd3d
+ER  - 
+
+TY  - CONF
+TI  - Ensemble Learning Model for Prediction of Natural Gas Spot Price Based on Least Squares Boosting Algorithm
+C3  - 2020 International Conference on Data Analytics for Business and Industry: Way Towards a Sustainable Economy, ICDABI 2020
+J2  - Int. Conf. Data Anal. Bus. Ind.: Way Towards Sustain. Econ., ICDABI
+PY  - 2020
+DO  - 10.1109/ICDABI51230.2020.9325615
+SN  - 9781728196756 (ISBN)
+AU  - Ali, A.
+AD  - University of Sheffield, Department of Automatic Control and Systems Engineering, Sheffield, United Kingdom
+AB  - Among fossil fuels, natural gas has been considered a fuel of choice for increasing the supply of energy and reducing environmental contamination worldwide. Given that the supply chain of natural gas is characterized by imbalances between demand and supply on a timely basis, effective and fast models for accurate spot price prediction for natural gas would not only inform but also help various stakeholders to make wise decisions in the competitive natural gas marketplace. Proposed in this paper is a regression ensemble learning model based on least squares boosting algorithm for improving the prediction of natural gas spot price on a monthly basis. Ensemble learning models are becoming more preferred predictive tools due to their capability to train multiple weak learning models, and aggregate their outputs to produce a strong learning model with better overall accuracy. A broad scope of time series data from January 1997 to May 2020 from Henry Hub natural gas spot prices were employed in developing and testing the proposed model. Coefficient of determination (R2), mean square error (MSE) and root mean square error (RMSE) are employed as performance metrics to evaluate the performance of the proposed model. Compared to four existing state-of-the-art approaches, overall results show that the proposed model exhibits better performance over the state-of-the-art methods with R2, MSE and RMSE scores of 0.9668, 0.3248, and 0.5699, respectively. © 2020 IEEE.
+KW  - ensemble learning
+KW  - least squares boosting algorithm
+KW  - Natural gas spot price
+KW  - Competition
+KW  - Forecasting
+KW  - Fossil fuels
+KW  - Gases
+KW  - Learning algorithms
+KW  - Mean square error
+KW  - Natural gas
+KW  - Supply chains
+KW  - Boosting algorithm
+KW  - Coefficient of determination
+KW  - Environmental contamination
+KW  - Overall accuracies
+KW  - Performance metrics
+KW  - Root mean square errors
+KW  - State-of-the-art approach
+KW  - State-of-the-art methods
+KW  - Learning systems
+PB  - Institute of Electrical and Electronics Engineers Inc.
+T2  - 2020 International Conference on Data Analytics for Business and Industry: Way Towards a Sustainable Economy, ICDABI 2020
+Y2  - 26 October 2020 through 27 October 2020
+N1  - Conference code: 166670
+N1  - Cited By :11
+N1  - Export Date: 20 April 2023
+M3  - Conference Paper
+DB  - Scopus
+C7  - 9325615
+LA  - English
+N1  - Correspondence Address: Ali, A.; University of Sheffield, United Kingdom; email: aaali27@sheffield.ac.uk
+N1  - Funding details: Petroleum Technology Development Fund, PTDF
+N1  - Funding text 1: This work was supported by Petroleum Development Technology Fund (PTDF), Nigeria.
+N1  - References: Natural gas information-2019 final edition (2020) Database Documentation, pp. 1-50. , International Energy Agency; 
+Gas analysis and forecast to 2014 (2019) Exec. Summ., pp. 1-8. , International Energy Agency; 
+Kelkar, M., (2008) Natural Gas Production Engineering, pp. 1-92. , PennWell Tulsa; 
+Arora, A., Srivastava, A., Bansal, S., Business competitive analysis using promoted post detection on social media (2020) J. Retail. Consum. Serv., 54, p. 101941; 
+Sucharitha, Y., Vijayalata, Y., Prasad, V.K., Analysis of early detection of emerging patterns from social media networks: A data mining techniques perspective (2019) Soft Computing and Signal Processing, 900, pp. 15-25. , Springer, Singapore; 
+Reddy, P.C.S., Sureshbabu, A., An applied time series forecasting model for yield prediction of agricultural crop (2019) Proceedings of 2nd International Conference on Soft Computing and Signal Processing, pp. 177-187. , Springer, Singapore, 21 June; 
+Reddy, P.C.S., Sureshbabu, A., An adaptive model for forecasting seasonal rainfall using predictive analytics (2019) Int. J. Intell. Eng. Syst., 12 (5), pp. 22-32; 
+Wang, M., Zhao, L., Du, R., Wang, C., Chen, L., Tian, L., A novel hybrid method of forecasting crude oil prices using complex network science and artificial intelligence algorithms (2018) Appl. Energy, 220 (1), pp. 480-495; 
+Chen, Y., He, K., Tso, G.K.F., Forecasting crude oil prices?: A deep learning based model (2017) Procedia Comp. Sci., 122, pp. 300-307; 
+Abdullah, S.N., Zeng, X., (2010) Machine Learning Approach for Crude Oil Price Prediction with Artificial Neural Networks-Quantitative (ANN-Q) Model., 44; 
+Lasisi, A., Predicting crude oil price using fuzzy rough set and bio-inspired negative selection algorithm (2019) Int. J. Swarm Intell. Res., 10 (4), pp. 25-37; 
+Lago, J., De Ridder, F., De Schutter, B., Forecasting spot electricity prices?: Deep learning approaches and empirical comparison of traditional algorithms (2018) Appl. Energy, 221 (4), pp. 386-405; 
+Yang, Z., Ce, L., Lian, L., Electricity price forecasting by a hybrid model, combining wavelet transform, arma and kernel-based extreme learning machine methods (2017) Applied Energy, 190, pp. 291-305; 
+Ceperic, E., Zikovic, S., Ceperic, V., Short-term forecasting of natural gas prices using machine learning and feature selection algorithms (2017) Energy, 140; 
+Su, M., Zhang, Z., Zhu, Y., Zha, D., Wen, W., Data driven natural gas spot price prediction models using machine learning methods (2019) Energies, 12 (9); 
+Merkel, G.D., Povinelli, R.J., Brown, R.H., Short-term load forecasting of natural gas with deep neural network regression † (2018) Energies; 
+Breiman, L., Random forest (2001) Machine Learning, 45, pp. 5-35; 
+Henrique, M., Molin, D., Coelho, S., Ensemble approach based on bagging, boosting and stacking for short-term prediction in agribusiness time series (2020) Appl. Soft Comput. J., 86, pp. 1-17; 
+Moonam, H.M., Qin, X., Zhang, J., Utilizing data mining techniques to predict expected freeway travel time from experienced travel time (2019) Math. Comput. Simul., 155, pp. 154-167; 
+Buhlmann, P., Hothorn, T., Boosting algorithms: Regularization prediction and model fitting (2007) Submitted to Statistical Science, pp. 1-52; 
+Friedman, J.H., Reitz lecture-greedy function approximation: A gradient boosting machine1 (1999) The Annals of Statistice, 29 (5), pp. 1189-1232. , 2001; 
+Natural Gas Explained: Factors Affecting Natural Gas Prices, , https://www.eia.gov/energyexplained/natural-gas/factors-Affecting-natural-gas-prices.php, U. S Energy Information Administration (EIA), available online, (accessed on 31 August 2020; 
+U. S Energy Information Administration (EIA), , https://www.eia.gov, available online, accessed on 31 Augist 2020; 
+Cameron, A.C., Windmeijer, F.A.G., An r-squared measure of goodness of fit for some common nonlinear regression models (1996) J. Econometrics, 77, pp. 329-342; 
+Hyndman, R.J., Koehler, A.B., Another look at measures of forecast accuracy (2006) Int. J. Forecasting, 22, pp. 679-688; 
+Voyant, C., Notton, G., Kalogirou, S., Nivet, M.L., Machine learning methods for solar radiation forecasting?: A review (2017) Renew. Energy, 105, pp. 569-582
+UR  - https://www.scopus.com/inward/record.uri?eid=2-s2.0-85100453092&doi=10.1109%2fICDABI51230.2020.9325615&partnerID=40&md5=e184357bbd62d7319fd9099ff8852643
+ER  - 
+
+TY  - CONF
+TI  - Applying Long Short-Term Memory Networks for natural gas demand prediction
+C3  - 10th International Conference on Information, Intelligence, Systems and Applications, IISA 2019
+J2  - Int. Conf. Inf., Intell., Syst. Appl., IISA
+PY  - 2019
+DO  - 10.1109/IISA.2019.8900746
+SN  - 9781728149592 (ISBN)
+AU  - Anagnostis, A.
+AU  - Papageorgiou, E.
+AU  - Dafopoulos, V.
+AU  - Bochtis, D.
+AD  - Institute for Bio-Economy and Agri-Technology (IBO), Center for Research and Technology Hellas (CERTH), Thessaloniki, Greece
+AD  - University of Thessaly-Gaiopolis, Faculty of Technology, Larissa, Gaiopolis, 41500, Greece
+AD  - Institute of Bio-Economy and AgriTechnology, Center for Research and Technology Hellas, Papanastasiou 51, Larissa, Greece
+AB  - Long Short-Term Memory (LSTM) algorithm encloses the characteristics of the advanced recurrent neural network methods and is used in this research study to forecast the natural gas demand in Greece in the short-term. LSTM is generally recognized by researchers as a key tool for time series prediction problems and has found important applicability in many different scientific domains over the last years. In this study, we apply the proposed LSTM for the purposes of a day-ahead natural gas demand prediction to three distribution points (cities) of Greece's natural gas grid. A comparative analysis was conducted by different Artificial Neural Network (ANN) structures and the results offer a deeper understanding of the large urban centers characteristics, showing the efficacy of the proposed methodology on predicting natural gas demand in a daily basis. © 2019 IEEE.
+KW  - LSTM
+KW  - Natural gas
+KW  - Neural networks
+KW  - Prediction
+KW  - Time series forecasting
+KW  - Brain
+KW  - Forecasting
+KW  - Gases
+KW  - Natural gas
+KW  - Neural networks
+KW  - Time series
+KW  - Comparative analysis
+KW  - Distribution points
+KW  - LSTM
+KW  - Natural gas demand
+KW  - Natural gas grids
+KW  - Predicting natural gas demands
+KW  - Time series forecasting
+KW  - Time series prediction
+KW  - Long short-term memory
+PB  - Institute of Electrical and Electronics Engineers Inc.
+T2  - 10th International Conference on Information, Intelligence, Systems and Applications, IISA 2019
+Y2  - 15 July 2019 through 17 July 2019
+N1  - Conference code: 154245
+N1  - Cited By :6
+N1  - Export Date: 20 April 2023
+M3  - Conference Paper
+DB  - Scopus
+C7  - 8900746
+LA  - English
+N1  - References: Ivezic, D., Short-Term Natural Gas Consumption Forecast (2006) FME Trans; 
+Motlagh, O., Grozev, G., Papageorgiou, E.I., A Neural Approach to Electricity Demand Forecasting (2016) Artificial Neural Network Modelling, pp. 281-306. , S. Shanmuganathan and S. Samarasinghe, Eds. Cham, Springer International Publishing; 
+Ghalehkhondabi, I., Ardjmand, E., Weckman, G.R., Young, W.A., An overview of energy demand forecasting methods published in 2005-2015 (2017) Energy Syst; 
+Raza, M.Q., Khosravi, A., A review on artificial intelligence based load demand forecasting techniques for smart grid and buildings (2015) Renewable and Sustainable Energy Reviews; 
+Fallah, S.N., Ganjkhani, M., Shamshirband, S., Wing Chau, K., Computational intelligence on short-term load forecasting: A methodological overview (2019) Energies; 
+Gorucu, F.B., Geris, P.U., Gumrah, F., Artificial Neural Network Modeling for Forecasting Gas Consumption (2004) Energy Sources; 
+Papageorgiou, E.I., Poczeta, K., A two-stage model for time series prediction based on fuzzy cognitive maps and neural networks (2017) Neurocomputing; 
+Karimi, H., Dastranj, J., Artificial neural network-based genetic algorithm to predict natural gas consumption (2014) Energy Syst; 
+Khotanzad, A., Elragal, H., (2003) Natural Gas Load Forecasting with Combination of Adaptive Neural Networks; 
+Khotanzad, A., Elragal, H., Lu, T.L., Combination of artificial neural-network forecasters for prediction of natural gas consumption (2000) IEEE Trans. Neural Networks; 
+Kizilaslan, R., Karlik, B., Combination of neural networks forecasters for monthly natural gas consumption prediction (2009) Neural Netw. World; 
+Kizilaslan, R., Karlik, B., Comparison neural networks models for short term forecasting of natural gas consumption in Istanbul (2008) 1st International Conference on the Applications of Digital Information and Web Technologies, ICADIWT, 2008; 
+Musilek, P., Pelikan, E., Brabec, T., Simunek, M., (2008) Recurrent Neural Network Based Gating for Natural Gas Load Prediction System; 
+Soldo, B., Forecasting natural gas consumption (2012) Applied Energy; 
+Szoplik, J., Forecasting of natural gas consumption with artificial neural networks (2015) Energy; 
+Azadeh, A., Asadzadeh, S.M., Ghanbari, A., An adaptive network-based fuzzy inference system for short-term natural gas demand estimation: Uncertain and complex environments (2010) Energy Policy; 
+Behrouznia, A., Saberi, M., Azadeh, A., Asadzadeh, S.M., Pazhoheshfar, P., An adaptive network based fuzzy inference system-fuzzy data envelopment analysis for gas consumption forecasting and analysis: The case of South America (2010) 2010 International Conference on Intelligent and Advanced Systems, ICIAS 2010; 
+Yu, F., Xu, X., A short-term load forecasting model of natural gas based on optimized genetic algorithm and improved BP neural network (2014) Appl. Energy; 
+Panapakidis, I.P., Dagoumas, A.S., Day-ahead natural gas demand forecasting based on the combination of wavelet transform and ANFIS/genetic algorithm/neural network model (2017) Energy; 
+Merkel, G.D., Povinelli, R.J., Brown, R.H., Deep neural network regression as a component of a forecast ensemble (2017) International Symposium on Forecasting; 
+Merkel, G.D., Deep Neural Networks As Time Series Forecasters of Energy Demand (2017) 37th Annu. Int. Symp. Forecast; 
+Merkel, G.D., Povinelli, R.J., Brown, R.H., Short-term load forecasting of natural gas with deep neural network regression (2018) Energies; 
+Tamba, J.G., Forecasting natural gas: A literature survey (2018) Int. J. Energy Econ. Policy; 
+McCulloch, W.S., Pitts, W., A logical calculus of the ideas immanent in nervous activity (1943) Bull. Math. Biophys; 
+Ivakhnenko, A.G., Polynomial Theory of Complex Systems (1971) IEEE Trans. Syst. Man Cybern; 
+Rosenblatt, F., The perceptron: A probabilistic model for information storage and organization in the brain (1958) Psychol. Rev; 
+Pal, S.K., Mitra, S., Multilayer Perceptron, Fuzzy Sets, and Classification (1992) IEEE Trans. Neural Networks; 
+Linnainmaa, S., Taylor expansion of the accumulated rounding error (1976) BIT; 
+Hochreiter, S., Schmidhuber, J., Long Short-Term Memory (1997) Neural Comput
+UR  - https://www.scopus.com/inward/record.uri?eid=2-s2.0-85075380044&doi=10.1109%2fIISA.2019.8900746&partnerID=40&md5=ecea021c5b4e7564beb57156770205e3
+ER  - 
+
+TY  - JOUR
+TI  - A hybrid hourly natural gas demand forecasting method based on the integration of wavelet transform and enhanced Deep-RNN model
+T2  - Energy
+J2  - Energy
+VL  - 178
+SP  - 585
+EP  - 597
+PY  - 2019
+DO  - 10.1016/j.energy.2019.04.167
+SN  - 03605442 (ISSN) 
+AU  - Su, H.
+AU  - Zio, E.
+AU  - Zhang, J.
+AU  - Xu, M.
+AU  - Li, X.
+AU  - Zhang, Z.
+AD  - National Engineering Laboratory for Pipeline Safety/ MOE Key Laboratory of Petroleum Engineering /Beijing Key Laboratory of Urban Oil and Gas Distribution Technology, China University of Petroleum-Beijing, Beijing, 102249, China
+AD  - Dipartimento di Energia, Politecnico di Milano, Via La Masa 34, Milano, 20156, Italy
+AD  - Chair System Science and the Energy Challenge, Fondation Electricité de France (EDF), CentraleSupélec, Université Paris Saclay, Bâtiment Bouygues, Laboratoire LGI, 2ème étage 3 Rue Joliot-Curie 91192, Gif-sur-Yvette Cedex, France
+AD  - Petrochina West East Gas Pipeline, Dongfushan Road 458, Pudong District, Shanghai, 200122, China
+AB  - The rapid development of big data and smart technology in the natural gas industry requires timely and accurate forecasting of natural gas consumption on different time horizons. In this work, we propose a robust hybrid hours-ahead gas consumption method by integrating Wavelet Transform, RNN-structured deep learning and Genetic Algorithm. The Wavelet Transform is used to reduce the complexity of the forecasting tasks by decomposing the original series of gas loads into several sub-components. The RNN-structured deep learning method is built up via combining a multi-layer Bi-LSTM model and a LSTM model. The multi-layer Bi-LSTM model can comprehensively capture the features in the sub-components and the LSTM model is used to forecast the future gas consumption based on these abstracted features. To enhance the performance of the RNN-structured deep learning model, Genetic Algorithm is employed to optimize the structure of each layer in the model. Besides, the dropout technology is applied in this work to overcome the potential problem of overfitting. In this case study, the effectiveness of the developed method is verified from multiple perspective, including graphical examination, mathematical errors analysis and model comparison, on different data sets. © 2019
+KW  - Deep learning
+KW  - Genetic algorithm
+KW  - Long short time memory model
+KW  - Natural gas demand forecasting
+KW  - Recurrent neural network
+KW  - Deep learning
+KW  - Forecasting
+KW  - Gas industry
+KW  - Gases
+KW  - Genetic algorithms
+KW  - Learning algorithms
+KW  - Natural gas
+KW  - Recurrent neural networks
+KW  - Wavelet transforms
+KW  - Analysis and modeling
+KW  - Learning methods
+KW  - Memory modeling
+KW  - Multiple perspectives
+KW  - Natural gas consumption
+KW  - Natural gas demand
+KW  - Potential problems
+KW  - Smart technology
+KW  - Long short-term memory
+KW  - artificial neural network
+KW  - complexity
+KW  - demand analysis
+KW  - energy planning
+KW  - forecasting method
+KW  - gas industry
+KW  - gas production
+KW  - genetic algorithm
+KW  - learning
+KW  - natural gas
+KW  - wavelet analysis
+PB  - Elsevier Ltd
+N1  - Cited By :70
+N1  - Export Date: 20 April 2023
+M3  - Article
+DB  - Scopus
+N1  - CODEN: ENEYD
+LA  - English
+N1  - Correspondence Address: Zhang, J.; College of Mechanical and Transportation Engineering, Fuxue Road 18, Changping District, China; email: zhangjj@cup.edu.cn
+N1  - Funding details: National Natural Science Foundation of China, NSFC, 51134006
+N1  - Funding details: China University of Petroleum, Beijing, CUPB, 01JB20188428
+N1  - Funding text 1: This work is supported by National Natural Science Foundation of China [grant number 51134006 ], and the research fund provided by China University of Petroleum, Beijing [grant number 01JB20188428 ].
+N1  - References: Flouri, M., Karakosta, C., Kladouchou, C., Psarras, J., How does a natural gas supply interruption affect the EU gas security? A Monte Carlo simulation (2015) Renew Sustain Energy Rev, 44, pp. 785-796; 
+Soldo, B., Forecasting natural gas consumption (2012) Appl Energy, 92, pp. 26-37; 
+Tamba, J.G., Forecasting natural gas: a literature survey (2018) Int J Energy Econ Policy, 8 (3), pp. 216-249; 
+Szoplik, J., Forecasting of natural gas consumption with artificial neural networks (2015) Energy, 85, pp. 208-220; 
+Erdogdu, E., Natural gas demand in Turkey (2010) Appl Energy, 87 (1), pp. 211-219; 
+Taşpinar, F., Çelebi, N., Tutkun, N., Forecasting of daily natural gas consumption on regional basis in Turkey using various computational methods (2013) Energy Build, 56, pp. 23-31; 
+Potočnik, P., Thaler, M., Govekar, E., Grabec, I., Poredoš, A., Forecasting risks of natural gas consumption in Slovenia (2007) Energy Policy, 35 (8), pp. 4271-4282; 
+Zhu, L., Li, M.S., Wu, Q.H., Jiang, L., Short-term natural gas demand prediction based on support vector regression with false neighbours filtered (2015) Energy, 80, pp. 428-436; 
+Herbert, J.H., Sitzer, S., Eades-Pryor, Y., A statistical evaluation of aggregate monthly industrial demand for natural gas in the U (1987) SA,” Energy, 12 (12), pp. 1233-1238; 
+Geem, Z.W., Roper, W.E., Energy demand estimation of South Korea using artificial neural network (2009) Energy Policy, 37 (10), pp. 4049-4054; 
+Khan, M.A., Modelling and forecasting the demand for natural gas in Pakistan (2015) Renew Sustain Energy Rev, 49, pp. 1145-1159; 
+Wang, Q., Li, S., Li, R., Forecasting energy demand in China and India: using single-linear, hybrid-linear, and non-linear time series forecast techniques (2018) Energy, 161, pp. 821-831; 
+Chen, Y., Chua, W.S., Koch, T., Forecasting day-ahead high-resolution natural-gas demand and supply in Germany (2018) Appl Energy, 228, pp. 1091-1110; 
+Čeperić, E., Žiković, S., Čeperić, V., Short-term forecasting of natural gas prices using machine learning and feature selection algorithms (2017) Energy, 140, pp. 893-900; 
+Yu, F., Xu, X., A short-term load forecasting model of natural gas based on optimized genetic algorithm and improved BP neural network (2014) Appl Energy, 134, pp. 102-113; 
+Soldo, B., Forecasting natural gas consumption (2012) Appl Energy, 92, pp. 26-37; 
+Aydinalp-Koksal, M., Ugursal, V.I., Comparison of neural network, conditional demand analysis, and engineering approaches for modeling end-use energy consumption in the residential sector (2008) Appl Energy, 85 (4), pp. 271-296; 
+Rigamonti, M., Baraldi, P., Zio, E., Roychoudhury, I., Goebel, K., Poll, S., Ensemble of optimized echo state networks for remaining useful life prediction (2018) Neurocomputing, 281, pp. 121-138; 
+Zheng, J., Xu, C., Zhang, Z., Li, X., Electric load forecasting in smart grid using long-short-term-memory based recurrent neural network electric load forecasting in smart grid using long-short-term-memory based recurrent neural network (2017) 2017 51st annu. Conf. Inf. Sci. Syst. (CISS), pp. 1-6. , no. January; 
+Kamilaris, A., Prenafeta-Boldú, F.X., Deep learning in agriculture: a survey (2018) Comput Electron Agric, 147, pp. 70-90; 
+Hirafuji Neiva, D., Zanchettin, C., Gesture recognition: a review focusing on sign language in a mobile context (2018) Expert Syst Appl, 103, pp. 159-183; 
+Marugán, A.P., Márquez, F.P.G., Perez, J.M.P., Ruiz-Hernández, D., A survey of artificial neural network in wind energy systems (2018) Appl Energy, 228, pp. 1822-1836; 
+Nagy, A.M., Simon, V., Survey on traffic prediction in smart cities (2018) Pervasive Mob Comput, 50, pp. 148-163; 
+Fischer, T., Krauss, C., “ARTICLE IN PRESS Deep learning with long short-term memory networks for financial market predictions (2017) Eur. J. Oper. Res. Eur. J. Oper. Res. J., 17. , 48–0; 
+Panapakidis, I.P., Dagoumas, A.S., Day-ahead natural gas demand forecasting based on the combination of wavelet transform and ANFIS/genetic algorithm/neural network model (2017) Energy, 118, pp. 231-245; 
+Tascikaraoglu, A., Sanandaji, B.M., Poolla, K., Varaiya, P., Exploiting sparsity of interconnections in spatio-temporal wind speed forecasting using Wavelet Transform (2016) Appl Energy, 165, pp. 735-747; 
+Bento, P.M.R., Pombo, J.A.N., Calado, M.R.A., Mariano, S.J.P.S., A bat optimized neural network and wavelet transform approach for short-term price forecasting (2018) Appl Energy, 210, pp. 88-97; 
+Stocchi, M., Marchesi, M., Fast wavelet transform assisted predictors of streaming time series (2018) Digit Signal Process, 77, pp. 5-12; 
+Zheng, H., Yuan, J., Chen, L., Short-term load forecasting using EMD-LSTM neural networks with a xgboost algorithm for feature importance evaluation (2017) Energies, 10 (8), p. 1168; 
+Asala, H.I., Chebeir, J., Zhu, W., Gupta, I., Taleghani, A.D., Romagnoli, J., A machine learning approach to optimize shale gas supply chain networks (2017) SPE Annu. Tech. Conf. Exhib., (October), pp. 0-28; 
+Qing, X., Niu, Y., Hourly day-ahead solar irradiance prediction using weather forecasts by LSTM (2018) Energy, 148, pp. 461-468; 
+Cui, Z., Ke, R., Wang, Y., Deep bidirectional and unidirectional LSTM recurrent neural network for network-wide traffic speed prediction (2018), pp. 22-25; Mellit, A., Kalogirou, S.A., Hontoria, L., Shaari, S., Artificial intelligence techniques for sizing photovoltaic systems: a review (2009) Renew Sustain Energy Rev, 13 (2), pp. 406-419; 
+Rahman, A., Srikumar, V., Smith, A.D., Predicting electricity consumption for commercial and residential buildings using deep recurrent neural networks (2018) Appl Energy, 212; 
+Gal, Y., Ghahramani, Z., “A theoretically grounded application of dropout in recurrent neural networks.”; Yang, J., Ma, J., A structure optimization framework for feed-forward neural networks using sparse representation (2016) Knowl Base Syst, 109, pp. 61-70; 
+Yu, F., Xu, X., A short-term load forecasting model of natural gas based on optimized genetic algorithm and improved BP neural network (2014) Appl Energy, 134, pp. 102-113; 
+Askari, S., Montazerin, N., Zarandi, M.H.F., Forecasting semi-dynamic response of natural gas networks to nodal gas consumptions using genetic fuzzy systems (2015) Energy, 83, pp. 252-266; 
+Ene, S., Küçükoğlu, İ., Aksoy, A., Öztürk, N., A genetic algorithm for minimizing energy consumption in warehouses (2016) Energy, 114, pp. 973-980; 
+Sharma, V., Yang, D., Walsh, W., Reindl, T., Short term solar irradiance forecasting using a mixed wavelet neural network (2016) Renew Energy, 90, pp. 481-492; 
+Bernas, M., Płaczek, B., Period-aware local modelling and data selection for time series prediction (2016) Expert Syst Appl, 59, pp. 60-77; 
+Su, H., Zio, E., Zhang, J., Yang, Z., Li, X., Zhang, Z., A systematic hybrid method for real-time prediction of system conditions in natural gas pipeline networks (2018) J Nat Gas Sci Eng, 57, pp. 31-44
+UR  - https://www.scopus.com/inward/record.uri?eid=2-s2.0-85065503987&doi=10.1016%2fj.energy.2019.04.167&partnerID=40&md5=e3baf76425fdd9c1fc60f138ca997b0c
+ER  - 
+
+TY  - CONF
+TI  - Implementing fuzzy cognitive maps with neural networks for natural gas prediction
+C3  - Proceedings - International Conference on Tools with Artificial Intelligence, ICTAI
+J2  - Proc. Int. Conf. Tools Artif. Intell. ICTAI
+VL  - 2018-November
+SP  - 1026
+EP  - 1032
+PY  - 2018
+DO  - 10.1109/ICTAI.2018.00158
+SN  - 10823409 (ISSN); 9781538674499 (ISBN)
+AU  - Poczeta, K.
+AU  - Papageorgiou, E.I.
+AD  - Department of Information Systems, Kielce University of Technology, Kielce, Poland
+AD  - Department of Electrical Engineering, Technological Educational Institute (T.E.I.) of Thessaly, Larisa, Greece
+AD  - Dept of Computer Science, University of Thessaly, Lamia, Greece
+AB  - The goal of this research study is to test the hardiness of a novel hybrid computational intelligence model in day-ahead natural gas demand prediction. The proposed model combines an evolutionary learned FCM method with a common ANN to construct a cascaded model that leads to high prediction accuracy in most distribution points. The FCM technique is used to provide a model which concepts are used as input nodes in a second-stage ANN model employed to provide the forecast for each gas time series. Learned by structure optimization genetic algorithm, the FCM outputs are fed into an ANN to refine the initial forecast and upgrade the overall forecasting accuracy. The model is applied to five distribution points that compose the natural gas grid of a Greek region, district of Thessaly. This approach enables the comparison of the hybrid model performance on different FCM and ANN structures and on consumption patterns, providing also insights on the characteristics of large urban centers and small towns. © 2018 IEEE.
+KW  - Artificial neural network
+KW  - Daily consumption
+KW  - Fuzzy cognitive map
+KW  - Natural gas prediction
+KW  - Cognitive systems
+KW  - Fuzzy inference
+KW  - Fuzzy neural networks
+KW  - Fuzzy rules
+KW  - Gases
+KW  - Genetic algorithms
+KW  - Large scale systems
+KW  - Natural gas
+KW  - Neural networks
+KW  - Structural optimization
+KW  - Consumption patterns
+KW  - Daily consumption
+KW  - Distribution points
+KW  - Forecasting accuracy
+KW  - Fuzzy cognitive map
+KW  - Hybrid computational intelligence
+KW  - Prediction accuracy
+KW  - Structure optimization
+KW  - Forecasting
+PB  - IEEE Computer Society
+T2  - 30th International Conference on Tools with Artificial Intelligence, ICTAI 2018
+Y2  - 5 November 2018 through 7 November 2018
+N1  - Conference code: 143794
+N1  - Cited By :7
+N1  - Export Date: 20 April 2023
+M3  - Conference Paper
+DB  - Scopus
+C7  - 8576156
+N1  - CODEN: PCTIF
+LA  - English
+N1  - References: Akpinar, M., Adakv, M.F., Yumusak, N., Day-ahead natural gas demand forecasting using optimized abc-based neural network with sliding window technique: The case study of regional basis in Turkey (2017) MDPI Energies, 10, p. 781; 
+Akpinar, M., Yumusak, N., Naïve forecasting household natural gas consumption with sliding window approach (2017) Turk. J. Elec. Eng. Comp. Sci., 25, pp. 30-45; 
+Azadeh, A., Asadzadeh, S.M., Ghanbari, A., An adaptive network-based fuzzy inference system for short-term natural gas demand estimation: Uncertain and complex environments (2010) Energy Policy, 38, pp. 1529-1536; 
+Behrouznia, A., Saberi, M., Azadeh, A., Asadzadeh, S.M., Pazhoheshfar, P., An adaptive network based fuzzy inference system-fuzzy data envelopment analysis for gas consumption forecasting and analysis: The case of South America (2010) 2010 International Conference on Intelligent and Advanced Systems (ICIAS), Malaysia; 
+Fogel, D.B., (2005) Evolutionary Computation. Toward a New Philosophy of Machine Intelligence 3rd Ed, , A John Wiley & Sons, Inc., Publication; 
+Gorucu, F.B., Geris, P.U., Gumrah, F., Artificial neural network modeling for forecasting gas consumption (2004) Energy Sources, 26 (3), pp. 299-307; 
+Hagan, M.T., Menhaj, M.B., Training feedforward networks with the marquardt algorithm (1996) IEEE Trans. Neural Netw., 5 (6), pp. 989-993; 
+Haykin, S., Networks, N., (1999) A Comprehensive Foundation, 2nd Ed, , Prentice Hall, Hamilton, Ontario, Canada; 
+Jastriebow, A., Poczeta, K., Analysis of multi-step algorithms for cognitive maps learning (2014) Bulletin of the Polish Academy of Sciences-Technical Sciences, 62 (4), pp. 735-741; 
+Karimi, H., Dastranj, J., Artificial neural network-based genetic algorithm to predict natural gas consumption (2014) Energy Systems, 5 (3), pp. 571-581; 
+Khotanzad, A., Erlagar, H., Natural gas load forecasting with combination of adaptive neural networks (1999) IJCNN '99. International Joint Conference on Neural Networks, pp. 4069-4072; 
+Khotanzad, A., Erlagar, H., Lu, T., Combination of artificial neural-network forecasters for prediction of natural gas consumption (2000) IEEE TRANSACTIONS on NEURAL NETWORKS, 11, pp. 464-473; 
+Kizilaslan, R., Karlik, B., Combination of neural networks forecasters for monthly natural gas consumption prediction (2009) Neural Network World, 19, pp. 191-199; 
+Kizilaslan, R., Karlik, B., Comparison neural networks models for short term forecasting of natural gas consumption in istanbul (2008) First International Conference on the Applications of Digital Information and Web Technologies, ICADIWT 2008, pp. 448-453; 
+Kosko, B., Fuzzy cognitive maps (1986) Int. J. Man Mach. Stud., 24 (1), pp. 65-75; 
+Musilek, P., Pelikan, E., Brabec, T., Simunek, M., Recurrent neural network based gating for natural gas load prediction system (2006) 2006 International Joint Conference on Neural Networks, Canada, pp. 3736-3741; 
+Panapakidis, I., Dagoumas, A., Day-ahead natural gas demand forecasting based on the combination of wavelet transform and ANFIS/genetic algorithm/neural network model (2017) Energy, 118, pp. 231-245; 
+Papageorgiou, E.I., Poczeta, K., A two-stage model for time series prediction based on fuzzy cognitive maps and neural networks (2017) Neurocomputing, 232, pp. 113-121; 
+Papageorgiou, E.I., Poczeta, K., Laspidou, C., Hybrid model for water demand prediction based on fuzzy cognitive maps and artificial neural networks (2016) 2016 IEEE International Conference on Fuzzy Systems (FUZZ). IEEE, New York, pp. 1523-1530; 
+Papageorgiou, E.I., Salmeron, J.L., A review of fuzzy cognitive maps research during the last decade (2013) IEEE Trans. Fuzzy Syst., 21 (1), pp. 66-79; 
+Poczeta, K., Yastrebov, A., Papageorgiou, E.I., Learning fuzzy cognitive maps using structure optimization genetic algorithm, " in (2015) Proceedings of the 2015 Federated Conference on Computer Science and Information Systems (FedCSIS), Lodz, Poland, pp. 547-554; 
+Potocnik, P., Soldo, B., Simunovic, G., Saric, T., Jeromen, A., Govekar, E., Comparison of static and adaptive models for short-term residentialnatural gas forecasting in Croatia (2014) Applied Energy, 129, pp. 94-103; 
+Soldo, B., Forecasting natural gas consumption (2012) Applied Energy, 92, pp. 26-37; 
+Stach, W., Kurgan, L., Pedrycz, W., Reformat, M., Genetic learning of fuzzy cognitive maps (2005) Fuzzy Sets Syst., 153 (3), pp. 371-401; 
+Szoplik, J., Forecasting of natural gas consumption with artificial neural networks (2015) Energy, 85, pp. 208-220; 
+Taspinar, F., Çelebi, N., Tutkun, N., Forecasting of daily natural gas consumption on regional basis in Turkey using various computational methods (2013) Energy and Buildings, 56, pp. 23-31; 
+Viet, N.H., Mandziuk, J., Neural and fuzzy neural networks in prediction of natural gas consumption (2003) 2003 IEEE 13th Workshop on Neural Networks for Signal Processing, NNSP'03; 
+Yu, F., Xu, X., A short-term load forecasting model of natural gas based on optimized genetic algorithm and improved bp neural network (2014) Applied Energy, 134, pp. 102-113; 
+Motlagh, O., Grozev, G., Papageorgiou, E.I., A neural approach to electricity demand forecasting 2016 Artificial Neural Network Modeling, Studies in Computational Intelligence, 628, pp. 281-306
+A4  - Biological and Artificial Intelligence Foundation (BAIF); IEEE Computer Society
+UR  - https://www.scopus.com/inward/record.uri?eid=2-s2.0-85060791611&doi=10.1109%2fICTAI.2018.00158&partnerID=40&md5=3d44c91f21ed1a0a377c5ee2f4292b96
+ER  - 
+
+TY  - JOUR
+TI  - Forecasting Natural Gas Consumption using ARIMA Models and Artificial Neural Networks
+T2  - IEEE Latin America Transactions
+J2  - IEEE. Lat. Am. Trans.
+VL  - 14
+IS  - 5
+SP  - 2233
+EP  - 2238
+PY  - 2016
+DO  - 10.1109/TLA.2016.7530418
+SN  - 15480992 (ISSN) 
+AU  - Cardoso, C.V.
+AU  - Cruz, G.L.
+AD  - Universidade Federal de Sergipe (UFS), São Cristovão, Sergipe, Brazil
+AD  - Sergas Sergipe Gás S. A., Aracaju, Sergipe, Brazil
+AB  - Production and distribution activities in natural gas systems are performed by producer and distributor companies, respectively. Producer companies are responsible for attending the demands of the local distributor companies while distributor companies are responsible for leading the gas to the final consumers. The producer adjusts its production capacity, daily, considering the availability of the gas transportation pipelines network and the demands from consumers. Consequently, the distributor companies are forced to forecast, in the early hours, the total gas volume to be consumed during the whole day. If the gas consumed exceed the forecasted limits penalties are applied to the distributor companies. In this paper, three approaches for natural gas consumption forecasting are implemented and examined: The time series model Autoregressive Integrated Moving Average - (ARIMA), the Artificial Neural Networks (ANNs) and a Hybrid Methodology combining these two techniques. Data from a northeast Brazilian distributor company has been used for validating the proposed forecasting algorithms. © 2016 IEEE.
+KW  - ANN
+KW  - ARIMA
+KW  - Artificial Neural Networks
+KW  - Gas Consumption Forecasting
+KW  - Forecasting
+KW  - Natural gas
+KW  - Neural networks
+KW  - ARIMA
+KW  - Auto-regressive integrated moving average
+KW  - Forecasting algorithm
+KW  - Forecasting natural gas consumption
+KW  - Gas consumption
+KW  - Hybrid methodologies
+KW  - Natural gas consumption
+KW  - Time series modeling
+KW  - Gases
+PB  - IEEE Computer Society
+N1  - Cited By :29
+N1  - Export Date: 20 April 2023
+M3  - Article
+DB  - Scopus
+C7  - 7530418
+LA  - Portuguese
+N1  - References: Freitas Monteiro, J.V., Silva, J.R.N.M., (2010) Gás Natural Aplicado À Indústria e Ao Grande Comércio, , São Paulo: Blucher; 
+Khotanzad, A., Elragal, H., Lu, T.L., Combination of artificial neuralnetwork forecasters for prediction of natural gas consumption (2000) IEEE Transactions on Neural Networks, 11 (2), pp. 464-473. , jan; 
+Brown, R.H., Matin, I., Development of artificial neural network models to predict daily gas consumption (1995) Computer Engineering, pp. 1389-1394; 
+Peharda, D., Delimar, M., Loncaric, S., Short term hourly forecasting of gas consumption using neural networks (2001) Proceeding of 23rd International Conference on Information Technology Interfaces, 1, pp. 367-371. , ITI 2001, jun. 2001; 
+Musilek, P., Pelikán, E., Brabec, Simunek, M., Recurrent neural network based gating for natural gas load prediction systems (1995) IEEE Transaction on Power Systems, 10 (1), pp. 254-265. , Feb; 
+Mohammed, O., Park, D., Merchant, R., Dinh, T., Tong, C., Azeem, A., Farah, J., Drake, E.C., Practical experiences with an adaptive neural network short-term load forecasting system (1995) IEEE Transactions on Power Systems, 10 (1), pp. 254-265; 
+Viet, H.N., Mandziuk, J., Neural and fuzzy neural networks for natural gas consumption prediction (2003) Workshop on Neural Networks for Signal Processing, 503, pp. 759-768; 
+Kandil, M.S., El-Debeiky, S.M., Hasanien, N.E., The implementation of long-term forecasting strategies using a knowledge-based expert system: Part II (2001) Electric Power Systems Research, 58 (1), pp. 19-25; 
+Rui, C., Jian, W.L., Ningjiw, Y., Pengyan, Z., The forecasting of China natural gas consumption based on genetic algorithm (2009) Fifth International Joint Conference on INC, pp. 1436-1439. , IMS and IDC; 
+Box, G.E.P., Jenkins, G.M., Reinsel, G.C., (1994) Time Series Analysis-Forecasting and Control, , 3.ed. New Jersey: Prentice Hall; 
+Akkurt, M., Demirel, O.F., Zaim, S., Forecasting Turkey's natural gas consumption by using time series methods (2015) European Journal of Economic and Political Studies, 3 (2). , http://ejeps.fatih.edu.tr/docs/articles/108.pdf, Jun. [Online]; 
+Al-Fattah, S.M., Time series modeling for U.S. Natural gas forecasting (2006) E-Journal of Petroleum Management Economics, , http://www.perpustakaan.depkeugo.id/FOLDERJURNAL/24.pdf, Jun; 
+Peter Zhang, G., Time series forecasting using a hybrid ARIMA and Neural Network Model (2003) Neurocomputing, 50, pp. 159-175; 
+Cruz, G.L., (2012) Estudos de Técnicas de Previsão de Consumo em Sistemas de Distribuição de Gás Natural, , Dissertação de Mestrado, PROEE/UFS, São Cristovão; 
+Haykin, S., (2001) Redes Neurais Princípios e Práticas, , 2. ed. Porto Alegre: Bookman; 
+Braga, A.P., Carvalho, A.C.P.L.F., Ludermir, T.B., (2000) Redes Neurais Artificiais: Teoria e Aplicações, , Rio de Janeiro: LTC
+UR  - https://www.scopus.com/inward/record.uri?eid=2-s2.0-84981289061&doi=10.1109%2fTLA.2016.7530418&partnerID=40&md5=da224f3c174e5caa724b3548120e439d
+ER  - 
+
+TY  - CONF
+TI  - A stochastic approach to solving bilevel natural gas cash-out problems
+C3  - Procedia Computer Science
+J2  - Procedia Comput. Sci.
+VL  - 80
+SP  - 1875
+EP  - 1886
+PY  - 2016
+DO  - 10.1016/j.procs.2016.05.483
+SN  - 18770509 (ISSN) 
+AU  - Kalashnikov, V.
+AU  - Alexandrov, V.
+AU  - Kalashnykova, N.
+AD  - Tecnológico de Monterrey (ITESM), Campus Monterrey, Mexico
+AD  - Central Economics and Mathematics Institute (CEMI), Moscow, Russian Federation
+AD  - Sumy State University, Sumy, Ukraine
+AD  - ICREA-BSC, C/Jordi Girona 29, Barcelona, Spain
+AD  - Universidad Autónoma de Nuevo León (UANL), Monterrey, Mexico
+AB  - We study a special bilevel programming problem that arises in transactions between a Natural Gas Shipping Company and a Pipeline Operator. Because of the business relationships between these two actors, the timing, and objectives of their decision-making process are different. In order to model that, bilevel programming was traditionally used. Apart from the theoretical studies of the problem to facilitate its solution a linear reformulation is required, as well as heuristic approaches, and branch-and-bound techniques may be applied. We present a linear programming reformulation of the latest version of the model, which is easier and faster to solve numerically. This reformulation makes it easier to theoretically analyze the problem, allowing us to draw some conclusions about the nature of the solution. Since elements of uncertainty are definitely present in the bilevel natural gas cash-out problem, its stochastic formulation is developed in the form of a bilevel multi-stage stochastic programming model with recourse. After reducing the original formulation to a bilevel linear problem, a stochastic scenario tree is defined by its node events, and time series forecasting is used to produce stochastic values for data of natural gas price and demand. Numerical experiments were run to compare the stochastic solution with the perfect information solution and the expected value solutions. © The Authors. Published by Elsevier B.V.
+KW  - Big data
+KW  - Natural gas cash-out problems
+KW  - Operations research
+KW  - Stochastic algorithms
+KW  - Big data
+KW  - Decision making
+KW  - Decision trees
+KW  - Gases
+KW  - Heuristic methods
+KW  - Linear programming
+KW  - Natural gas
+KW  - Operations research
+KW  - Stochastic programming
+KW  - Stochastic systems
+KW  - Trees (mathematics)
+KW  - Bilevel programming problem
+KW  - Branch and bound techniques
+KW  - Decision making process
+KW  - Gas cash-out problem
+KW  - Multi-stage stochastic programming
+KW  - Stochastic algorithms
+KW  - Stochastic formulation
+KW  - Time series forecasting
+KW  - Stochastic models
+A2  - Connolly M.
+PB  - Elsevier B.V.
+T2  - International Conference on Computational Science, ICCS 2016
+Y2  - 6 June 2016 through 8 June 2016
+N1  - Conference code: 130478
+N1  - Cited By :2
+N1  - Export Date: 20 April 2023
+M3  - Conference Paper
+DB  - Scopus
+LA  - English
+N1  - Correspondence Address: Alexandrov, V.; ICREA-BSC, C/Jordi Girona 29, Spain; email: vassil.alexandrov@bsc.es
+N1  - Funding details: CB-2009-01-127691, CB-2013-01-221676, CE250-09
+N1  - Funding details: Instituto Tecnológico y de Estudios Superiores de Monterrey, ITESM
+N1  - Funding text 1: The research activity of the authors was financially supported by the Research Department of the Tecnológico de Monterrey (ITESM), Campus Monterrey, and by the SEP-CONACYT project CB-2013-01-221676, Mexico. The third author was also supported by the PAICYT project No. CE250-09 and by the SEP-CONACYT project CB-2009-01-127691.
+N1  - References: Arano, K.G., Blair, B.F., An ex-post welfare analysis of natural gas regulation in the industrial sector (2008) Energy Economics, 30, pp. 789-806; 
+Ben-Ayed, O., Boyce, D.E., Blair, C.A., A general bilevel linear programming formulation of the network design problem (1988) Journal of Transportations Research, 22, pp. 311-318; 
+Borraz-Sánchez, C., Ríos-Mercado, R.Z., A hybrid meta-heuristic approach for natural gas pipeline network optimization (2005) Hybrid Metaheuristics, 36, pp. 54-65. , Lecture Notes in Computer Science M. J. Blesa et al. (Eds.) New York: Springer; 
+Brockwell, P.J., Davis, R.A., (2002) Introduction to Time Series and Forecasting, , New York: Springer; 
+Chebouba, A., Yalaoui, F., Smati, A., Amodeo, L., Younsi, K., Tairi, A., Optimization of natural gas pipeline transportation using ant colony optimization (2009) Computers and Operations Research, 36, pp. 1916-1923; 
+Chiou, S.W., Bilevel programming for the continuous transport network design problem (2005) Transportations Research Part B, 39, pp. 361-383; 
+Cruz, F.R.B., Smith, J.M.J., Mateus, G.R., Algorithms for a multilevel network optimization problem (1999) European Journal of Operational Research, 118, pp. 164-180; 
+Dempe, S., Kalashnikov, V.V., Pérez-Valdés, G.A., Kalashnykova, N.I., (2015) Bilevel Programming Problems: Theory, Algorithms and Applications to Energy Networks, , BerlinHeidelberg: Springer; 
+Dempe, S., Kalashnikov, V.V., Ríos-Mercado, R.Z., Discrete bilevel programming: Application to a natural gas cash-out problem (2005) European Journal of Operational Research, 166, pp. 469-488. , 2005; 
+Egging, R., Gabriel, S.A., Holz, F., Zhuang, J., A complementarity model for the European natural gas market (2008) Energy Policy, 36, pp. 2385-2414; 
+(1992) Energy Information Administration, FERC Policy on System Ownership since 1992, , http://www.eia.doe.gov/oilgas/naturalgas/analysispublications/ngma-jorleg/fercpolicy.html, a; 
+(2005) Energy Information Administration, Natural Gas Summary, , http://tonto.eia.doe.gov/dnav/ng/ngsumlsumdcunusm.html; 
+(1992) Energy Information Administration, FERC Order 636: The Restructuring Rule, , http://www.eia.doe.gov/oilgas/naturalgas/analysispublications/ngmajorleg/ferc636.html, b; 
+Esnault, B., The need for regulation of gas storage: The case of France (2003) Energy Policy, 31, pp. 167-174; 
+Gabriel, S.A., Zhuang, J., Kiet, S., A large-scale linear complementarity model of the North American natural gas market (2005) Energy Economics, 27, pp. 639-665; 
+Hawdon, D., Efficiency, performance, and regulation of the international gas industry: A bootstrap DEA approach (2003) Energy Policy, 31, pp. 1167-1178; 
+IHS, (2007) IHS Engineering: EC Proposes New Legislation for European Energy Policy, , http://engineers.ihs.com/news/eu-enenergy-policy-9-07.html; 
+Kabirian, A., Hemmati, M.R., A strategic planning model for natural gas transmission networks (2007) Energy Policy, 35, pp. 5656-5670; 
+Kalashnikov, V.V., Pérez-Valdés, G.A., Kalashnykova, N.I., A linearization approach to solve the natural gas cash-out bilevel problem (2010) Annals of Operations Research, 181, pp. 423-442. , a; 
+Kalashnikov, V.V., Pérez-Valdés, G.A., Tomasgard, A., Kalashnykova, N.I., Natural gas cash-out problem: Bilevel stochastic optimization approach (2010) European Journal of Operational Research, 206, pp. 18-33. , G.A. b; 
+Kalashnikov, V.V., Ríos-Mercado, R.Z., A penalty-function approach to a mixedinteger bilevel programming problem (2001) Proceedings of the 3rd International Meeting on Computer Science, 2, pp. 1045-1054. , C. Zozaya et al. (Eds.); 
+Kalashnikov, V.V., Ríos-Mercado, R.Z., A natural gas cash-out problem: A bilevel programming framework and a penalty function method (2006) Optimization and Engineering, 7, pp. 403-420; 
+Kall, P., Wallace, S.W., (1994) Stochastic Programming, , Chichester: John Wiley & Sons; 
+Keyaerts, N., Meeus, L., D'Haeseleer, W., Analysis of balancing-system design and contracting behavior in the natural gas markets (2008) Proceedings of the European Doctoral Seminar on Natural Gas, 26p. , Delft, The Netherlands; 
+Kinderlehrer, D., Stampacchia, G., (1980) An Introduction to Variational Inequalities and their Applications, , New York: Academic Press; 
+Midthun, K.T., (2007) Optimization Models for Liberalized Natural Gas Markets, 205p. , Ph.D. Thesis, Norwegian University of Science and Technology (NTNU): Trondheim; 
+Ríos-Mercado, R.Z., Secomandi, N., Buraparate, V., (1999) A Mixed-integer Bilevel Programming Model for the Problem of Minimizing Cash-out Penalty Costs of a Natural Gas Shipping Company, , Technical report, Working paper, Postgraduate Program in System Engineering, UANL, San Nicolás de los Garza, Mexico; 
+Rockafellar, R.T., (1970) Convex Analysis. Princeton, , Princeton University Press; 
+Soto, A., (2008) FERC Order 636 & 637, , http://www.aga.org/Legislative/issuesummaries/FERCOrder636637.html; 
+Yang, H., Bell, M.G.H., Transport bilevel programming problems: Recent methodological advances (2001) Transportation Research Part B, 35, pp. 1-4
+A4  - 
+UR  - https://www.scopus.com/inward/record.uri?eid=2-s2.0-84978471946&doi=10.1016%2fj.procs.2016.05.483&partnerID=40&md5=9aa388ab77f1573fd18ea46b371d9048
+ER  - 
+
+TY  - JOUR
+TI  - Short-term natural gas demand prediction based on support vector regression with false neighbours filtered
+T2  - Energy
+J2  - Energy
+VL  - 80
+SP  - 428
+EP  - 436
+PY  - 2015
+DO  - 10.1016/j.energy.2014.11.083
+SN  - 03605442 (ISSN) 
+AU  - Zhu, L.
+AU  - Li, M.S.
+AU  - Wu, Q.H.
+AU  - Jiang, L.
+AD  - Department of Electrical Engineering and Electronics, University of Liverpool, Liverpool, L69 3GJ, United Kingdom
+AD  - School of Electric Power Engineering, South China University of Technology, Guangzhou, 510641, China
+AB  - This paper presents a novel approach, named the SVR (support vector regression) based SVRLP (support vector regression local predictor) with FNF-SVRLP (false neighbours filtered-support vector regression local predictor), to predict short-term natural gas demand. This method integrates the SVR algorithm with the reconstruction properties of a time series, and optimises the original local predictor by removing false neighbours. A unified model, named the SM ("Standard Model"), is presented to process the entire dataset. To further improve the predicted accuracy, an AM ("Advanced Model") is proposed, and is based on specific customer behaviours during different days of the week. The AM contains seven individual models for the seven days of the week. The FNF-SVRLP based AM has been used to predict natural gas demand for the National Grid of the United Kingdom (UK). This model outperforms the SVRLP, the ARMA (autoregressive moving average) and the ANN (artificial neural network) methods when applied to real-world data obtained from National Grid and has been successfully applied to daily gas operations for National Grid. © 2014 Elsevier Ltd.
+KW  - False neighbours
+KW  - Local predictor
+KW  - Natural gas demand
+KW  - Short-term prediction
+KW  - Support vector regression
+KW  - Time series reconstruction
+KW  - Forecasting
+KW  - Gases
+KW  - Natural gas
+KW  - Neural networks
+KW  - Regression analysis
+KW  - Time series
+KW  - False neighbours
+KW  - Local predictor
+KW  - Natural gas demand
+KW  - Short term prediction
+KW  - Support vector regression (SVR)
+KW  - Time series reconstruction
+KW  - Vectors
+KW  - data set
+KW  - energy market
+KW  - natural gas
+KW  - prediction
+KW  - regression analysis
+KW  - time series
+KW  - United Kingdom
+PB  - Elsevier Ltd
+N1  - Cited By :82
+N1  - Export Date: 20 April 2023
+M3  - Article
+DB  - Scopus
+N1  - CODEN: ENEYD
+LA  - English
+N1  - Correspondence Address: Wu, Q.H.; Department of Electrical Engineering and Electronics, United Kingdom
+N1  - References: Parikh, J., Purohit, P., Maitra, P., Demand projections of petroleum products and natural gas in India (2007) Energy Oct, 32 (10), pp. 1825-1837; 
+Wadud, Z., Dey, H.S., Kabir, M.A., Khan, S.I., Modeling and forecasting natural gas demand in Bangladesh (2011) Energy Policy, 39, pp. 7273-7281; 
+Soldo, B., Forecasting natural gas consumption (2012) Appl Energy, 92, pp. 26-37; 
+Almeida, A.T., Lopes, A.C., Carvalho, A., Mariano, J., Jahnd, A., Broeged, M., Examining the potential of natural gas demand-side measures to benefit customers, the distribution utility, and the environment: two case studies from Europe (2004) Energy, 29, pp. 979-1000; 
+http://www.hi-energy.org.uk/Renewables/Why-Renewable-%20Energy/How-electricity-is-generated-in-the-UK.htm, [accessed 07.06.2014]; (2008) Electricity generation and supply figures for Scotland, Wales, Northern Ireland and England, , http://https://www.gov.uk/government/uploads/system/uploads/attachment_data/file/65841/7345-elec-gen-2008-2011-et-%20article.pdf/, [accessed 07.06.2014]; 
+Sarak, H., Satman, A., The degree-day method to estimate the residential heating natural gas consumption in Turkey: a case study (2003) Energy, 28, pp. 929-939; 
+Siemek, J., Nagy, S., Rychlicki, S., Estimation of natural-gas consumption in Poland based on the logistic-curve interpretation (2003) Appl Energy, 75 (1-2), pp. 1-7; 
+Gutierrez, R., Nafidi, A., Sanchez, R.G., Forecasting total natural-gas consumption in Spain by using the stochastic Gompertz innovation diffusion model (2005) Appl Energy, 80 (2), pp. 115-124; 
+Potočnik, P., Thaler, M., Govekar, E., Grabec, I., Poredos, A., Forecasting risks of natural gas consumption in Slovenia (2007) Energy Policy, 35, pp. 4271-4282; 
+Erdogdu, E., Natural gas demand in Turkey (2010) Appl Energy, 87 (1), pp. 211-219; 
+Brown, R.H., Kharouf, P., Feng, X., Piessens, L.P., Nestor, D., Development of feed-forward network models to predict gas consumption (1994) IEEE international conference on neural networks C conference proceedings, 2, pp. 802-805; 
+Brown, R.H., Matin, I., Development of artificial neural network models to predict daily gas consumption (1995) IECON proceedings (industrial electronics conference), 2, pp. 1389-1394; 
+Khotanzad, A., Elragal, H., Natural gas load forecasting with combination of adaptive neural networks (1999) Proceedings of the international joint conference on neural networks, 6, pp. 4069-4072; 
+Khotanzad, A., Elragal, H., Lu, T.L., Combination of artificial neural-network forecasters for prediction of natural gas consumption (2000) IEEE Trans Neural Netw, 11 (2), pp. 464-473; 
+Ivezić, D., Short-term natural gas consumption forecast (2006) FME Trans, 34, pp. 165-169; 
+Azadeh, A., Asadzadeh, S.M., Ghanbari, A., An adaptive network-based fuzzy inference system for short-term natural gas demand estimation: uncertain and complex environments (2010) Energy Policy, 38 (3), pp. 1529-1536; 
+Salahshoor, K., Kordestani, M., Khoshro, M.S., Fault detection and diagnosis of an industrial steam turbine using fusion of SVM (support vector machine) and ANFIS (adaptive neuro-fuzzy inference system) classifiers (2010) Energy, 35 (12), pp. 5472-5482; 
+Zhang, W.Y., Hong, W.C., Dong, Y., Tsai, G., Sung, J.T., Fan, G.F., Application of SVR with chaotic GASA algorithm in cyclic electric load forecasting (2012) Energy, 45, pp. 850-858; 
+Taghavifar, H., Mardani, A., Acomparative trend in forecasting ability of artificial neural networks and regressive support vector machine methodologies for energy dissipation modeling of off-road vehicles (2014) Energy, 66, pp. 569-576; 
+Hong, W.C., Load forecasting by seasonal recurrent SVR (support vector regression) with chaotic artificial bee colony algorithm (2011) Energy, 36, pp. 5568-5578; 
+Lau, K.W., Wu, Q.H., Local prediction of non-linear time series using support vector regression (2008) Pattern Recognit, 41 (5), pp. 1556-1564; 
+Gong, X.F., Lai, C.H., Improvement of local prediction of chaotic time series (1999) Phys Rev E, 60 (5), pp. 5463-5468; 
+Packard, N.H., Cratchfield, J.P., Farmer, J.D., Shaw, R.S., Geomertry from a time series (1980) Phys Rev E, 45 (9), pp. 712-726; 
+Takens, F., (1981) Detecting strange attractors in turbulence. Lecture Notes in Mathematics, 898, pp. 366-381. , Springer; 
+Sauer, T., Yorke, J., Csdagli, M., Embedology (1991) JStat Phys, 65 (3-4), pp. 579-616; 
+Grassberger, P., Procaccia, I., Estimation of the kolmogorov entropy from a chaotic signal (1983) Phys Rev A, 28, pp. 2591-2593; 
+Liebert, W., Schuster, H.G., Proper choice of the time delay for the analysis of chaotic time series (1989) Phys Lett, 142, pp. 107-111; 
+http://marketinformation.natgrid.co.uk/gas/, [accessed 02/05/2014]; Kusiak, A., Zheng, H., Song, Z., Short-term prediction of wind farm power: a data mining approach (2009) IEEE Trans Energy Convers, 24 (1), pp. 125-136; 
+Lora, A.T., Riquelme, J.C., Ramos, J.L.M., Influence of kNN based load forecasting errors on optimal energy production (2003) Lect Notes Comput Sci (Springer Berlin), 2902, pp. 189-203; 
+Sorjamaa, A., Reyhani, N., Lendasse, A., Input and structure selection for k-NN approximator (2005) Lect Notes Comput Sci (Springer Berlin), 3512, pp. 985-992; 
+Elattar, E.E., Goulermas, J.Y., Wu, Q.H., Generalized locally weighted GMDH for short term load forecasting (2012) IEEE Trans Syst Man Cybern Part C: Appl Rev, 42 (3), pp. 345-356
+UR  - https://www.scopus.com/inward/record.uri?eid=2-s2.0-84921433286&doi=10.1016%2fj.energy.2014.11.083&partnerID=40&md5=9bc375fbd1058d801e37d3cc112a4456
+ER  - 
+
+TY  - SER
+TI  - 4th International Conference on Civil Engineering, Architecture and Building Materials, CEABM 2014
+C3  - Applied Mechanics and Materials
+J2  - Appl. Mech. Mater.
+VL  - 587-589
+PY  - 2014
+SN  - 16609336 (ISSN); 9783038351672 (ISBN)
+AB  - The proceedings contain 459 papers. The special focus in this conference is on Structural Engineering, Monitoring and Control of Structures, Structural Rehabilitation, Retrofitting and Strengthening, Reliability and Durability of Structures. The topics include: Analysis on determining factors of regional construction land carbon emissions; based on the land resources reuse under the condition of projects benefit analysis; paradigm analysis and guidance of island commercial settlements - a case study of work-living settlements in zhoushan island; building sustainable communities in China - status and outlook; analysis of landscape space meta-structure in regional settlement; applications of GIS in regional planning; attractiveness of the area in the context of individual housing; fuzzy evaluation method of sustainable development of mining area; residential differentiation research in Guangzhou; the initial study of evaluation system in hot-summer and warm-winter region; management of the investment potential of sustainable development of the city; a survey on development of energy service industry in Zhejiang China; study on urban sustainable development based on system dynamics; the measure index system and evaluation research of new-type urbanization; from disordering center competition to space cooperation; a solar-powered in-vehicle semiconductor refrigeration system; mechanical and thermal properties of liquefied corn bran-based epoxy resins; study on cost of green building based on the life cycle theory; the solar energy-air source heat pump was applied to the hot water system; insulation design for non-heated stairwells of residences in severe cold zones; application of BIM technology on energy efficiency building design; photovoltaic architectural shadow and a case analysis; review on phase change material storage in solar energy application; automated calculation of solar electricity systems in Russia as an example of the Moscow region; the research of test on load-bearing capacity of the new energy-saving panels; energy saving renovation of existing buildings on campus sunshade design; the agglomeration effect of Chinese wind power industry and empirical study; a field study on thermal comfort of traditional metal processing factories; air age equation parameterized by ventilation grouped time; medical space oriented color psychology perception model; numerical research on indoor wind environment of green building; the indoor greening design practices; the determination and analysis of volatile organic compounds in public buildings; reduce haze and improve urban and rural construction; noise influence and prevention treatment of residential buildings near highway; rural community environmental health evaluation empirical study; PCBs in soils around an old electric transformer factory in North China; condition of road infrastructure related with regional development; application of natural zeolites for aquatic and air medium purification; numerical simulation of dissolved oxygen transfer in an aerated pond; development of network pressure-superposed secondary water purification; removal of geosmin by powered activated carbon as an emergency method; information technologies in view of complex solution of waste water problems; discussion of treatment of wastewater and sludge from viscose industry; application and development of artificial floating island technology; a review of research development of ventilated double-skin facade; green building development features in China; diffusion model of atmospheric fine particles PM2.5 under the direction of the wind; optimization and selection of automatic monitoring indicators in beer manufacturing; research of antibiotics pollution in soil environments and theirs biological degradation; study on plant-microbial remediation of antibiotic and heavy metal contaminated soil; the exploration of public participation mechanism in ecological civilization construction; the summarized study of heavy metal pollution in the city soil; marine environment impact analysis and countermeasures on sea water utilization project; simulation of final cover systems in mitigating landfill gas migration; the analysis of the characteristics and the research status of the recycled concrete; a southern highway asphalt pavement analysis and treatment of water damage; study on the bearing capacity test for the saline soil soft ground; the study on a new composite road panel structure; study of static mechanical properties of Aeolian sand; the different pavement structure combination shear stress analyze; acoustic models for dense- and open-graded asphalt pavement; research on evaluation method of asphalt pavement crack treatment; time-domain simulation of high-speed railway track irregularity; evaluation segregation of SMA-13 asphalt pavement by compactness; precast pavement smoothness control method; effect of reinforcing the base of pavement with steel geogrid; experimental study on the reinforcement treatment of saline soil subgrade; key construction technology of porous concrete permeable base; newly-constructed cement concrete pavement crack renovation technique; case study on composite bridge pier construction method; research on maintenance and repair technology of the continuous welded railway in plateau permafrost region; review on nanomodified asphalt; specific study of airport pavement asphalt mixture; study on factors for determination of highway subgrade height; study on the effect of WMA additive to the asphalt technical properties; the application of discrete element method on asphalt mixture; the influence of coarse and fine ratio on ATB asphalt mixture performance; study on water stability improvement of granite asphalt mixture; the fatigue test of railway rail fastener assemblies; research on numerical simulation of roadway deformation under the influence of mining; study on low temperature performance of SBS modified asphalt and its mixture; mechanical properties of wood and timber bridge evaluation; study on the vehicle load of highway bridge based on measured data; application of stress-free status control method in bridge construction control; research status of FRP-concrete composite beam/bridge deck systems; on the development and innovation of modern suspension bridge in China; the application of pushover method in complex bridge seismic design; research on skew coefficient for stresses of skewly supported three-span continuous box girders; design of an experimental prestressed arch pedestrian bridge made of UHPC; dynamic analysis and test validation for continuous girder bridge; impact response spectrum for design of ship-bridge collisions; optimization of cable force of extradosed bridges; practical calculation of cable-stayed arch bridge lateral stability; reliability analysis of half-through concrete-filled steel tubular arch bridge; study on the durability of coastal area bridge; design of an experimental tensegrity pedestrian bridge; transverse ribs affect the stability of steel-concrete composite box beams; simulation analysis on construction of Liangjiang great bridge; research on CWR design on steel-concrete composite beam bridge in alpine region; a new decision support methodology for subway operation management; evaluation model of road network vulnerability and its genetic algorithm solution; the integrated berth and quay crane scheduling problem in container terminals; traffic demand model to study urban agglomeration transportation system; a method of bike sharing demand forecasting; on urban transportation planning in an information society; on urban transportation planning in an information society; study on the bike path width considering the electric bike; adaptive reliable shortest path in discrete stochastic networks; freight vehicles regulatory assistance system based on internet of things; research of cluster supply chain network for its optimal control by SOA technology; research on supply chain network system based on industrial cluster; study on the index system of urban rail transit and bus network integration; optimizing supply and demand in coal logistics networks; research on traffic flow characteristics of urban expressway; analysis of the impact of fog on expressway vehicle speed; traffic speed time series short term forecasting using aggregated model; study of dynamic adjustment to the freeway entrance ramp based on VISSIM; design of a warning system for pedestrians and non-motorized vehicles; research on the calculation model of signal intersection delay; research on applications of grid technology in railway information service; a survey on awareness of traffic signs among youth in Qatar; power quality problems and their monitoring of urban rail transit; security design in Tianjin city expressway entrances and exits; the research on urban rail transit ticket pricing based on system dynamics; an analysis on common overload traffic disease and treatment; Nash equilibrium analysis based on a generalized travel cost; impact analysis of different bus lane layout form to traffic efficiency; application study of green building based on BIM technology; on equilibrium for abstract economies in GFC-spaces; improved global harmony search algorithm for numerical optimization; study on the fitting methods of the polyworks software; the stability analysis for a kind of functional differential equations and analysis on non-center cloud storage architecture of gluster.
+PB  - Trans Tech Publications Ltd
+T2  - 4th International Conference on Civil Engineering, Architecture and Building Materials, CEABM 2014
+Y2  - 24 May 2014 through 25 May 2014
+CY  - Haikou
+N1  - Conference code: 106661
+N1  - Export Date: 20 April 2023
+M3  - Conference Review
+DB  - Scopus
+LA  - English
+A4  - 
+UR  - https://www.scopus.com/inward/record.uri?eid=2-s2.0-84905038100&partnerID=40&md5=b1e237d26f03f84c6ad76cd0c1c95e3f
+ER  - 
+
+TY  - SER
+TI  - 2013 3rd International Conference on Mechatronics and Intelligent Materials, MIM 2013
+C3  - Advanced Materials Research
+J2  - Adv. Mater. Res.
+VL  - 706-708
+PY  - 2013
+SN  - 10226680 (ISSN); 9783037857106 (ISBN)
+AB  - The proceedings contain 466 papers. The special focus in this conference is on Mechatronics and Intelligent Materials. The topics include: Analysis of the wedge tip fillet for central defeats in the process of cross wedge rolling 4Cr9Si2 valve; application of materials studio modeling in crystal structure; applied research of intelligent textile fiber materials; characteristics analysis of plane processing of sapphire corundum crystals; copolymer based on bromobenzene and 3,4-ethylenedioxythiophene; design, materials and processing for the summer Olympic torches; effect of carbon doped in BN on thermodynamic properties; effects of load on the wear behaviors of Cu-based composite under different electrical currents; effects of the mould pressure and mould pressing time on the properties of graphite/phenolic resin composites; elastic properties of rhombus dodecahedron open-cell cellular materials; experimental research of new rotor with variable clearance in mixing the short fiber-rubber composite; fabrication of bioceramic scaffolds for tissue engineering using additive manufacturing technology; hydrogen properties of lithium doped stannic oxide thick film sensors; influence of the temperature on ultimate strength of 93WNiFe alloy; interfacial reactions between Sn-Ag-Cu-Fe composite solder and Cu substrate; material removal property in low energy ion beam etching; YAG laser welding between Ti and PET using pulse shaping; optimization decomposition cast structure in M35 high-speed steel; oxidition resistance of multi-arc ion plating TiN films; parameters study for composites forming infusion from inside and outside at same time; performance of self-lubricant bearing from composite material and its application practice in textiles; prediction of soluble solids content of jujube fruit using hyperspectral reflectance imaging; preparation and microstructure of two kinds of exfoliated graphite; preparation and structure characterization of poly(lactide-co-ethylene carbonate) microspheres; preparation ZnS quantum dots via water-phase synthesis method; press forging forming of stepped holes in thick sheet metal; research on interfacial assembly of some trigonal schiff base amphiphiles in lb films; simulation and optimization of steel casting by sand casting; strain-rate characteristic of the brush plated nanocrystalline Cu; study on aging resistance properties of natural rubber dried by microwave; study on atmospheric pressure plasma processing of fused silica; study on the interaction between a self-assembling peptide and paclitaxe; study on the properties of functional cleancool fiber; study on the yield-thixotropy of waxy crude oil under uniform sweeping rate of share rate; studying status and application prospect of cryogenic treatment on HSS; the color, taste and toxicity of non-ferrous metals; discovery, principle and application; the influence of poly lactic acid's crystalline behavior and the compatibility by poly(ionic liquid); the mechanical properties and hydrophilicity of poly(L-Lactide)/Laponite composite film; the structures and features of atomic defects in Fe-Al alloys; the study and application on injection mold design of side holes plastic parts; tribological properties of PVD CrAlN coating tools; application of new ecological clothing materials in green design for dressing; an effective MECE module as a recycling process for PET diaphragm of digital paper; applying and practicing of MATLAB programing for voronoi tessellation; energy level width of 2DEG in different well in mesoscopic system; a new synthesis method of nanomaterial using diisopropylamine; the principle and applications of colored solar cells; an optimized method for choosing friction stir welding parameters; analysis drive index of A12 oil reservoir; analysis of biological dirt on the sewage-source heat pump exchange surface; press forging forming of the round-fin on heat sink; research and application of warm extrusion forming technology for internal combustion engine piston head; study on the drying mechanism and dynamics of palygorskite; a comparative research on sludge properties under different wastewater quality conditions; comparison of antimony determination methods in drinking water; design and simulation analysis for power plant coal storage bunker girder structure; evaluation of coal floor water inrush risk with five-figure and double-coefficient method; a technique method of recycling cyanide zinc plating waste liquid in the laboratory; study on long-term performance of concrete based on seawater, sea sand and coral sand; the application of glass materials in building design; experiment on mechanical properties of steel fiber concrete under dynamic load; isolation and identification of a cellulolytic bacterium from the huguang maar lake; investigation of entropy and gray theory in coal and gas outburst controlled factors assessment; study on driving fatigue based on ergonomics; the analysis of categories of users in car design; research on emergency plan management system for high-speed railway; operation management of port logistics in the global supply chain; the application status of weapons fault diagnosis technology; system availability test procedure with minimum operating time; study on low frequency load-shedding of substitute district; research on green procurement model based on green supply chain; refined oil repository safety assessment studies; multi-agent technology application in the ASCM model; flight safety assessment of airlines based on analytic hierarchy process; design for energy optimization method based on energy unit; condition-based maintenance and state diagnosis of electric equipment; aviation oil demand combination forecasting based on vectorial angle cosine; a grid flow management system for resource allocation problem; the parametric design and FEA of solidworks based on the VB; study on a MES-based large blast furnace expert system; software tool used for transformer design in autoCAD environment; equipment support training level evaluation method based on ANFIS; design of a scene federate in the proving ground simulation platform; design and implementation of multiple linked lists sharing the same memory; comprehensive assessment method of equipment support exercise; the power spectrum estimation of the AR model based on motor imagery EEG; simulation of A/D conversion with LabView; multi-domain modeling simulation and application based on maplesim; human motion tracking based on B-Spline snake algorithm; a face detection method based on log-Gabor filters; human face detection method based on skin color model; a fast convex hull algorithm of planar point set; an ASP based approach of inter-domain role mapping; study the propeller blade impact on powder mixture; study on thermal performance of a new solar air heating collector; research on HOV space motion mathematical model; loose detecting of tower crane bolts based on time series analysis; harmonic responses of blades with piezoelectric or piezomagnetic coatings; design and analysis of bicycle helmet with impaxx foam liner; bearing fault diagnosis based on wavelet analysis; an integrated numerical model for a PEM fuel cell system; a numerical study of underwater explosion bubble; a comparison of peer-to-peer simulator; a contactless sensing analysis of a CUP wafer and a new intelligent fault recognition method for rotating machinery.
+T2  - 2013 3rd International Conference on Mechatronics and Intelligent Materials, MIM 2013
+Y2  - 18 May 2013 through 19 May 2013
+CY  - XiShuangBanNa
+N1  - Conference code: 97695
+N1  - Export Date: 20 April 2023
+M3  - Conference Review
+DB  - Scopus
+LA  - English
+A4  - Hong Kong Control Engin. and Inform.; Science Research Assoc. (CEIS); Internat. Frontiers of science and; technol. Research Assoc. (IFST); Integrated Research Center for Green Living Techniques; National Chin-Yi University of Technology
+UR  - https://www.scopus.com/inward/record.uri?eid=2-s2.0-84879980333&partnerID=40&md5=0b908503edeea2a1a58b1d1679094908
+ER  - 
+
+TY  - JOUR
+TI  - Forecasting of daily natural gas consumption on regional basis in Turkey using various computational methods
+T2  - Energy and Buildings
+J2  - Energy Build.
+VL  - 56
+SP  - 23
+EP  - 31
+PY  - 2013
+DO  - 10.1016/j.enbuild.2012.10.023
+SN  - 03787788 (ISSN) 
+AU  - Taşpinar, F.
+AU  - Çelebi, N.
+AU  - Tutkun, N.
+AD  - Department of Environmental Engineering, Düzce University, 81620 Düzce, Turkey
+AD  - Department of Industrial Engineering, Istanbul University, 34320 Istanbul, Turkey
+AD  - Department of Electrical and Electronic Engineering, Düzce University, 81620 Düzce, Turkey
+AB  - It is widely accepted that natural gas is a clean energy source that can be used to meet energy demand for heating and industrial purpose among the fossil fuels and its usage remarkably increases in order to maintain a clean environment in many countries in the world. It is fact that this makes energy investment planning in a country or region highly important for suitable economic development as well as environmental aspect. Therefore, energy demand for various sectors should be estimated in the frame of short-term energy policy. For accurate estimation of short-term energy demand a limited number of computational methods are employed by using the 4 yearly measured natural gas consumption values. Among these methods, the ANN and time series are widely used for short-term estimation of natural gas consumption in Turkey's certain regions. In this study, multilayer perceptron the ANNs with time series approach is proposed to forecast short-term natural gas consumption. Meteorological data (moisture, atmospheric pressure, wind speed and ambient temperature) obtained from the regional gas distribution company and the local meteorology office in last 4 years to construct well-tuned algorithm. Although the number of data was small, the proposed algorithm works well to forecast the short-term natural gas consumption and produces encouraging and meaningful outcomes for future energy investment policy. © 2012 Elsevier B.V. All rights reserved.
+KW  - Forecasting methodology
+KW  - Natural gas consumption
+KW  - Neural networks
+KW  - SARIMAX
+KW  - Time series models
+KW  - Accurate estimation
+KW  - Clean energy sources
+KW  - Clean environment
+KW  - Economic development
+KW  - Energy demands
+KW  - Energy investments
+KW  - Environmental aspects
+KW  - Future energies
+KW  - Gas distribution company
+KW  - Meteorological data
+KW  - Multi layer perceptron
+KW  - Natural gas consumption
+KW  - Number of datum
+KW  - SARIMAX
+KW  - Time series models
+KW  - Wind speed
+KW  - Algorithms
+KW  - Atmospheric pressure
+KW  - Computational methods
+KW  - Energy management
+KW  - Energy policy
+KW  - Forecasting
+KW  - Fossil fuels
+KW  - Investments
+KW  - Meteorology
+KW  - Neural networks
+KW  - Risk assessment
+KW  - Time series
+KW  - Natural gas
+N1  - Cited By :99
+N1  - Export Date: 20 April 2023
+M3  - Article
+DB  - Scopus
+N1  - CODEN: ENEBD
+LA  - English
+N1  - Correspondence Address: Çelebi, N.; Department of Industrial Engineering, , 34320 Istanbul, Turkey; email: ncelebi@istanbul.edu.tr
+N1  - References: Yumurtaci, Z., Asmaz, E., Electric energy demand of turkey for the year 2050 (2004) Energy Sources, 26 (12), pp. 1157-1164; 
+Akay, D., Atak, M., Grey prediction with rolling mechanism for electricity demand forecasting of Turkey (2007) Energy, 32 (9), pp. 1670-1675; 
+Ceylan, H., Ceylan, H., Haldenbilen, S., Baskan, O., Transport energy modeling with meta-heuristic harmony search algorithm, an application to Turkey (2008) Energy Policy, 36 (7), pp. 2527-2535; 
+Öztürk, H.K., Ceylan, H., Canyurt, O.E., Hepbasli, A., Electricity estimation using genetic algorithm approach: A case study of Turkey (2005) Energy, 30, pp. 1003-1012; 
+Öztürk, H.K., Canyurt, O.E., Hepbasli, A., Utlu, Z., Residential-commercial energy input estimation based on genetic algorithm approaches: An application of Turkey (2004) Energy and Buildings, 36, pp. 175-183; 
+Kavaklioǧlu, K., Ceylan, H., Öztürk, H.K., Canyurt, O.E., Modeling and prediction of Turkey's electricity consumption using artificial neural networks (2009) Energy Conversion and Management, 50, pp. 2719-2727; 
+Toksari, M.D., Ant colony optimization approach to estimate energy demand of Turkey (2007) Energy Policy, 35, pp. 3984-3990; 
+Kilic, A.M., Turkey's natural gas necessity, consumption and future perspectives (2006) Energy Policy, 34, pp. 1928-1934; 
+Durmayaz, A., Kadoglu, M., En, Z., An application of the degree-hours method to estimate the residential heating energy requirement and fuel consumption in Istanbul (2000) Energy, 25 (12), pp. 1245-1256; 
+Gumrah, F., Katircioglu, D., Aykan, Y., Okumus, S., Kilincer, N., Modelling of gas demand using degree day concept: Case study of Ankara (2001) Energy Sources, 23, pp. 101-114; 
+Sarak, H., Satman, A., The degree-day method to estimate the residential heating natural gas consumption in Turkey: A case study (2003) Energy, 28, pp. 929-939; 
+Gorucu, F.B., Geris, P.U., Gumrah, F., Artificial neural networks modeling for forecasting gas consumption (2004) Energy Sources, 26, pp. 299-307; 
+Gorucu, F.B., Gumrah, F., Evaluation and forecasting of gas consumption by statistical analysis (2004) Energy Sources, 26 (3), pp. 267-276; 
+Demirel, O.F., Zaim, S., Caliskan, A., Ozuyar, P., Forecasting natural gas consumption in Istanbul using neural networks and multivariate time series methods (2012) Turkish Journal of Electrical Engineering & Computer Sciences, 20 (5), pp. 695-711; 
+Aras, H., Aras, N., Forecasting residential natural gas demand (2004) Energy Sources, 26 (5), pp. 463-472; 
+Erdogdu, E., Natural gas demand in Turkey (2010) Applied Energy, 87 (1), pp. 211-219; 
+Toksari, M., Predicting the natural gas demand based on economic indicators - Case of Turkey (2010) Energy Sources, Part A: Recovery, Utilization, and Environmental Effects, 32 (6), pp. 559-566; 
+Aras, N., Forecasting residential consumption of natural gas using genetic algorithms (2008) Energy Exploration and Exploitation, 26 (4), pp. 241-266; 
+Kizilaslan, R., Karlik, B., Combination of neural networks forecasters for monthly natural gas consumption prediction (2009) Neural Network World, 19 (2), pp. 191-199; 
+Isik, C., Natural gas consumption and economic growth in Turkey: A bound test approach (2010) Energy System, 1, pp. 441-456; 
+Li, J., Dong, X., Shangguan, J., Hook, M., Forecasting the growth of China's natural gas consumption (2011) Energy, 36, pp. 1380-1385; 
+Iranmanesh, H., Abdollazade, M., Miranian, A., Forecasting natural gas consumption using PSO optimized least squares support vector machines, i (2011) Journal of Artificial Intelligence and Applications (IJAIA), 2 (4); 
+Forouzanfer, M., Doustmohammadi, A., Menjah, M.B., Hasanzadeh, S., Modeling and estimation of natural gas consumption for residential and commercial sectors in Iran (2010) Applied Energy, 87, pp. 268-274; 
+Tavakoli, E., Montazerin, N., Stochastic analysis of natural gas consumption in residential and commercial buildings (2011) Energy and Buildings, 43, pp. 2289-2297; 
+Wadud, Z., Dey, H.S., Kabir, A.Md., Khan, S.I., Modeling and forecasting natural gas demand in Bangladesh (2011) Energy Policy, 39, pp. 7372-7380; 
+Wei, W.S.W., (2006) Time Series Analysis: Univariate and Multivariate Methods, , second ed. 978-0321322166; 
+Box, G.E.P., Jenkins, M.G., (1976) Time Series Analysis Forecasting and Control, , Holden Day San Francisco, CA; 
+Cryer, J.D., Chan, K.S., (2008) Time Series Analysis with Applications in R, , second ed. Springer; 
+Box, G.E.P., Jenkins, G.M., Reinsel, G.C., (2008) Time Series Analysis, Forecasting and Control, , fourth ed. Wiley; 
+Murat, Y.S., Ceylan, H., Use of artificial neural networks for transport energy demand modeling (2006) Energy Policy, 34, pp. 3165-3172; 
+Foody, G.M., Supervised image classification by MLP and RBF neural networks with and without an exhaustively defined set of classes (2004) International Journal of Remote Sensing, 25 (15), pp. 3091-3104; 
+Bishop, C.M., (1995) Neural Networks for Pattern Recognition, , Clarendon Press Oxford
+UR  - https://www.scopus.com/inward/record.uri?eid=2-s2.0-84870677450&doi=10.1016%2fj.enbuild.2012.10.023&partnerID=40&md5=635443257cc427de15441ae209211130
+ER  - 
+
+TY  - CONF
+TI  - Short-range multivariate process prediction for use in automatized systems
+C3  - Society of Petroleum Engineers - Fall Meeting of the Society of Petroleum Engineers of AIME, FM 1969
+J2  - Soc. Pet. Eng. - Fall Meet. Soc. Pet. Eng. AIME, FM
+PY  - 1969
+DO  - 10.2118/2630-ms
+SN  - 9781555638160 (ISBN)
+AU  - Durrer, J.
+AU  - Somerton, W.H.
+AU  - Mueller, T.D.
+AD  - U.of California, Berkeley, United States
+AD  - Standard Oil Co. of California, United States
+AB  - Automatic process control requires the maximum amount of information about the future beha-vior of parameters that affect the regulated system. For a particular set of processes, formal mathematical relationships describing this behavior can be established. However, certain processes cannot be described by formal relationships and their analyses must be based on statistical evaluation of their past histories. In the particular case of multivariate processes, regres sion and time series analyses are the two most powerful tools which can be utilized to describe their behavior and to project this behavior into the future. The above techniques were studied using data from a small natural gas distribution system. The natural gas demand for space heating and the prevailing meteorological conditions were recorded hourly for a group of lk residential homes in Northern California for over a year's time. Statistical evaluation of the data included study of the correlations of precipitation, wind velocity and direction, radiation, relative humidity, and temperature with demand. Temperature and relative humidity showed the best correlation with demand. Stepwise regressional analysis applied to the parameters and various combinations of them revealed that mean values or gradients, predominantly of temperature conditions, are needed in order to stabilize the system and to obtain reasonable predictions. However, due to the averaging propensity of regressional analyses, peak demands are not well predicted. This difficulty is minimized if one uses methods of time series analysis. Various methods for detrending and elimination of periodicities were checked in order to obtain stationary series to which autoregressive spectral analysis can be applied. Linear filters seem to be simple and yet are as powerful as more complicated ones. Of the three algorithms (matrix defactorization and the autoregressive schemes of Hingorani and of Robinson) tested for spectral analytic predictions, Robinson's proved to be the most efficient. This algorithm also has the advantage that, in additior to better accuracy than the regressional analysis, only a relatively short record length is necessary Therefore, for example, no corrections for population growth in the demand are needed. In the present application it was concluded that the greater accuracy of the Robinson algorithm far outweighs the additional costs incurred by the lengthier computations and greate: complexity of the method over regression analysis Better and more complete data and improved weathei forecasting techniques will be required for direct application of the method to automatic control. © Copyright 1969 American Institute of Mining, Metallurgical, and Petroleum Engineers, Inc.
+KW  - Automation
+KW  - Engineers
+KW  - Forecasting
+KW  - Gasoline
+KW  - Harmonic analysis
+KW  - Natural gas
+KW  - Population statistics
+KW  - Regression analysis
+KW  - Spectrum analysis
+KW  - Time series analysis
+KW  - Automatic process control
+KW  - Forecasting techniques
+KW  - Mathematical relationship
+KW  - Meteorological condition
+KW  - Natural gas distribution system
+KW  - Statistical evaluation
+KW  - Temperature and relative humidity
+KW  - Wind velocity and direction
+KW  - Process control
+PB  - Society of Petroleum Engineers
+T2  - 44th Annual Fall Meeting of the Society of Petroleum Engineers of AIME, FM 1969
+Y2  - 28 September 1969 through 1 October 1969
+N1  - Conference code: 141277
+N1  - Export Date: 20 April 2023
+M3  - Conference Paper
+DB  - Scopus
+LA  - English
+N1  - Funding text 1: The primary author gratefully acknowledges the financial support provided by the Jane Lewis Fellowship Program and by Tenneco Oil Company iuring the period of this research.
+UR  - https://www.scopus.com/inward/record.uri?eid=2-s2.0-85088772725&doi=10.2118%2f2630-ms&partnerID=40&md5=ad5974fc1b97106b0d038e33e1c511d9
+ER  - 
+
