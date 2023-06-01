@@ -1,0 +1,323 @@
+---
+title: "Series_de_Tiempo_Segundo_Parcial_v1"
+author: "Sergibar"
+date: "2023-06-01"
+output: html_document
+---
+
+
+
+# Universidad Nacional Autónoma de México 
+# Posgrado en Ingeniería de Sistemas 
+# Series de tiempo Dr. Wulfrano Gomez Gallardo 
+# Segundo Parcial: Aplicaicón de métodos ARIMA / SARIMA para pronóstico de series de tiempo (3 casos aplicativos)
+
+
+# Serie de tiempo 1 SIN tendencia y SIN estacionalidad: Historico anual Accidentes terrestres en México
+
+Tenemos data anual desde 2005 a 2021 sobre el número de accidentes terrestres que ha habido en México, son 22 datos en total. 
+La idea es usar 19 de esos 22 como una especie de "data de entrenamiento" para aplicar los modelos A) ARIMA y B) SARIMA para posteriormente predecir con cada modelo los valores de los 3 años restantes y poder comparar contra los reales e identificar el mejor modelo entre los dos mencionados para modelar los accidentes terrestres en México 
+
+
+
+Primero importamos la data de Accidentes terrestres en MEX
+Data obtenida de la página oficial del INEGI:  https://www.inegi.org.mx/temas/accidentes/
+
+```{r}
+library("readxl")
+
+
+Accidentes_transito_MEX <-read_excel("Accidentes_transito_pp_.xlsx")
+```
+
+
+Revisamos que la data de Accidentes_transitos MEX se haya importado correctamente 
+```{r}
+Accidentes_transito_MEX
+summary(Accidentes_transito_MEX)
+typeof(Accidentes_transito_MEX)
+dim(Accidentes_transito_MEX)
+```
+
+
+
+
+
+
+
+
+#### Convertimos los concentracion_datos_original a Serie de tiempo 
+
+Al observar la data se determina que existe una especie de estacionalidad que se repite cada 12 meses 
+
+```{r}
+
+concentracion_datos_original_ts<- ts(concentracion_datos_original$CONCEN, frequency = 12)
+head(concentracion_datos_original_ts)
+typeof(concentracion_datos_original_ts)
+
+```
+
+
+Graficamos la serie del tiempo
+```{r}
+plot(concentracion_datos_original_ts, col = "violet", main = "Colorado Data_original")
+
+```
+
+
+
+### Vamos a descomponer la data usando el metodo decompose para entender sus compoentes de tren, seasonalidad y aleatorio
+
+```{r}
+concentracion_datos_original_ts_decompose <- decompose(concentracion_datos_original_ts)
+summary(concentracion_datos_original_ts_decompose)
+```
+
+Vamos a plotear la desmposición 
+
+```{r}
+plot(concentracion_datos_original_ts_decompose)
+```
+
+
+
+
+
+### Analicemos los valores de la variable y 
+
+```{r}
+hist(concentracion_datos_original_ts)
+```
+
+
+
+```{r}
+summary(concentracion_datos_original_ts)
+```
+
+
+Se observa que la gran mayoria de los valores de la variable y están en el intervalo de [335,345] y que la variable puede seguir una distribución más o menos normal 
+
+
+
+#### Separamos el concentracion_datos_original_ts en data sets train y test
+
+Se tienen 600 datos mensuales, por lo que el train serpa de 576 datos, para que el test sea de 24 datos o 2 años 
+
+```{r}
+
+# Split the data into training and testing sets
+
+
+# Subset the data to keep rows from the beginning until train_end and all columns
+concentracion_datos_original_ts_train <- concentracion_datos_original_ts[1:144]
+head(concentracion_datos_original_ts_train)
+tail(concentracion_datos_original_ts_train)
+
+
+```
+
+
+
+```{r}
+# Subset the data to keep rows from the beginning until train_end and all columns
+
+
+concentracion_datos_original_ts_test <- concentracion_datos_original_ts[145:154]
+head(concentracion_datos_original_ts_test)
+tail(concentracion_datos_original_ts_test)
+
+
+```
+
+
+
+
+## Modelo SARIMA para Datos_original
+
+
+#### Determinación de ACF & PACF para el caso de la colorado_data_original (SIN ESTACIONALIZAR)
+
+```{r}
+#install.packages("forecast")
+library(forecast)
+
+#par(mfrow=c(2,1))
+
+acf_concentracion_datos_original_ts_sin_diferenciar <- Acf(concentracion_datos_original_ts, lag.max = 100, ci.type = "ma")
+acf_concentracion_datos_original_ts_sin_diferenciar
+
+
+pacf_datos_concentracion_original_ts_sin_diferenciar <- Pacf(concentracion_datos_original_ts, lag.max = 100, ci.type = "ma")
+pacf_datos_concentracion_original_ts_sin_diferenciar
+
+```
+
+La función ACF de la serie colorado, nos muestra claramente una forma de decaimiento constante. Hagamos una prueba de estacionariedad 
+
+
+
+#### Se lleva a cabo el tet de Dickey-Fulley (Ho: Serie no estacionaria) a la serie de datos_original <sin diferenciar>
+
+```{r}
+# Install and load the "urca" package
+#install.packages("urca")
+library(urca)
+
+# Perform ADF test for stationarity
+adf_test_datos_concentracion_original_ts <- ur.df(concentracion_datos_original_ts)
+
+# Print the ADF test results
+summary(adf_test_datos_concentracion_original_ts)
+
+```
+Se observa como el valor p de la prueva DF de estacioriedad fue menor a 0.05 por lo tanto se rechaza Ho que indicaba que la serie no era estacionaria y se acepta H1 
+
+
+
+
+
+#### Vamos a diferenciar la serie de datos_orignal 'para hacerlo estacionaria'
+
+```{r}
+# Calculate the difference between consecutive elements
+datos_concentracion_original_ts_diferencia1 <- diff(concentracion_datos_original_ts, differences = 1)
+
+# Print the results
+print(datos_concentracion_original_ts_diferencia1)
+
+```
+
+
+
+#### ACF & PACF para los datos_original con 1 diferencia  'estacionariazada'
+
+
+```{r}
+library(forecast)
+
+#par(mfrow=c(2,1))
+
+acf_datos_concentracion_original_ts_diferencia1 <- Acf(datos_concentracion_original_ts_diferencia1, lag.max = 100, ci.type = "ma")
+acf_datos_concentracion_original_ts_diferencia1
+
+
+pacf_datos_concentracion_original_ts_diferencia1 <- Pacf(datos_concentracion_original_ts_diferencia1, lag.max = 100, ci.type = "ma")
+pacf_datos_concentracion_original_ts_diferencia1
+```
+
+
+La diferenciación de la seria ayudó a hacerla estacionaria y además a que se puediera disntinguir tanto los valores significativos para la parte MA del ARIMA, como la estacionalidad marcada cada 12 meses 
+
+
+
+Con base en las gráficas de ACF y PACF se decide probar un modleo ARIMA (2,1,1)
+
+
+#### Ajustae y predicicon de Demanda_electrico con modelo ARIMA 
+
+
+```{r}
+#install.packages("astsa")
+library(astsa)
+
+# Fit the SARIMA model
+ARIMA_2_1_1_concentracion_datos_original <- astsa::sarima(concentracion_datos_original_ts_train , p=2, d=1, q=1)
+
+# Print the model summary
+summary(ARIMA_2_1_1_concentracion_datos_original)
+
+```
+En general se observa para el modelo ARIMA_2_1_1_concentracion_datos_original: 
+
+Los errores estandarizados tienen un compartiempo aprorximadamente normal con media cero 
+Los errores estandarizados no tiene una correlación signifcativa
+
+
+#### Calculo de predicción del ARIMA para los datos_original
+
+```{r}
+
+# Get the predictors
+
+
+pred_ARIMA_2_1_1_concentracion_datos_original <- sarima.for(concentracion_datos_original_ts_train, n.ahead=9,2,1,1)
+pred_ARIMA_2_1_1_concentracion_datos_original
+
+
+```
+
+
+
+
+```{r}
+pred_ARIMA_2_1_1_concentracion_datos_original$pred
+```
+
+
+
+
+#### Calculo de errores del modelo ARIMA para los datos_original
+
+```{r}
+accuracy(concentracion_datos_original_ts_test ,pred_ARIMA_2_1_1_concentracion_datos_original$pred )
+```
+
+El MAPE del modelo ARIMA 2,1,1 es muy bueno aún, aunque ligeramente mayor que el modelo lineal generalizado simple 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Serie de tiempo 2 CON tendencia y SIN estacionalidad: Historico trimestral de Población Económicamente Activa (PEA) en México
+
+Tenemos data trimestral de Enero de 2005 a Agosto de 2022 sobre la Población Económicamente activa en México, son 72 datos en total. 
+La idea es usar 66 de esos 72 como una especie de "data de entrenamiento" para aplicar los modelos A) ARIMA y B) SARIMA para posteriormente predecir con cada modelo los valores de los 3 años restantes y poder comparar contra los reales e identificar el mejor modelo entre los dos mencionados para modelar La Poblacion económicamente activa en México 
+
+
+Primero importamos la data de PEA en MEX
+Data obtenida de la página oficial del INEGI:  https://www.inegi.org.mx/temas/empleo/
+
+```{r}
+
+library("readxl")
+
+PEA_mex <-read_excel("PEA_MEX_pp.xlsx")
+```
+
+
+Revisamos que la data de nacimientos MEX sehay importado correctamente 
+```{r}
+head(PEA_mex)
+summary(PEA_mex)
+typeof(PEA_mex)
+dim(PEA_mex)
+```
+
+
+
+
+
+# Serie de tiempo 3 CON tendencia y CON estacionalidad (Historico mensual de Demanda de Gas Natural para el sector eléctrico en México)
+
+Tenemos data mensual de Enero de 2005 a Agosto de 2022 sobre la demanda de gas natural para el sector eléctrico en México, son 213 datos en total. 
+La idea es usar 201 de esos 2013 como una especie de "data de entreaniemto" para aplicar los modelos  A) ARIMA y B) SARIMA para posteriormente predecir con cada modelo los valores de los 3 años restantes y poder comparar contra los reales e identificar el mejor modelo entre los dos mencionados para modelar demanda de gas natural en el sector eléctrico en México 
+
+
+
+
+
+
+
