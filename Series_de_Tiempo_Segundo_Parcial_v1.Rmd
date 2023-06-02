@@ -27,7 +27,7 @@ Data obtenida de la página oficial del INEGI:  https://www.inegi.org.mx/temas/a
 library("readxl")
 
 
-Accidentes_transito_MEX <-read_excel("Accidentes_transito_pp_.xlsx")
+Accidentes_transito_MEX <-read_excel("Accidentes_transito_full_.xlsx")
 ```
 
 
@@ -46,64 +46,46 @@ dim(Accidentes_transito_MEX)
 
 
 
-#### Convertimos los concentracion_datos_original a Serie de tiempo 
+#### Convertimos los data importada a Serie de tiempo
 
-Al observar la data se determina que existe una especie de estacionalidad que se repite cada 12 meses 
 
 ```{r}
 
-concentracion_datos_original_ts<- ts(concentracion_datos_original$CONCEN, frequency = 12)
-head(concentracion_datos_original_ts)
-typeof(concentracion_datos_original_ts)
+Accidentes_transito_MEX_ts<- ts(Accidentes_transito_MEX$Num, frequency = 1)
+head(Accidentes_transito_MEX_ts)
+typeof(Accidentes_transito_MEX_ts)
 
 ```
 
 
 Graficamos la serie del tiempo
 ```{r}
-plot(concentracion_datos_original_ts, col = "violet", main = "Colorado Data_original")
+plot(Accidentes_transito_MEX_ts, col = "red", main = "Data histoirca anual de accidentes de transito en México de 2005 a 2021", ylab="Número de accidentes")
 
 ```
-
-
-
-### Vamos a descomponer la data usando el metodo decompose para entender sus compoentes de tren, seasonalidad y aleatorio
-
-```{r}
-concentracion_datos_original_ts_decompose <- decompose(concentracion_datos_original_ts)
-summary(concentracion_datos_original_ts_decompose)
-```
-
-Vamos a plotear la desmposición 
-
-```{r}
-plot(concentracion_datos_original_ts_decompose)
-```
-
-
 
 
 
 ### Analicemos los valores de la variable y 
 
 ```{r}
-hist(concentracion_datos_original_ts)
+hist(Accidentes_transito_MEX_ts)
 ```
 
 
 
 ```{r}
-summary(concentracion_datos_original_ts)
+summary(Accidentes_transito_MEX_ts)
 ```
 
 
-Se observa que la gran mayoria de los valores de la variable y están en el intervalo de [335,345] y que la variable puede seguir una distribución más o menos normal 
+Se observa que la gran mayoria de los valores de la variable y están en el intervalo de [350,000,400,000] y que la variable puede seguir una distribución con "skewness" hacia la cola derecha  
 
 
 
-#### Separamos el concentracion_datos_original_ts en data sets train y test
+#### Separamos el en data sets train y test
 
-Se tienen 600 datos mensuales, por lo que el train serpa de 576 datos, para que el test sea de 24 datos o 2 años 
+Se tienen 22 datos, por lo que el train será de 19 datos, para que el test sea de 3 datos o 3 años 
 
 ```{r}
 
@@ -111,9 +93,9 @@ Se tienen 600 datos mensuales, por lo que el train serpa de 576 datos, para que 
 
 
 # Subset the data to keep rows from the beginning until train_end and all columns
-concentracion_datos_original_ts_train <- concentracion_datos_original_ts[1:144]
-head(concentracion_datos_original_ts_train)
-tail(concentracion_datos_original_ts_train)
+Accidentes_transito_MEX_ts_train <- Accidentes_transito_MEX_ts[1:19]
+head(Accidentes_transito_MEX_ts_train)
+tail(Accidentes_transito_MEX_ts_train)
 
 
 ```
@@ -124,20 +106,20 @@ tail(concentracion_datos_original_ts_train)
 # Subset the data to keep rows from the beginning until train_end and all columns
 
 
-concentracion_datos_original_ts_test <- concentracion_datos_original_ts[145:154]
-head(concentracion_datos_original_ts_test)
-tail(concentracion_datos_original_ts_test)
-
+# Subset the data to keep rows from the beginning until train_end and all columns
+Accidentes_transito_MEX_ts_test <- Accidentes_transito_MEX_ts[20:22]
+head(Accidentes_transito_MEX_ts_test)
+tail(Accidentes_transito_MEX_ts_test)
 
 ```
 
 
 
 
-## Modelo SARIMA para Datos_original
+## Modelo SARIMA para Serie 1 (Accidentes terrestres en México)
 
 
-#### Determinación de ACF & PACF para el caso de la colorado_data_original (SIN ESTACIONALIZAR)
+#### Determinación de ACF & PACF para el caso de la serie 1 (Accidentes transitos Mex) sin diferneciar 
 
 ```{r}
 #install.packages("forecast")
@@ -145,20 +127,20 @@ library(forecast)
 
 #par(mfrow=c(2,1))
 
-acf_concentracion_datos_original_ts_sin_diferenciar <- Acf(concentracion_datos_original_ts, lag.max = 100, ci.type = "ma")
-acf_concentracion_datos_original_ts_sin_diferenciar
+acf_Accidentes_transito_MEX_ts_sin_diferenciar <- Acf(Accidentes_transito_MEX_ts, lag.max = 100, ci.type = "ma")
+acf_Accidentes_transito_MEX_ts_sin_diferenciar
 
 
-pacf_datos_concentracion_original_ts_sin_diferenciar <- Pacf(concentracion_datos_original_ts, lag.max = 100, ci.type = "ma")
-pacf_datos_concentracion_original_ts_sin_diferenciar
+pacf_Accidentes_transito_MEX_ts_sin_diferenciar <- Pacf(Accidentes_transito_MEX_ts, lag.max = 100, ci.type = "ma")
+pacf_Accidentes_transito_MEX_ts_sin_diferenciar
 
 ```
 
-La función ACF de la serie colorado, nos muestra claramente una forma de decaimiento constante. Hagamos una prueba de estacionariedad 
+La función ACF de la serie, nos refleja la forma 'original' de la serie donde los primeros años hay una tendencia  creciente y posteriormente una decreciente. El hecho de que la serie muestra varios valores significativos en el pasado sugiere que No es una serie estacionaria, para estar 100% seguros heremos un test de Dickey-Fuller  
 
 
 
-#### Se lleva a cabo el tet de Dickey-Fulley (Ho: Serie no estacionaria) a la serie de datos_original <sin diferenciar>
+#### Se lleva a cabo el tet de Dickey-Fulley (Ho: Serie no estacionaria) de la serie 1 (Accidentes transitos Mex)  <sin diferenciar>
 
 ```{r}
 # Install and load the "urca" package
@@ -166,32 +148,32 @@ La función ACF de la serie colorado, nos muestra claramente una forma de decaim
 library(urca)
 
 # Perform ADF test for stationarity
-adf_test_datos_concentracion_original_ts <- ur.df(concentracion_datos_original_ts)
+acf_test_Accidentes_transito_MEX_ts_sin_diferenciar <- ur.df(Accidentes_transito_MEX_ts)
 
 # Print the ADF test results
-summary(adf_test_datos_concentracion_original_ts)
+summary(adf_test_Accidentes_transito_MEX_ts_sin_diferenciar)
 
 ```
-Se observa como el valor p de la prueva DF de estacioriedad fue menor a 0.05 por lo tanto se rechaza Ho que indicaba que la serie no era estacionaria y se acepta H1 
+Se observa como el valor p de la prueba DF de estacionariedad p> 0.05 por lo tanto NO se rechaza Ho que indica que la serie no es estacionaria. 
 
 
-
+Para intentar "hacer estacionaria la serie vamos a tomar la primer diferencia de Yt con Yt-1"
 
 
 #### Vamos a diferenciar la serie de datos_orignal 'para hacerlo estacionaria'
 
 ```{r}
 # Calculate the difference between consecutive elements
-datos_concentracion_original_ts_diferencia1 <- diff(concentracion_datos_original_ts, differences = 1)
+Accidentes_transito_MEX_ts_diferencia1 <- diff(Accidentes_transito_MEX_ts, differences = 1)
 
 # Print the results
-print(datos_concentracion_original_ts_diferencia1)
+print(Accidentes_transito_MEX_ts_diferencia1)
 
 ```
 
 
 
-#### ACF & PACF para los datos_original con 1 diferencia  'estacionariazada'
+#### ACF & PACF para los la serie 1 (Accidentes transitos Mex) diferencia1  'estacionariazada'
 
 
 ```{r}
@@ -199,23 +181,39 @@ library(forecast)
 
 #par(mfrow=c(2,1))
 
-acf_datos_concentracion_original_ts_diferencia1 <- Acf(datos_concentracion_original_ts_diferencia1, lag.max = 100, ci.type = "ma")
-acf_datos_concentracion_original_ts_diferencia1
+acf_test_Accidentes_transito_MEX_ts_diferencia1 <- Acf(Accidentes_transito_MEX_ts_diferencia1, lag.max = 100, ci.type = "ma")
+acf_test_Accidentes_transito_MEX_ts_diferencia1
 
 
-pacf_datos_concentracion_original_ts_diferencia1 <- Pacf(datos_concentracion_original_ts_diferencia1, lag.max = 100, ci.type = "ma")
-pacf_datos_concentracion_original_ts_diferencia1
+pacf_test_Accidentes_transito_MEX_ts_diferencia1 <- Pacf(Accidentes_transito_MEX_ts_diferencia1, lag.max = 100, ci.type = "ma")
+pacf_test_Accidentes_transito_MEX_ts_diferencia1
 ```
 
 
-La diferenciación de la seria ayudó a hacerla estacionaria y además a que se puediera disntinguir tanto los valores significativos para la parte MA del ARIMA, como la estacionalidad marcada cada 12 meses 
+Todo indica que la primer diferenciación de la seria ayudó a hacerla estacionaria. Se hace nuevamente una prueba de Dickey-Fulley para verificar estacionariedad 
 
 
+#### Se lleva a cabo el tet de Dickey-Fulley (Ho: Serie no estacionaria) a la serie 1  <diferenciar 1>
 
-Con base en las gráficas de ACF y PACF se decide probar un modleo ARIMA (2,1,1)
+```{r}
+# Install and load the "urca" package
+#install.packages("urca")
+library(urca)
+
+# Perform ADF test for stationarity
+acf_test_Accidentes_transito_MEX_ts_diferencia1 <- ur.df(Accidentes_transito_MEX_ts_diferencia1)
+
+# Print the ADF test results
+summary(acf_test_Accidentes_transito_MEX_ts_diferencia1)
+
+```
+Con un valor de p<0.05 se comprueba que la serie con 1 diferencia ya es estacionaria. 
 
 
-#### Ajustae y predicicon de Demanda_electrico con modelo ARIMA 
+Con base en las gráficas de ACF y PACF se decide probar un modleo ARIMA (1,1,1)
+
+
+#### Ajustae y predicicon de para serie 1 (Accidentes transitos Mex) con modelo ARIMA 
 
 
 ```{r}
@@ -223,27 +221,27 @@ Con base en las gráficas de ACF y PACF se decide probar un modleo ARIMA (2,1,1)
 library(astsa)
 
 # Fit the SARIMA model
-ARIMA_2_1_1_concentracion_datos_original <- astsa::sarima(concentracion_datos_original_ts_train , p=2, d=1, q=1)
+ARIMA_1_1_1_Accidentes_transito_Mex <- astsa::sarima(Accidentes_transito_MEX_ts_train , p=1, d=1, q=1)
 
 # Print the model summary
-summary(ARIMA_2_1_1_concentracion_datos_original)
+summary(ARIMA_1_1_1_Accidentes_transito_Mex)
 
 ```
-En general se observa para el modelo ARIMA_2_1_1_concentracion_datos_original: 
+En general se observa para el modelo ARIMA_1_1_1_Accodentes_transito_Mex: 
 
 Los errores estandarizados tienen un compartiempo aprorximadamente normal con media cero 
 Los errores estandarizados no tiene una correlación signifcativa
 
 
-#### Calculo de predicción del ARIMA para los datos_original
+#### Calculo de predicción del ARIMA para serie 1 (Accidentes transitos Mex)
 
 ```{r}
 
 # Get the predictors
 
 
-pred_ARIMA_2_1_1_concentracion_datos_original <- sarima.for(concentracion_datos_original_ts_train, n.ahead=9,2,1,1)
-pred_ARIMA_2_1_1_concentracion_datos_original
+pred_ARIMA_1_1_1_Accidentes_transito_Mex <- sarima.for(Accidentes_transito_MEX_ts_train, n.ahead=3,1,1,1)
+pred_ARIMA_1_1_1_Accidentes_transito_Mex
 
 
 ```
@@ -252,28 +250,69 @@ pred_ARIMA_2_1_1_concentracion_datos_original
 
 
 ```{r}
-pred_ARIMA_2_1_1_concentracion_datos_original$pred
+pred_ARIMA_1_1_1_Accidentes_transito_Mex$pred
 ```
 
 
 
 
-#### Calculo de errores del modelo ARIMA para los datos_original
+#### Calculo de errores del modelo ARIMA para serie 1 (Accidentes transitos Mex)
 
 ```{r}
-accuracy(concentracion_datos_original_ts_test ,pred_ARIMA_2_1_1_concentracion_datos_original$pred )
+accuracy(Accidentes_transito_MEX_ts_test ,pred_ARIMA_1_1_1_Accidentes_transito_Mex$pred )
 ```
 
-El MAPE del modelo ARIMA 2,1,1 es muy bueno aún, aunque ligeramente mayor que el modelo lineal generalizado simple 
+El MAPE del modelo ARIMA 1,1,1 es de ~5.3% 
 
 
 
 
+#### Ajustae y predicicon con modelo SARIMA para serie 1 (Accidentes transitos Mex) 
+
+
+```{r}
+#install.packages("astsa")
+library(astsa)
+
+# Fit the SARIMA model
+SARIMA_Accidentes_transito_Mex <- Arima(Accidentes_transito_MEX_ts_train, order = c(1, 1, 1), seasonal = list(order = c(1, 0, 0), period = 1))
+
+# Print the model summary
+summary(SARIMA_Accidentes_transito_Mex)
+
+```
+
+
+#### Calculo de predicción del SARIMA para serie 1 (Accidentes transitos Mex) 
+
+```{r}
+
+# Get the predictors
+
+
+pred_SARIMA_Accidentes_transito_Mex <- forecast(SARIMA_Accidentes_transito_Mex, h = 3)
+pred_SARIMA_Accidentes_transito_Mex
+
+
+```
 
 
 
 
+```{r}
+pred_SARIMA_Accidentes_transito_Mex$mean
+```
 
+
+
+
+#### Calculo de errores del modelo SARIMA para serie 1 (Accidentes transitos Mex) 
+
+```{r}
+accuracy(Accidentes_transito_MEX_ts_test ,pred_SARIMA_Accidentes_transito_Mex$mean )
+```
+
+El MAPE del modelo SARIMA 1,1,1 (1,0,0) S=1 es de ~4.5%. Lo que indica y en este caso comprueba que diferenciar la serie hace, es decir, hacerla estacionaria, mejor en general los pronósticos en los modelos SARIMA
 
 
 
@@ -284,7 +323,7 @@ El MAPE del modelo ARIMA 2,1,1 es muy bueno aún, aunque ligeramente mayor que e
 # Serie de tiempo 2 CON tendencia y SIN estacionalidad: Historico trimestral de Población Económicamente Activa (PEA) en México
 
 Tenemos data trimestral de Enero de 2005 a Agosto de 2022 sobre la Población Económicamente activa en México, son 72 datos en total. 
-La idea es usar 66 de esos 72 como una especie de "data de entrenamiento" para aplicar los modelos A) ARIMA y B) SARIMA para posteriormente predecir con cada modelo los valores de los 3 años restantes y poder comparar contra los reales e identificar el mejor modelo entre los dos mencionados para modelar La Poblacion económicamente activa en México 
+La idea es usar 66 de esos 72 como una especie de "data de entrenamiento" para aplicar los modelos A) ARIMA y B) SARIMA para posteriormente predecir con cada modelo los valores de los 6 trimestres restantes y poder comparar contra los reales e identificar el mejor modelo entre los dos mencionados para modelar La Poblacion económicamente activa en México 
 
 
 Primero importamos la data de PEA en MEX
@@ -294,17 +333,311 @@ Data obtenida de la página oficial del INEGI:  https://www.inegi.org.mx/temas/e
 
 library("readxl")
 
-PEA_mex <-read_excel("PEA_MEX_pp.xlsx")
+PEA_mex <-read_excel("PEA_MEX_full.xlsx")
 ```
 
 
-Revisamos que la data de nacimientos MEX sehay importado correctamente 
+Revisamos que la data se hay importado correctamente 
 ```{r}
-head(PEA_mex)
+PEA_mex
 summary(PEA_mex)
 typeof(PEA_mex)
 dim(PEA_mex)
 ```
+
+
+
+
+#### Convertimos los data importada a Serie de tiempo 
+
+ 
+
+```{r}
+
+PEA_mex_ts<- ts(PEA_mex$PEA, frequency = 4)
+head(PEA_mex_ts)
+typeof(PEA_mex_ts)
+
+```
+
+
+Graficamos la serie del tiempo
+```{r}
+plot(PEA_mex_ts, col = "blue", main = "Data histoirca anual de PEA en México de 2005 a 2022", ylab="Número de accidentes")
+
+```
+
+
+
+
+
+### Vamos a descomponer la data usando el metodo decompose para entender sus compoentes de tren, seasonalidad y aleatorio
+
+```{r}
+PEA_mex_ts_decompose <- decompose(PEA_mex_ts)
+summary(PEA_mex_ts_decompose)
+```
+
+Vamos a plotear la desmposición 
+
+```{r}
+plot(PEA_mex_ts_decompose)
+```
+
+Se observa claramente una tendencia creciente (excepto en años 2021 y 2021 derivado de pandemia de Covid-19). Se observa una estacionalidad por 4trimestres donde el 1er cuatrimestre de cada año es el más bajo y e último el más alto. 
+
+
+
+### Analicemos los valores de la variable y 
+
+```{r}
+hist(PEA_mex_ts)
+```
+
+
+
+```{r}
+summary(PEA_mex_ts)
+```
+
+
+Se observa que la gran mayoria de los valores de la variable y están en el intervalo de [51 - 56 millones] y que la variable puede seguir una distribución con "skewness" hacia la cola izquierda  
+
+
+
+#### Separamos el en data sets train y test
+
+Se tienen 72 datos, por lo que el train será de 66 datos, para que el test sea de 6 datos o 6 trimestres 
+
+```{r}
+
+# Split the data into training and testing sets
+
+
+# Subset the data to keep rows from the beginning until train_end and all columns
+PEA_mex_ts_train <- PEA_mex_ts[1:66]
+head(PEA_mex_ts_train)
+tail(PEA_mex_ts_train)
+
+
+```
+
+
+
+```{r}
+# Subset the data to keep rows from the beginning until train_end and all columns
+
+
+# Subset the data to keep rows from the beginning until train_end and all columns
+PEA_mex_ts_test <- PEA_mex_ts[67:72]
+head(PEA_mex_ts_test)
+tail(PEA_mex_ts_test)
+
+```
+
+
+
+
+## Modelo SARIMA para Serie 2 (PEA en México)
+
+
+#### Determinación de ACF & PACF para el caso de la serie 2 sin diferneciar 
+
+```{r}
+#install.packages("forecast")
+library(forecast)
+
+#par(mfrow=c(2,1))
+
+acf_PEA_mex_ts_sin_diferenciar <- Acf(PEA_mex_ts, lag.max = 100, ci.type = "ma")
+acf_PEA_mex_ts_sin_diferenciar
+
+
+pacf_PEA_mex_ts_sin_diferenciar <- Pacf(PEA_mex_ts, lag.max = 100, ci.type = "ma")
+pacf_PEA_mex_ts_sin_diferenciar
+
+```
+
+La función ACF de la serie, nos refleja la forma 'original' de la serie donde los primeros años hay una tendencia  creciente y posteriormente una decreciente. El hecho de que la serie muestra varios valores significativos en el pasado sugiere que No es una serie estacionaria, para estar 100% seguros heremos un test de Dickey-Fuller  
+
+
+
+#### Se lleva a cabo el tet de Dickey-Fulley (Ho: Serie no estacionaria) de la Serie 2 (PEA en México)  <sin diferenciar>
+
+```{r}
+# Install and load the "urca" package
+#install.packages("urca")
+library(urca)
+
+# Perform ADF test for stationarity
+acf_test_PEA_mex_ts_sin_diferenciar <- ur.df(PEA_mex_ts)
+
+# Print the ADF test results
+summary(acf_test_PEA_mex_ts_sin_diferenciar)
+
+```
+Se observa como el valor p de la prueba DF de estacionariedad p> 0.05 por lo tanto NO se rechaza Ho que indica que la serie no es estacionaria. 
+
+
+Para intentar "hacer estacionaria la serie vamos a tomar la primer diferencia de Yt con Yt-1"
+
+
+#### Vamos a diferenciar la Serie 2 (PEA en México)  'para hacerlo estacionaria'
+
+```{r}
+# Calculate the difference between consecutive elements
+PEA_mex_ts_diferencia1 <- diff(PEA_mex_ts, differences = 1)
+
+# Print the results
+print(PEA_mex_ts_diferencia1)
+
+```
+
+
+
+#### ACF & PACF para de la Serie 2 (PEA en México)  con diferencia1 'estacionariazada'
+
+
+```{r}
+library(forecast)
+
+#par(mfrow=c(2,1))
+
+acf_test_PEA_mex_ts_diferencia1 <- Acf(PEA_mex_ts_diferencia1, lag.max = 100, ci.type = "ma")
+acf_test_PEA_mex_ts_diferencia1
+
+
+pacf_test_PEA_mex_ts_diferencia1 <- Pacf(PEA_mex_ts_diferencia1, lag.max = 100, ci.type = "ma")
+pacf_test_PEA_mex_ts_diferencia1
+```
+
+Todo indica que la primer diferenciación de la seria ayudó a hacerla estacionaria. Se hace nuevamente una prueba de Dickey-Fulley para verificar estacionariedad 
+
+
+#### Se lleva a cabo el tet de Dickey-Fulley (Ho: Serie no estacionaria) a la Serie 2 (PEA en México)  <diferenciar 1>
+
+```{r}
+# Install and load the "urca" package
+#install.packages("urca")
+library(urca)
+
+# Perform ADF test for stationarity
+acf_test_PEA_mex_ts_diferencia1 <- ur.df(PEA_mex_ts_diferencia1)
+
+# Print the ADF test results
+summary(acf_test_PEA_mex_ts_diferencia1)
+
+```
+
+Con un valor de p<0.05 se comprueba que la serie con 1 diferencia ya es estacionaria. 
+
+
+Con base en las gráficas de ACF y PACF se decide probar un modleo ARIMA (2,1,1)
+
+
+#### Ajustae y predicicon de para la Serie 2 (PEA en México) con modelo ARIMA 
+
+
+```{r}
+#install.packages("astsa")
+library(astsa)
+
+# Fit the SARIMA model
+ARIMA_2_1_1_PEA_mex_ts <- astsa::sarima(PEA_mex_ts_train , p=2, d=1, q=1)
+
+# Print the model summary
+summary(ARIMA_2_1_1_PEA_mex_ts)
+
+```
+En general se observa para el modelo ARIMA_2_1_1_PEA_mex_ts: 
+
+Los errores estandarizados tienen un compartiempo aprorximadamente normal con media cero 
+Los errores estandarizados no tiene una correlación signifcativa
+
+
+#### Calculo de predicción del ARIMA para la Serie 2 (PEA en México)
+
+```{r}
+
+# Get the predictors
+
+
+pred_ARIMA_2_1_1_PEA_mex_ts <- sarima.for(PEA_mex_ts_train, n.ahead=6,2,1,1)
+pred_ARIMA_2_1_1_PEA_mex_ts
+
+
+```
+
+
+
+
+```{r}
+pred_ARIMA_2_1_1_PEA_mex_ts$pred
+```
+
+
+
+
+#### Calculo de errores del modelo ARIMA  para la Serie 2 (PEA en México)
+
+```{r}
+accuracy(PEA_mex_ts_test ,pred_ARIMA_2_1_1_PEA_mex_ts$pred )
+```
+
+El MAPE del modelo ARIMA 2,1,1 es de ~2.71% 
+
+
+
+
+#### Ajustae y predicicon con modelo SARIMA  para la Serie 2 (PEA en México) 
+
+
+```{r}
+#install.packages("astsa")
+library(astsa)
+
+# Fit the SARIMA model
+SARIMA_PEA_mex_ts <- Arima(PEA_mex_ts_train, order = c(2, 1, 1), seasonal = list(order = c(0, 1, 0), period = 4))
+
+# Print the model summary
+summary(SARIMA_PEA_mex_ts)
+
+```
+
+
+#### Calculo de predicción del SARIMA para la Serie 2 (PEA en México)
+
+```{r}
+
+# Get the predictors
+
+
+pred_SARIMA_PEA_mex_ts <- forecast(SARIMA_PEA_mex_ts, h = 6)
+pred_SARIMA_PEA_mex_ts
+
+
+```
+
+
+
+
+```{r}
+pred_SARIMA_PEA_mex_ts$mean
+```
+
+
+
+
+#### Calculo de errores del modelo SARIMA para la Serie 2 (PEA en México)
+
+```{r}
+accuracy(PEA_mex_ts_test ,pred_SARIMA_PEA_mex_ts$mean )
+```
+
+El MAPE del modelo SARIMA 1,1,1 (0,1,0) S=4 es de ~5%. 
+
+
+
 
 
 
