@@ -892,7 +892,7 @@ Con un valor de p<0.05 se comprueba que la serie con 1 diferencia ya es estacion
 Con base en las gráficas de ACF y PACF se decide probar un modleo ARIMA (1,1,1)
 
 
-#### Ajustae y predicicon de para la serie 3 (Demanda_electrico México) con modelo ARIMA 
+#### Ajuste y predicicon de para la serie 3 (Demanda_electrico México) con modelo ARIMA 
 
 
 ```{r}
@@ -906,7 +906,7 @@ ARIMA_1_1_1_Demanda_electrico_original_ts <- astsa::sarima(Demanda_electrico_ori
 summary(ARIMA_1_1_1_Demanda_electrico_original_ts)
 
 ```
-En general se observa para el modelo ARIMA_2_1_1_PEA_mex_ts: 
+En general se observa para el modelo ARIMA_1_1_1_Demanda_electrico_original_ts: 
 
 Los errores estandarizados tienen un compartiempo aprorximadamente normal con media cero 
 Los errores estandarizados no tiene una correlación signifcativa
@@ -919,7 +919,7 @@ Los errores estandarizados no tiene una correlación signifcativa
 # Get the predictors
 
 
-pred_ARIMA_1_1_1_Demanda_electrico_original_ts <- sarima.for(PEA_mex_ts_train, n.ahead=12,1,1,1)
+pred_ARIMA_1_1_1_Demanda_electrico_original_ts <- sarima.for(Demanda_electrico_original_train, n.ahead=12,1,1,1)
 pred_ARIMA_1_1_1_Demanda_electrico_original_ts
 
 
@@ -940,5 +940,54 @@ pred_ARIMA_1_1_1_Demanda_electrico_original_ts$pred
 ```{r}
 accuracy(Demanda_electrico_original_test ,pred_ARIMA_1_1_1_Demanda_electrico_original_ts$pred)
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### Ajustae y predicicon de Demanda_electrico con modelo SARIMA + PDQ S
+
+```{r}
+library(forecast)
+
+
+# Fit the SARIMA model
+SARIMA_PDQS_Demanda_electrico_V1_model <- Arima(Demanda_electrico_original_train, order = c(1, 1, 1), seasonal = list(order = c(0, 1, 1), period = 12))
+
+# Forecast for the next 12 periods
+forecast_SARIMA_PDQS_Demanda_electrico_V1_model <- forecast(SARIMA_PDQS_Demanda_electrico_V1_model, h = 12)
+
+# Print the forecasted values
+print(forecast_SARIMA_PDQS_Demanda_electrico_V1_model)
+```
+
+
+```{r}
+forecast_SARIMA_PDQS_Demanda_electrico_V1_model$mean
+```
+
+
+#### Calculo de errores del Demanda_electrico_original.ts con SARIMA + PDQ S
+
+```{r}
+accuracy(Demanda_electrico_original_test ,forecast_SARIMA_PDQS_Demanda_electrico_V1_model$mean )
+```
+
+
+
+
+
+
+
 
 
