@@ -1,5 +1,5 @@
 ---
-title: "Series_de_Tiempo_Segundo_Parcial_v1"
+title: "Series_de_Tiempo_Segundo_Parcial_v1.1"
 author: "Sergibar"
 date: "2023-06-01"
 output: html_document
@@ -40,12 +40,6 @@ dim(Accidentes_transito_MEX)
 ```
 
 
-
-
-
-
-
-
 #### Convertimos los data importada a Serie de tiempo
 
 
@@ -60,7 +54,7 @@ typeof(Accidentes_transito_MEX_ts)
 
 Graficamos la serie del tiempo
 ```{r}
-plot(Accidentes_transito_MEX_ts, col = "red", main = "Data histoirca anual de accidentes de transito en México de 2005 a 2021", ylab="Número de accidentes")
+plot(Accidentes_transito_MEX_ts, col = "red", main = "Data historica anual de accidentes de transito en México de 2005 a 2021", ylab="Número de accidentes")
 
 ```
 
@@ -79,8 +73,24 @@ summary(Accidentes_transito_MEX_ts)
 ```
 
 
-Se observa que la gran mayoria de los valores de la variable y están en el intervalo de [350,000,400,000] y que la variable puede seguir una distribución con "skewness" hacia la cola derecha  
+```{r}
 
+library(e1071)
+
+# Calculate skewness
+skewness_value <- skewness(Accidentes_transito_MEX_ts)
+
+# Calculate kurtosis
+kurtosis_value <- kurtosis(Accidentes_transito_MEX_ts)
+
+# Print the results
+print(paste("Skewness:", skewness_value))
+print(paste("Kurtosis:", kurtosis_value))
+
+```
+
+
+Se observa que la gran mayoria de los valores de la variable Y (número de accidentes terrestres anuales en México) están en el intervalo de [350,000 a 400,000] y que la variable sigue una distribución ´de tipo normal´ pero con "skewness" hacia la cola derecha  
 
 
 #### Separamos el en data sets train y test
@@ -136,7 +146,7 @@ pacf_Accidentes_transito_MEX_ts_sin_diferenciar
 
 ```
 
-La función ACF de la serie, nos refleja la forma 'original' de la serie donde los primeros años hay una tendencia  creciente y posteriormente una decreciente. El hecho de que la serie muestra varios valores significativos en el pasado sugiere que No es una serie estacionaria, para estar 100% seguros heremos un test de Dickey-Fuller  
+La función ACF de la serie, nos refleja la forma 'original' de la serie donde los primeros años hay una tendencia  creciente y posteriormente una decreciente. El hecho de que la serie muestra varios valores significativos para la gráfica de ACF sugiere que No es una serie estacionaria, para estar 100% seguros heremos un test de Dickey-Fuller  
 
 
 
@@ -160,7 +170,7 @@ Se observa como el valor p de la prueba DF de estacionariedad p> 0.05 por lo tan
 Para intentar "hacer estacionaria la serie vamos a tomar la primer diferencia de Yt con Yt-1"
 
 
-#### Vamos a diferenciar la serie de datos_orignal 'para hacerlo estacionaria'
+#### Vamos a diferenciar la serie 1 (Accidentes transitos Mex) 'para hacerlo estacionaria'
 
 ```{r}
 # Calculate the difference between consecutive elements
@@ -207,10 +217,9 @@ acf_test_Accidentes_transito_MEX_ts_diferencia1 <- ur.df(Accidentes_transito_MEX
 summary(acf_test_Accidentes_transito_MEX_ts_diferencia1)
 
 ```
-Con un valor de p<0.05 se comprueba que la serie con 1 diferencia ya es estacionaria. 
+Con un valor de p<0.05 se comprueba que la serie 1 (Accidentes transitos Mex) con 1 diferencia ya es estacionaria. 
 
-
-Con base en las gráficas de ACF y PACF se decide probar un modleo ARIMA (1,1,1)
+Con base en las gráficas de ACF y PACF (y teniendo en cuenta el principio de parcimonia) se decide probar un modleo ARIMA (1,1,1)
 
 
 #### Ajustae y predicicon de para serie 1 (Accidentes transitos Mex) con modelo ARIMA 
@@ -233,7 +242,7 @@ Los errores estandarizados tienen un compartiempo aprorximadamente normal con me
 Los errores estandarizados no tiene una correlación signifcativa
 
 
-#### Calculo de predicción del ARIMA para serie 1 (Accidentes transitos Mex)
+#### Calculo de predicción para serie 1 (Accidentes transitos Mex) con modelo ARIMA
 
 ```{r}
 
@@ -262,7 +271,7 @@ pred_ARIMA_1_1_1_Accidentes_transito_Mex$pred
 accuracy(Accidentes_transito_MEX_ts_test ,pred_ARIMA_1_1_1_Accidentes_transito_Mex$pred )
 ```
 
-El MAPE del modelo ARIMA 1,1,1 es de ~5.3% 
+El MAPE del modelo ARIMA 1,1,1 para la serie 1 (Accidentes transitos Mex) es de ~5.3% 
 
 
 
@@ -312,10 +321,7 @@ pred_SARIMA_Accidentes_transito_Mex$mean
 accuracy(Accidentes_transito_MEX_ts_test ,pred_SARIMA_Accidentes_transito_Mex$mean )
 ```
 
-El MAPE del modelo SARIMA 1,1,1 (1,0,0) S=1 es de ~4.5%. Lo que indica y en este caso comprueba que diferenciar la serie hace, es decir, hacerla estacionaria, mejor en general los pronósticos en los modelos SARIMA
-
-
-
+El MAPE del modelo SARIMA 1,1,1 (1,0,0) S=1 es de ~4.5%. Lo que indica y en este caso comprueba que diferenciar la serie para hacerla estacionaria, en general mejora los pronósticos en los modelos ARIMA
 
 
 
@@ -323,7 +329,7 @@ El MAPE del modelo SARIMA 1,1,1 (1,0,0) S=1 es de ~4.5%. Lo que indica y en este
 # Serie de tiempo 2 CON tendencia y SIN estacionalidad: Historico trimestral de Población Económicamente Activa (PEA) en México
 
 Tenemos data trimestral de Enero de 2005 a Agosto de 2022 sobre la Población Económicamente activa en México, son 72 datos en total. 
-La idea es usar 66 de esos 72 como una especie de "data de entrenamiento" para aplicar los modelos A) ARIMA y B) SARIMA para posteriormente predecir con cada modelo los valores de los 6 trimestres restantes y poder comparar contra los reales e identificar el mejor modelo entre los dos mencionados para modelar La Poblacion económicamente activa en México 
+La idea es usar 66 de esos 72 como una especie de "data de entrenamiento" para aplicar los modelos A) ARIMA y B) SARIMA para posteriormente predecir con cada modelo los valores de los 6 trimestres restantes y poder comparar contra los reales e identificar el mejor entre los dos mencionados para modelar La Poblacion económicamente activa en México 
 
 
 Primero importamos la data de PEA en MEX
@@ -350,8 +356,6 @@ dim(PEA_mex)
 
 #### Convertimos los data importada a Serie de tiempo 
 
- 
-
 ```{r}
 
 PEA_mex_ts<- ts(PEA_mex$PEA, frequency = 4)
@@ -363,15 +367,13 @@ typeof(PEA_mex_ts)
 
 Graficamos la serie del tiempo
 ```{r}
-plot(PEA_mex_ts, col = "blue", main = "Data histoirca anual de PEA en México de 2005 a 2022", ylab="Número de accidentes")
+plot(PEA_mex_ts, col = "blue", main = "Data historica trimestral de PEA en México de 2005 a 2022", ylab="Número de accidentes")
 
 ```
 
 
 
-
-
-### Vamos a descomponer la data usando el metodo decompose para entender sus compoentes de tren, seasonalidad y aleatorio
+### Vamos a descomponer la data usando el metodo decompose para entender sus componentes de tren, seasonalidad y aleatorio de la Serie 2 (PEA en México)
 
 ```{r}
 PEA_mex_ts_decompose <- decompose(PEA_mex_ts)
@@ -384,11 +386,11 @@ Vamos a plotear la desmposición
 plot(PEA_mex_ts_decompose)
 ```
 
-Se observa claramente una tendencia creciente (excepto en años 2021 y 2021 derivado de pandemia de Covid-19). Se observa una estacionalidad por 4trimestres donde el 1er cuatrimestre de cada año es el más bajo y e último el más alto. 
+Se observa claramente una tendencia creciente (excepto en años 2020 y 2021 derivado de pandemia de Covid-19). Se observa una estacionalidad por 4trimestres donde el 1er cuatrimestre de cada año es el más bajo y e último el más alto. 
 
 
 
-### Analicemos los valores de la variable y 
+### Analicemos los valores de la variable Y 
 
 ```{r}
 hist(PEA_mex_ts)
@@ -401,11 +403,30 @@ summary(PEA_mex_ts)
 ```
 
 
-Se observa que la gran mayoria de los valores de la variable y están en el intervalo de [51 - 56 millones] y que la variable puede seguir una distribución con "skewness" hacia la cola izquierda  
+
+```{r}
+
+library(e1071)
+
+# Calculate skewness
+skewness_value_serie_PEA <- skewness(PEA_mex_ts)
+
+# Calculate kurtosis
+kurtosis_value_serie_PEA <- kurtosis(PEA_mex_ts)
+
+# Print the results
+print(paste("Skewness:", skewness_value_serie_PEA))
+print(paste("Kurtosis:", kurtosis_value_serie_PEA))
+
+```
 
 
 
-#### Separamos el en data sets train y test
+Se observa que la gran mayoria de los valores de la variable y están en el intervalo de [51 - 56 millones] y que la variable puede seguir una distribución 'Aproximadamente normal con una ligera "skewness" hacia la cola derecha y 'colas pesadas'    
+
+
+
+#### Separamos el en data sets train y test de la Serie 2 (PEA en México)
 
 Se tienen 72 datos, por lo que el train será de 66 datos, para que el test sea de 6 datos o 6 trimestres 
 
@@ -438,10 +459,10 @@ tail(PEA_mex_ts_test)
 
 
 
+
 ## Modelo SARIMA para Serie 2 (PEA en México)
 
-
-#### Determinación de ACF & PACF para el caso de la serie 2 sin diferneciar 
+#### Determinación de ACF & PACF para el caso de la Serie 2 (PEA en México) sin diferneciar 
 
 ```{r}
 #install.packages("forecast")
@@ -457,8 +478,7 @@ pacf_PEA_mex_ts_sin_diferenciar <- Pacf(PEA_mex_ts, lag.max = 100, ci.type = "ma
 pacf_PEA_mex_ts_sin_diferenciar
 
 ```
-
-La función ACF de la serie, nos refleja la forma 'original' de la serie donde los primeros años hay una tendencia  creciente y posteriormente una decreciente. El hecho de que la serie muestra varios valores significativos en el pasado sugiere que No es una serie estacionaria, para estar 100% seguros heremos un test de Dickey-Fuller  
+La gráfica de ACF indica que la serie No es una serie estacionaria, para estar 100% seguros heremos un test de Dickey-Fuller  
 
 
 
@@ -584,10 +604,7 @@ pred_ARIMA_2_1_1_PEA_mex_ts$pred
 accuracy(PEA_mex_ts_test ,pred_ARIMA_2_1_1_PEA_mex_ts$pred )
 ```
 
-El MAPE del modelo ARIMA 2,1,1 es de ~2.71% 
-
-
-
+El MAPE del modelo ARIMA 2,1,1 para la Serie 2 (PEA en México)  es de 2.71% 
 
 #### Ajustae y predicicon con modelo SARIMA  para la Serie 2 (PEA en México) 
 
@@ -639,16 +656,289 @@ El MAPE del modelo SARIMA 1,1,1 (0,1,0) S=4 es de ~5%.
 
 
 
-
-
 # Serie de tiempo 3 CON tendencia y CON estacionalidad (Historico mensual de Demanda de Gas Natural para el sector eléctrico en México)
 
 Tenemos data mensual de Enero de 2005 a Agosto de 2022 sobre la demanda de gas natural para el sector eléctrico en México, son 213 datos en total. 
-La idea es usar 201 de esos 2013 como una especie de "data de entreaniemto" para aplicar los modelos  A) ARIMA y B) SARIMA para posteriormente predecir con cada modelo los valores de los 3 años restantes y poder comparar contra los reales e identificar el mejor modelo entre los dos mencionados para modelar demanda de gas natural en el sector eléctrico en México 
+La idea es usar 201 de esos 2013 como una especie de "data de entreaniemto" para aplicar los modelos  A) ARIMA y B) SARIMA para posteriormente predecir con cada modelo los valores de los 3 años restantes y poder comparar contra los reales e identificar el mejor entre los dos mencionados para modelar demanda de gas natural en el sector eléctrico en México 
 
 
 
 
+Primero importamos la data con el gas demandado en el sector electrico
+```{r}
 
+Demanda_electrico_importado<-read.csv("Demanda_electrico_2022_full1.csv", header= TRUE)
+
+```
+
+
+
+
+Nos aseguramos que la data con el gas demandado en el sector electrico se haya importado correctamente
+```{r}
+head(Demanda_electrico_importado)
+summary(Demanda_electrico_importado)
+typeof(Demanda_electrico_importado)
+dim(Demanda_electrico_importado)
+```
+
+
+Transformamos el tipo de dato de la columna DATE  a as.date column 
+
+```{r}
+Demanda_electrico_importado$Date <- as.Date(Demanda_electrico_importado$Date, format = "%m/%d/%Y")
+head(Demanda_electrico_importado)
+tail(Demanda_electrico_importado)
+typeof(Demanda_electrico_importado)
+Demanda_electrico_importado
+
+```
+
+
+
+#### Convertimos los data importada a Serie de tiempo 
+
+```{r}
+
+Demanda_electrico_ts<- ts(Demanda_electrico_importado$Demanded_Gas, frequency = 12)
+head(Demanda_electrico_ts)
+typeof(Demanda_electrico_ts)
+
+```
+
+
+Graficamos la serie del tiempo
+```{r}
+plot(Demanda_electrico_ts, col = "green", main = "Data historica mensual de Demanda de Gas Natural para el sector eléctrico en México de 2005 a 2022", cex.main=0.85, ylab="Gas Demandado MMpcd")
+
+```
+
+
+
+### Vamos a descomponer la data usando el metodo decompose para entender sus componentes de tren, seasonalidad y aleatorio de la Serie 3 (Demanda de Gas Natural en sector eléctrico en México)
+
+```{r}
+Demanda_electrico_ts_decompose <- decompose(Demanda_electrico_ts)
+summary(Demanda_electrico_ts_decompose)
+```
+
+Vamos a plotear la desmposición 
+
+```{r}
+plot(Demanda_electrico_ts_decompose)
+```
+
+Se observa claramente una tendencia creciente (excepto en años 2020 y 2021 derivado de pandemia de Covid-19). Se observa una estacionalidad en donde hay una "subida los primeros 6 meses", se llega asu máximo en el mes 07-08 y una bajada los meses 09, 10 y 11.  
+
+
+
+### Analicemos los valores de la variable Y 
+
+```{r}
+hist(Demanda_electrico_ts)
+```
+
+
+
+```{r}
+summary(Demanda_electrico_ts)
+```
+
+
+
+```{r}
+
+library(e1071)
+
+# Calculate skewness
+skewness_value_serie_Demanda_electrico <- skewness(Demanda_electrico_ts)
+
+# Calculate kurtosis
+kurtosis_value_serie_Demanda_electrico <- kurtosis(Demanda_electrico_ts)
+
+# Print the results
+print(paste("Skewness:", skewness_value_serie_Demanda_electrico))
+print(paste("Kurtosis:", kurtosis_value_serie_Demanda_electrico))
+
+```
+
+
+Se observa que la gran mayoria de los valores de la variable y están en el intervalo de [2,500 - 3,500 Mpcd] y que la variable puede seguir una distribución 'Aproximadamente normal con una ligera "skewness" hacia la cola derecha 
+
+
+
+#### Separamos training and testing sets DE LA SERIE 3 (Demanda_electrico) para aplicar modeo ARIMA & SARIMA   
+
+```{r}
+
+# Split the data into training and testing sets
+
+
+# Subset the data to keep rows from the beginning until train_end and all columns
+Demanda_electrico_original_train <- Demanda_electrico_ts[1:201]
+Demanda_electrico_original_train
+
+
+
+```
+
+
+
+```{r}
+# Subset the data to keep rows from the beginning until train_end and all columns
+
+
+Demanda_electrico_original_test <- Demanda_electrico_ts[202:213]
+Demanda_electrico_original_test
+
+
+
+```
+
+
+
+## Modelo SARIMA para Serie 3 (Demanda_electrico México)
+
+
+#### Determinación de ACF & PACF para el caso de la Serie 3 (Demanda_electrico México) sin diferneciar 
+
+```{r}
+#install.packages("forecast")
+library(forecast)
+
+#par(mfrow=c(2,1))
+
+acf_Demanda_electrico_ts_sin_diferenciar <- Acf(Demanda_electrico_ts, lag.max = 100, ci.type = "ma")
+acf_Demanda_electrico_ts_sin_diferenciar
+
+
+pacf_Demanda_electrico_ts_sin_diferenciar <- Pacf(Demanda_electrico_ts, lag.max = 100, ci.type = "ma")
+pacf_Demanda_electrico_ts_sin_diferenciar
+
+```
+La gráfica de ACF indica claramente que la serie No es una serie estacionaria, para estar 100% seguros heremos un test de Dickey-Fuller  
+
+
+
+#### Se lleva a cabo el tet de Dickey-Fulley (Ho: Serie no estacionaria) de la Serie 3 (Demanda_electrico México)  <sin diferenciar>
+
+```{r}
+# Install and load the "urca" package
+#install.packages("urca")
+library(urca)
+
+# Perform ADF test for stationarity
+acf_test_Demanda_electrico_ts_sin_diferenciar <- ur.df(Demanda_electrico_ts)
+
+# Print the ADF test results
+summary(acf_test_Demanda_electrico_ts_sin_diferenciar)
+
+```
+Se observa como el valor p de la prueba DF de estacionariedad p> 0.05 por lo tanto NO se rechaza Ho que indica que la serie no es estacionaria. 
+
+Para intentar "hacer estacionaria la serie vamos a tomar la primer diferencia de Yt con Yt-1"
+
+
+#### Vamos a diferenciar la Serie 3 (Demanda_electrico México)  'para hacerlo estacionaria'
+
+```{r}
+# Calculate the difference between consecutive elements
+Demanda_electrico_ts_diferencia1 <- diff(Demanda_electrico_ts, differences = 1)
+
+# Print the results
+print(Demanda_electrico_ts_diferencia1)
+
+```
+
+
+
+#### ACF & PACF para de la Serie 3 (Demanda_electrico México) con diferencia1 'estacionariazada'
+
+
+```{r}
+library(forecast)
+
+#par(mfrow=c(2,1))
+
+acf_test_Demanda_electrico_ts_diferencia1 <- Acf(Demanda_electrico_ts_diferencia1, lag.max = 100, ci.type = "ma")
+acf_test_Demanda_electrico_ts_diferencia1
+
+
+pacf_test_Demanda_electrico_ts_diferencia1 <- Pacf(Demanda_electrico_ts_diferencia1, lag.max = 100, ci.type = "ma")
+pacf_test_Demanda_electrico_ts_diferencia1
+```
+
+Todo indica que la primer diferenciación de la seria ayudó a hacerla estacionaria. Se hace nuevamente una prueba de Dickey-Fulley para verificar estacionariedad 
+
+
+#### Se lleva a cabo el tet de Dickey-Fulley (Ho: Serie no estacionaria) a la Serie 3 (Demanda_electrico México) <diferenciar 1>
+
+```{r}
+# Install and load the "urca" package
+#install.packages("urca")
+library(urca)
+
+# Perform ADF test for stationarity
+acf_test_Demanda_electrico_ts_diferencia1 <- ur.df(Demanda_electrico_ts_diferencia1)
+
+# Print the ADF test results
+summary(acf_test_Demanda_electrico_ts_diferencia1)
+
+```
+
+Con un valor de p<0.05 se comprueba que la serie con 1 diferencia ya es estacionaria. 
+
+
+Con base en las gráficas de ACF y PACF se decide probar un modleo ARIMA (1,1,1)
+
+
+#### Ajustae y predicicon de para la serie 3 (Demanda_electrico México) con modelo ARIMA 
+
+
+```{r}
+#install.packages("astsa")
+library(astsa)
+
+# Fit the SARIMA model
+ARIMA_1_1_1_Demanda_electrico_original_ts <- astsa::sarima(Demanda_electrico_original_train , p=1, d=1, q=1)
+
+# Print the model summary
+summary(ARIMA_1_1_1_Demanda_electrico_original_ts)
+
+```
+En general se observa para el modelo ARIMA_2_1_1_PEA_mex_ts: 
+
+Los errores estandarizados tienen un compartiempo aprorximadamente normal con media cero 
+Los errores estandarizados no tiene una correlación signifcativa
+
+
+#### Calculo de predicción del ARIMA para la serie 3 (Demanda_electrico México)
+
+```{r}
+
+# Get the predictors
+
+
+pred_ARIMA_1_1_1_Demanda_electrico_original_ts <- sarima.for(PEA_mex_ts_train, n.ahead=12,1,1,1)
+pred_ARIMA_1_1_1_Demanda_electrico_original_ts
+
+
+```
+
+
+
+
+```{r}
+pred_ARIMA_1_1_1_Demanda_electrico_original_ts$pred
+```
+
+
+
+
+#### Calculo de errores del modelo ARIMA  para la serie 3 (Demanda_electrico México)
+
+```{r}
+accuracy(Demanda_electrico_original_test ,pred_ARIMA_1_1_1_Demanda_electrico_original_ts$pred)
+```
 
 
