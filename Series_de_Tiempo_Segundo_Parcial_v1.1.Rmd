@@ -161,7 +161,7 @@ library(urca)
 acf_test_Accidentes_transito_MEX_ts_sin_diferenciar <- ur.df(Accidentes_transito_MEX_ts)
 
 # Print the ADF test results
-summary(adf_test_Accidentes_transito_MEX_ts_sin_diferenciar)
+summary(acf_test_Accidentes_transito_MEX_ts_sin_diferenciar)
 
 ```
 Se observa como el valor p de la prueba DF de estacionariedad p> 0.05 por lo tanto NO se rechaza Ho que indica que la serie no es estacionaria. 
@@ -943,18 +943,6 @@ accuracy(Demanda_electrico_original_test ,pred_ARIMA_1_1_1_Demanda_electrico_ori
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 #### Ajustae y predicicon de Demanda_electrico con modelo SARIMA + PDQ S
 
 ```{r}
@@ -983,6 +971,135 @@ forecast_SARIMA_PDQS_Demanda_electrico_V1_model$mean
 accuracy(Demanda_electrico_original_test ,forecast_SARIMA_PDQS_Demanda_electrico_V1_model$mean )
 ```
 
+
+
+
+## Estrategia de limitación del set de train serie 3 (Demanda electrico)  (Con data de entrenameitno hatsa 1:170 que es ignorar 2021 y 2021)
+
+
+#### Training and testing sets (ORIGINAL) para aplicar modeo ARIMA serie 3 (Demanda electrico)  (Con data de entrenameitno hatsa 1:170 que es ignorar 2021 y 2021)
+
+
+```{r}
+
+# Split the data into training and testing sets
+
+
+# Subset the data to keep rows from the beginning until train_end and all columns
+Demanda_electrico_train_V2 <- Demanda_electrico_ts[1:170]
+Demanda_electrico_train_V2
+
+
+
+```
+
+```{r}
+# Subset the data to keep rows from the beginning until train_end and all columns
+
+
+Demanda_electrico_test_V2 <- Demanda_electrico_ts[202:213]
+Demanda_electrico_test_V2
+
+
+
+```
+
+#### Ajustae y predicicon de Demanda_electrico con modelo SARIMA serie 3 (Demanda electrico)  (Con data de entrenameitno hatsa 1:170 que es ignorar 2021 y 2021)
+
+
+```{r}
+#install.packages("astsa")
+library(astsa)
+
+# Fit the SARIMA model
+ARIMA_1_1_1_Demanda_electrico_V2 <- astsa::sarima( Demanda_electrico_train_V2 , p=1, d=1, q=1)
+
+# Print the model summary
+summary(ARIMA_1_1_1_Demanda_electrico_V2)
+
+```
+
+
+
+```{r}
+
+# Get the predictors
+
+
+pred_ARIMA_1_1_1_Demanda_electrico_V2 <- sarima.for(Demanda_electrico_train_V2, n.ahead=12,1,1,1)
+pred_ARIMA_1_1_1_Demanda_electrico_V2
+
+
+```
+
+
+```{r}
+pred_ARIMA_1_1_1_Demanda_electrico_V2$pred
+```
+
+
+
+
+#### Calculo de errores de serie 3 (Demanda electrico)  con modleo (Con data de entrenameitno hatsa 1:170 que es ignorar 2021 y 2021)
+
+```{r}
+accuracy(Demanda_electrico_original_test ,pred_ARIMA_1_1_1_Demanda_electrico_V2$pred )
+```
+
+
+
+
+
+#### Training and testing sets (ORIGINAL) para aplicar modeo SARIMA + PDQ S
+
+
+#### Ajustae y predicicon de Demanda_electrico con modelo SARIMA + PDQ S
+
+```{r}
+library(forecast)
+
+
+# Fit the SARIMA model
+SARIMA_PDQS_Demanda_electrico_V2_model <- Arima(Demanda_electrico_train_V2, order = c(1, 1, 1), seasonal = list(order = c(0, 1, 1), period = 12))
+
+# Forecast for the next 12 periods
+forecast_SARIMA_PDQS_Demanda_electrico_V2_model<- forecast(SARIMA_PDQS_Demanda_electrico_V2_model, h = 12)
+
+# Print the forecasted values
+print(forecast_SARIMA_PDQS_Demanda_electrico_V2_model)
+```
+
+
+```{r}
+forecast_SARIMA_PDQS_Demanda_electrico_V2_model$mean
+```
+
+
+#### Calculo de errores del Demanda_electrico_original.ts con SARIMA + PDQ S
+
+```{r}
+accuracy(Demanda_electrico_original_test ,forecast_SARIMA_PDQS_Demanda_electrico_V2_model$mean )
+```
+
+
+## Aplicando el auto.arima a la serie 3 (Demanda_electrico)
+
+
+
+### Transformando la variable dependiente (LOG(Y)) a la serie 3 (Demanda_electrico)
+
+```{r}
+
+# Load the TTR package
+library(TTR)
+
+Demanda_electrico_ts_log <- log(Demanda_electrico_ts)
+```
+
+
+```{r}
+plot(Demanda_electrico_ts_log, col = "brown", main = "Demanda electrico 'original'transformado usando la funcion log")
+```
 
 
 
